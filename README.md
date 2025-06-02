@@ -1,10 +1,10 @@
 # Freemius
 
-![Freemius](https://github.com/evrpress/freemius-wp-plugin/blob/main/.wordpress-org/banner.jpg)
+![Freemius](https://github.com/Freemius/freemius-wp-plugin/blob/main/.wordpress-org/banner.jpg)
 
-[Try it in the Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/evrpress/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/blueprint.json)
+[Try it in the Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/blueprint.json)
 
-Contributors:      everpress  
+Contributors:      everpress, freemius  
 Tags:              freemius, checkout, payment, button  
 Tested up to:      6.8  
 Stable tag:        0.2.0  
@@ -55,6 +55,10 @@ The plugin works with any WordPress theme that supports the block editor (Gutenb
 2. Example of a Freemius checkout button in action
 
 ## Changelog
+
+### 0.2.0
+
+- changed deprecated argument "plugin_id" to "product_id" (breaking change)
 
 ### 0.1.9
 
