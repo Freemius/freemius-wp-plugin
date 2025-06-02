@@ -44,6 +44,8 @@ function block_script_styles() {
 	// load from assets.php
 	$freemius_dependencies = include $plugin_dir . 'build/freemius-button/editor.asset.php';
 
+	\wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
+
 	// Freemius Button Block
 	\wp_enqueue_script( 'freemius-button', $plugin_url . 'build/freemius-button/editor.js', $freemius_dependencies['dependencies'], $freemius_dependencies['version'], true );
 	\wp_enqueue_style( 'freemius-button', $plugin_url . 'build/freemius-button/editor.css', array(), $freemius_dependencies['version'] );

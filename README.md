@@ -56,6 +56,10 @@ The plugin works with any WordPress theme that supports the block editor (Gutenb
 
 ## Changelog
 
+### 0.2.1
+
+- Added popout editor for code fields
+
 ### 0.2.0
 
 - changed deprecated argument "plugin_id" to "product_id" (breaking change)
