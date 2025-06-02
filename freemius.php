@@ -26,7 +26,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 class_exists( 'EverPress\WPUpdater' ) && WPUpdater::add(
 	'freemius/freemius.php',
 	array(
-		'repository' => 'evrpress/freemius-wp-plugin',
+		'repository' => 'Freemius/freemius-wp-plugin',
 	)
 );
 

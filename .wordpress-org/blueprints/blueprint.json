@@ -13,7 +13,7 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "url",
-				"url": "https://github-proxy.com/proxy/?repo=evrpress/freemius-wp-plugin&release=latest&asset=freemius.zip"
+				"url": "https://github-proxy.com/proxy/?repo=Freemius/freemius-wp-plugin&release=latest&asset=freemius.zip"
 			},
 			"options": {
 				"activate": true
@@ -23,7 +23,7 @@
 			"step": "importWxr",
 			"file": {
 				"resource": "url",
-				"url": "https://raw.githubusercontent.com/evrpress/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/content.xml"
+				"url": "https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/content.xml"
 			}
 		}
 	]
