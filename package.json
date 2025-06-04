@@ -28,7 +28,7 @@
 		"@wordpress/i18n": "^5.24.0"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.24.0",
+		"@wordpress/env": "^10.25.0",
 		"@wordpress/scripts": "^30.17.0",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
