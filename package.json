@@ -20,7 +20,7 @@
 		"*.php"
 	],
 	"dependencies": {
-		"@10up/block-components": "^1.19.3",
+		"@10up/block-components": "^1.21.1",
 		"@emotion/styled": "^11.14.0",
 		"@wordpress/data": "^10.24.0",
 		"@wordpress/dom-ready": "^4.24.0",
