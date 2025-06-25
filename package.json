@@ -25,7 +25,7 @@
 		"@wordpress/data": "^10.24.0",
 		"@wordpress/dom-ready": "^4.24.0",
 		"@wordpress/element": "^6.24.0",
-		"@wordpress/i18n": "^5.24.0"
+		"@wordpress/i18n": "^5.26.0"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.24.0",
