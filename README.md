@@ -7,7 +7,7 @@
 Contributors:      everpress, freemius  
 Tags:              freemius, checkout, payment, button  
 Tested up to:      6.8  
-Stable tag:        0.2.0  
+Stable tag:        0.2.1  
 License:           MIT  
 
 Freemius Toolkit is a powerful WordPress plugin that allows you to transform any block-based button into a Freemius checkout button.

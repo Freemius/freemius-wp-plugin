@@ -9,7 +9,7 @@ use EverPress\WPUpdater;
  * Description:       Freemius Toolkit
  * Requires at least: 6.6
  * Requires PHP:      7.4
- * Version:           0.2.0
+ * Version:           0.2.1
  * Author:            Xaver
  * Author URI:        https://freemius.com
  * License:           MIT
