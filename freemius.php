@@ -22,14 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 
-// Initialize the updater
-class_exists( 'EverPress\WPUpdater' ) && WPUpdater::add(
-	'freemius/freemius.php',
-	array(
-		'repository' => 'Freemius/freemius-wp-plugin',
-	)
-);
-
 
 \add_action( 'enqueue_block_assets', __NAMESPACE__ . '\block_script_styles', 1 );
 function block_script_styles() {
