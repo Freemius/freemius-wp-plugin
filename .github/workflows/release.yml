@@ -90,7 +90,7 @@ jobs:
             ${{ steps.read_version.outputs.project_name }}.zip
 
       - name: WordPress Plugin Deploy
-        if: ${{ false && !env.ACT && hashFiles('.wordpress-org/**') != '' }}
+        if: ${{ !env.ACT && hashFiles('.wordpress-org/**') != '' }}
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
           generate-zip: false

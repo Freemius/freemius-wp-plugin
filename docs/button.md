@@ -6,6 +6,15 @@ The Freemius Button allows you to add Freemius Checkout to any button of your Wo
 
 The Freemius Button extends the core Button block with Freemius Checkout functionality. When enabled, clicking the button will open the Freemius Checkout popup to process payments.
 
+![Freemius Checkout](https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/docs/assets/checkout.png)
+
+## Getting Started
+
+1. Install the Freemius Button plugin from the WordPress.org repository.
+2. Add a new button block to your content.
+3. Enable the Freemius Button by checking the "Freemius Checkout" checkbox.
+4. Configure the button settings as needed.
+
 ## Configuration Scopes
 
 The button settings can be configured at three different scopes:
@@ -30,7 +39,7 @@ Settings cascade down from global to button level, with more specific scopes ove
 - **Success URL** - Redirect URL after successful purchase
 - **Cancel URL** - Redirect URL after cancellation
 
-Please refer to the [Freemius documentation](https://freemius.com/help/documentation/) for more information on these settings.
+Please refer to the [Freemius documentation](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/) for more information on these settings.
 
 ## Customization
 

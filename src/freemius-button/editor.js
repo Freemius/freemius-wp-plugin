@@ -400,6 +400,11 @@ const BlockEdit = (props) => {
 							onChangeHandler(scope, key, val);
 						};
 
+						// do not show deprecated fields if they are not set
+						if (item.isDeprecated && !value) {
+							return null;
+						}
+
 						return (
 							<FsToolItem
 								key={key}

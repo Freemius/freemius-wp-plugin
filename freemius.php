@@ -9,7 +9,7 @@ use EverPress\WPUpdater;
  * Description:       Freemius Toolkit
  * Requires at least: 6.6
  * Requires PHP:      7.4
- * Version:           0.2.0
+ * Version:           0.2.1
  * Author:            Xaver
  * Author URI:        https://freemius.com
  * License:           MIT
@@ -21,14 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-
-// Initialize the updater
-class_exists( 'EverPress\WPUpdater' ) && WPUpdater::add(
-	'freemius/freemius.php',
-	array(
-		'repository' => 'Freemius/freemius-wp-plugin',
-	)
-);
 
 
 \add_action( 'enqueue_block_assets', __NAMESPACE__ . '\block_script_styles', 1 );
@@ -43,6 +35,8 @@ function block_script_styles() {
 
 	// load from assets.php
 	$freemius_dependencies = include $plugin_dir . 'build/freemius-button/editor.asset.php';
+
+	\wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
 
 	// Freemius Button Block
 	\wp_enqueue_script( 'freemius-button', $plugin_url . 'build/freemius-button/editor.js', $freemius_dependencies['dependencies'], $freemius_dependencies['version'], true );
