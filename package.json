@@ -22,14 +22,14 @@
 	"dependencies": {
 		"@10up/block-components": "^1.19.3",
 		"@emotion/styled": "^11.14.0",
-		"@wordpress/data": "^10.24.0",
-		"@wordpress/dom-ready": "^4.24.0",
-		"@wordpress/element": "^6.24.0",
-		"@wordpress/i18n": "^5.24.0"
+		"@wordpress/data": "^10.26.0",
+		"@wordpress/dom-ready": "^4.26.0",
+		"@wordpress/element": "^6.26.0",
+		"@wordpress/i18n": "^5.26.0"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.24.0",
-		"@wordpress/scripts": "^30.17.0",
+		"@wordpress/env": "^10.26.0",
+		"@wordpress/scripts": "^30.19.0",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
 	}

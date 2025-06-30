@@ -98,5 +98,6 @@ jobs:
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: freemius
           ASSETS_DIR: dist/assets
           BUILD_DIR: dist/${{ steps.read_version.outputs.project_name }}
