@@ -1,10 +1,6 @@
 # Freemius
 
-![Freemius](https://github.com/Freemius/freemius-wp-plugin/blob/main/.wordpress-org/banner.jpg)
-
-[Try it in the Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/blueprint.json)
-
-Contributors:      everpress, freemius  
+Contributors:      xaverb, freemius  
 Tags:              freemius, checkout, payment, button  
 Tested up to:      6.8  
 Stable tag:        0.2.1  
