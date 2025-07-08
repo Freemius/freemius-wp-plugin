@@ -1,4 +1,4 @@
-# Freemius
+# Freemius for WordPress
 
 Contributors:      xaverb, freemius  
 Tags:              freemius, checkout, payment, button  
@@ -6,18 +6,25 @@ Tested up to:      6.8
 Stable tag:        0.2.1  
 License:           MIT  
 
-Freemius Toolkit is a powerful WordPress plugin that allows you to transform any block-based button into a Freemius checkout button.
+Freemius for WordPress helps you to add Freemius Checkout to any button of your WordPress content using the block editor.
 
 ## Description
 
-Freemius Toolkit is a powerful WordPress plugin that allows you to transform any block-based button into a Freemius checkout button. This makes it easy to integrate Freemius payment processing into your WordPress site with minimal effort.
+Freemius for WordPress is a powerful WordPress plugin that allows you to transform any block-based button into a Freemius checkout button. This makes it easy to integrate Freemius payment processing into your WordPress site with minimal effort.
 
-Key features:
+### Key features
 
 - Convert any block button to a Freemius checkout button
 - Seamless integration with Freemius payment processing
 - Customizable checkout experience
 - Works with all block-based themes and plugins
+
+### Roadmap
+
+- Support for Pricing tables.
+- Better support to measure analytics.
+- Dedicated Settings page.
+- Testimonials (from the API).
 
 ## Installation
 
