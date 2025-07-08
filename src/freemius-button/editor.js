@@ -29,6 +29,7 @@ import { Icon, globe, page, button } from '@wordpress/icons';
  */
 import './editor.scss';
 import FsToolItem from './fs-tool-item';
+import EnableCheckbox from '../util/EnableCheckbox';
 
 const PanelDescription = styled.div`
 	grid-column: span 2;
@@ -78,15 +79,6 @@ const BlockEdit = (props) => {
 				setAttributes({ freemius: undefined });
 		}
 	};
-
-	const EnableCheckbox = () => (
-		<CheckboxControl
-			__nextHasNoMarginBottom
-			label={__('Freemius Checkout', 'freemius')}
-			checked={freemius_enabled}
-			onChange={(val) => setAttributes({ freemius_enabled: val })}
-		/>
-	);
 
 	const getDocument = () => {
 		const iframe = document.querySelector('iframe[name="editor-canvas"]');
@@ -281,7 +273,10 @@ const BlockEdit = (props) => {
 		return (
 			<InspectorControls>
 				<PanelBody title={__('Freemius Button', 'freemius')}>
-					<EnableCheckbox />
+					<EnableCheckbox
+						label={__('Freemius Checkout', 'freemius')}
+						{...props}
+					/>
 				</PanelBody>
 			</InspectorControls>
 		);
@@ -354,7 +349,10 @@ const BlockEdit = (props) => {
 				}
 			>
 				<PanelDescription>
-					<EnableCheckbox />
+					<EnableCheckbox
+						label={__('Freemius Checkout', 'freemius')}
+						{...props}
+					/>
 					<CheckboxControl
 						__nextHasNoMarginBottom
 						label={__('Auto Refresh', 'freemius')}

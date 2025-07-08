@@ -52,6 +52,7 @@ spl_autoload_register(
 
 function init() {
 	Button::get_instance();
+	Pricing::get_instance();
 }
 \add_action( 'plugins_loaded', __NAMESPACE__ . '\\init' );
 

@@ -1,0 +1,222 @@
+<?php
+/**
+ * Freemius Pricing
+ *
+ * @package    Freemius
+ * @category   WordPress_Plugin
+ * @author     Freemius <support@freemius.com>
+ * @license    GPL v2 or later
+ * @link       https://freemius.com/
+ */
+
+namespace Freemius;
+
+/**
+ * Class Pricing
+ *
+ * @package Freemius
+ */
+class Pricing {
+	/**
+	 * Instance of this class
+	 *
+	 * @var Pricing
+	 */
+	private static $instance = null;
+
+	/**
+	 * Constructor
+	 */
+	private function __construct() {
+
+		// Enqueue the block script and styles
+		\add_action( 'enqueue_block_assets', array( $this, 'block_script_styles' ), 1 );
+
+		// Render the pricing
+		\add_filter( 'render_block_core/group', array( $this, 'render_pricing' ), 10, 3 );
+
+		// Register the post meta
+		\add_action( 'enqueue_block_assets', array( $this, 'register_post_meta' ), 1 );
+
+		// Register the setting
+		\add_action( 'init', array( $this, 'register_post_meta' ) );
+		\add_action( 'rest_api_init', array( $this, 'register_post_meta' ) );
+
+		// Register the setting
+		\add_action( 'init', array( $this, 'register_my_setting' ) );
+		\add_action( 'rest_api_init', array( $this, 'register_my_setting' ) );
+	}
+
+	/**
+	 * Get instance of this class
+	 *
+	 * @return Pricing
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Prevent cloning of the instance
+	 */
+	private function __clone() {}
+
+	/**
+	 * Prevent unserializing of the instance
+	 */
+	public function __wakeup() {}
+
+
+	/**
+	 * Enqueue the block script and styles
+	 */
+	public function block_script_styles() {
+
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		// load from assets.php
+		$freemius_dependencies = include FREEMIUS_PLUGIN_DIR . '/build/freemius-pricing/editor.asset.php';
+
+		\wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
+
+		// Freemius Button Block
+		\wp_enqueue_script( 'freemius-pricing', FREEMIUS_PLUGIN_URL . '/build/freemius-pricing/editor.js', $freemius_dependencies['dependencies'], $freemius_dependencies['version'], true );
+		\wp_enqueue_style( 'freemius-pricing', FREEMIUS_PLUGIN_URL . '/build/freemius-pricing/editor.css', array(), $freemius_dependencies['version'] );
+	}
+
+
+	/**
+	 * Render the pricing
+	 *
+	 * @param string $block_content The block content.
+	 * @param array  $block         The block.
+	 * @param array  $instance      The instance.
+	 * @return string The block content.
+	 */
+	public function render_pricing( $block_content, $block, $instance ) {
+
+		if ( ! isset( $block['attrs'] ) ) {
+			return $block_content;
+		}
+		if ( ! isset( $block['attrs']['freemius_enabled'] ) || $block['attrs']['freemius_enabled'] === false ) {
+			return $block_content;
+		}
+
+		return $block_content;
+
+		// merge the data from the site, the page and the block
+		$site_data   = \get_option( 'freemius_button', array() );
+		$page_data   = \get_post_meta( get_the_ID(), 'freemius_button', true );
+		$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
+
+		$data = array_merge( (array) $site_data, (array) $page_data, (array) $plugin_data );
+
+		/**
+		 * Filter the data that will be passed to the Freemius checkout.
+		 *
+		 * @param array $data The data that will be passed to the Freemius checkout.
+		 */
+		$data = \apply_filters( 'freemius_button_data', $data );
+
+		$extra  = '';
+		$extra .= '<script type="application/json" class="freemius-button-data">' . wp_json_encode( $data ) . '</script>';
+
+		\wp_enqueue_script( 'freemius-button-checkout', 'https://checkout.freemius.com/js/v1/', array(), 'v1', true );
+
+		// load from assets.php
+		$dependecied = include FREEMIUS_PLUGIN_DIR . '/build/freemius-button/view.asset.php';
+		\wp_enqueue_script( 'freemius-button-frontend', FREEMIUS_PLUGIN_URL . '/build/freemius-button/view.js', $dependecied['dependencies'], $dependecied['version'], true );
+		\wp_enqueue_style( 'freemius-button-frontend', FREEMIUS_PLUGIN_URL . '/build/freemius-button/view.css', array(), $dependecied['version'] );
+
+		return $extra . $block_content;
+	}
+
+
+	/**
+	 * Register the post meta
+	 */
+	public function register_post_meta() {
+
+		\register_post_meta(
+			'', // registered for all post types
+			'freemius_button',
+			array(
+				'single'            => true,
+				'type'              => 'object',
+				'sanitize_callback' => __NAMESPACE__ . '\sanitize_schema',
+				'default'           => array(),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'                 => 'object',
+						'properties'           => $this->get_schema(),
+						'additionalProperties' => false,
+
+					),
+
+				),
+			)
+		);
+	}
+
+
+	/**
+	 * Register the setting
+	 */
+	public function register_my_setting() {
+
+		\register_setting(
+			'options',
+			'freemius_button',
+			array(
+				'single'            => true,
+				'label'             => 'Freemius Button',
+				'type'              => 'object',
+				'sanitize_callback' => __NAMESPACE__ . '\sanitize_schema',
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'                 => 'object',
+						'properties'           => $this->get_schema(),
+						'additionalProperties' => false,
+
+					),
+
+				),
+			)
+		);
+	}
+
+
+	/**
+	 * Sanitize the schema
+	 *
+	 * @param array $settings The settings.
+	 * @return array The sanitized settings.
+	 */
+	public function sanitize_schema( $settings ) {
+
+		foreach ( $settings as $key => $value ) {
+			if ( $settings[ $key ] === '' ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Get the schema
+	 *
+	 * @return array The schema.
+	 */
+	public function get_schema() {
+
+		$schema = include FREEMIUS_PLUGIN_DIR . '/includes/schema.php';
+
+		return $schema;
+	}
+}

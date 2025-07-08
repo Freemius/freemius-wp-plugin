@@ -47,6 +47,8 @@ const soundPluginOptions = {
 const customEntries = {
 	'freemius-button/editor': './src/freemius-button/editor.js',
 	'freemius-button/view': './src/freemius-button/view.js',
+	'freemius-pricing/editor': './src/freemius-pricing/editor.js',
+	'freemius-pricing/view': './src/freemius-pricing/view.js',
 };
 
 module.exports = {
