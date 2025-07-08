@@ -2,15 +2,13 @@
 
 namespace Freemius;
 
-use EverPress\WPUpdater;
-
 /**
- * Plugin Name:       Freemius
+ * Plugin Name:       Freemius for WordPress
  * Description:       Freemius Toolkit
  * Requires at least: 6.6
  * Requires PHP:      7.4
  * Version:           0.2.1
- * Author:            Xaver
+ * Author:            Freemius
  * Author URI:        https://freemius.com
  * License:           MIT
  */
@@ -20,8 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
-
-
 
 \add_action( 'enqueue_block_assets', __NAMESPACE__ . '\block_script_styles', 1 );
 function block_script_styles() {
