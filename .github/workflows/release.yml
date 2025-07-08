@@ -11,7 +11,7 @@ permissions: write-all
 jobs:
   create-release:
     name: 'Create Release'
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
 
     outputs:
       version: ${{ steps.read_version.outputs.version }}
@@ -34,10 +34,15 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "project_name=$PROJECT_NAME" >> $GITHUB_OUTPUT
 
-      - name: 🤞 Install dependencies
+      - name: 🤞 Install NPM dependencies
+        if: ${{ hashFiles('package.json') != '' }}
         run: |
-          [ -f "package.json" ] && npm install --no-fund --silent || echo "No package.json file found"
-          [ -f "composer.json" ] && composer install --no-dev --quiet || echo "No composer.json file found"
+          npm install --no-fund --silent
+
+      - name: 🤞 Install Composer dependencies
+        if: ${{ hashFiles('composer.json') != '' }}
+        run: |
+          composer install --no-dev --quiet
 
       - name: 🖼️ Install imagemagick
         if: ${{ true }}
@@ -48,20 +53,26 @@ jobs:
       - name: 📚 Convert Readme.md to WordPress Readme
         uses: everpress-co/action-md2wp@main
 
-      - name: 🏗️ Build
+      - name: 🏗️ Build Node Nodules
+        if: ${{ hashFiles('package.json') != '' }}
         run: |
           npm run build --no-dev
+
+      - name: 🏗️ Build Composer
+        if: ${{ hashFiles('composer.json') != '' }}
+        run: |
+          composer install --no-dev --quiet
 
       - name: 🏗️ Build assets
         if: ${{ hashFiles('.wordpress-org/**') != '' }}
         run: |
+          mkdir -p dist/assets
+          cp -r .wordpress-org/* dist/assets  
           if [ -f .wordpress-org/banner.png ]; then
-            mkdir -p dist/assets
             convert -resize 1544x500 .wordpress-org/banner.png dist/assets/banner-1544x500.png
             convert -resize 772x250 .wordpress-org/banner.png dist/assets/banner-772x250.png
           fi
           if [ -f .wordpress-org/icon.png ]; then
-            mkdir -p dist/assets
             convert -resize 256x256 .wordpress-org/icon.png dist/assets/icon-256x256.png
             convert -resize 128x128 .wordpress-org/icon.png dist/assets/icon-128x128.png
           fi
