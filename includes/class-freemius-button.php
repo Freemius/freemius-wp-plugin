@@ -5,7 +5,7 @@
  * @package    Freemius
  * @category   WordPress_Plugin
  * @author     Freemius <support@freemius.com>
- * @license    GPL v2 or later
+ * @license    MIT
  * @link       https://freemius.com/
  */
 
@@ -36,9 +36,6 @@ class Button {
 		\add_filter( 'render_block_core/button', array( $this, 'render_button' ), 10, 3 );
 
 		// Register the post meta
-		\add_action( 'enqueue_block_assets', array( $this, 'register_post_meta' ), 1 );
-
-		// Register the setting
 		\add_action( 'init', array( $this, 'register_post_meta' ) );
 		\add_action( 'rest_api_init', array( $this, 'register_post_meta' ) );
 
@@ -80,13 +77,13 @@ class Button {
 		}
 
 		// load from assets.php
-		$freemius_dependencies = include FREEMIUS_PLUGIN_DIR . '/build/freemius-button/editor.asset.php';
+		$freemius_dependencies = include FREEMIUS_PLUGIN_DIR . '/build/button/index.asset.php';
 
 		\wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
 
 		// Freemius Button Block
-		\wp_enqueue_script( 'freemius-button', FREEMIUS_PLUGIN_URL . '/build/freemius-button/editor.js', $freemius_dependencies['dependencies'], $freemius_dependencies['version'], true );
-		\wp_enqueue_style( 'freemius-button', FREEMIUS_PLUGIN_URL . '/build/freemius-button/editor.css', array(), $freemius_dependencies['version'] );
+		\wp_enqueue_script( 'freemius-button', FREEMIUS_PLUGIN_URL . '/build/button/index.js', $freemius_dependencies['dependencies'], $freemius_dependencies['version'], true );
+		\wp_enqueue_style( 'freemius-button', FREEMIUS_PLUGIN_URL . '/build/button/style-index.css', array(), $freemius_dependencies['version'] );
 
 		// TODO: load this via API in the editor.js
 		\wp_add_inline_script( 'freemius-button', 'const freemius_button_schema = ' . wp_json_encode( $this->get_schema() ) . '', true );
@@ -130,9 +127,9 @@ class Button {
 		\wp_enqueue_script( 'freemius-button-checkout', 'https://checkout.freemius.com/js/v1/', array(), 'v1', true );
 
 		// load from assets.php
-		$dependecied = include FREEMIUS_PLUGIN_DIR . '/build/freemius-button/view.asset.php';
-		\wp_enqueue_script( 'freemius-button-frontend', FREEMIUS_PLUGIN_URL . '/build/freemius-button/view.js', $dependecied['dependencies'], $dependecied['version'], true );
-		\wp_enqueue_style( 'freemius-button-frontend', FREEMIUS_PLUGIN_URL . '/build/freemius-button/view.css', array(), $dependecied['version'] );
+		$dependecied = include FREEMIUS_PLUGIN_DIR . '/build/button/view.asset.php';
+		\wp_enqueue_script( 'freemius-button-view', FREEMIUS_PLUGIN_URL . '/build/button/view.js', $dependecied['dependencies'], $dependecied['version'], true );
+		\wp_enqueue_style( 'freemius-button-view', FREEMIUS_PLUGIN_URL . '/build/button/view.css', array(), $dependecied['version'] );
 
 		return $extra . $block_content;
 	}
@@ -149,7 +146,7 @@ class Button {
 			array(
 				'single'            => true,
 				'type'              => 'object',
-				'sanitize_callback' => __NAMESPACE__ . '\sanitize_schema',
+				'sanitize_callback' => array( $this, 'sanitize_schema' ),
 				'default'           => array(),
 				'show_in_rest'      => array(
 					'schema' => array(
@@ -170,14 +167,16 @@ class Button {
 	 */
 	public function register_my_setting() {
 
+		// Register API settings
 		\register_setting(
-			'options',
+			'freemius_settings',
 			'freemius_button',
 			array(
-				'single'            => true,
-				'label'             => 'Freemius Button',
 				'type'              => 'object',
-				'sanitize_callback' => __NAMESPACE__ . '\sanitize_schema',
+				'label'             => __( 'Freemius Button', 'freemius' ),
+				'description'       => __( 'Define the site wide default values for the Freemius Button. You can override these values on a per-page basis.', 'freemius' ),
+				'sanitize_callback' => array( $this, 'sanitize_schema' ),
+				'default'           => array(),
 				'show_in_rest'      => array(
 					'schema' => array(
 						'type'                 => 'object',
@@ -216,7 +215,7 @@ class Button {
 	 */
 	public function get_schema() {
 
-		$schema = include FREEMIUS_PLUGIN_DIR . '/includes/schema.php';
+		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/button.php';
 
 		return $schema;
 	}

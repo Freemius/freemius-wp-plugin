@@ -215,7 +215,6 @@ const CodeEditor = (props) => {
 		const editor = initCodeEditor(textarea.current, codemirrorProps);
 		if (editor) {
 			editor.on('change', () => {
-				console.log('change');
 				onChange(editor.getValue());
 			});
 			editor.setValue(value);

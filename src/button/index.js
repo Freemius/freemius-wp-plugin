@@ -27,7 +27,7 @@ import { Icon, globe, page, button } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import './editor.scss';
+import './style.scss';
 import FsToolItem from './fs-tool-item';
 import EnableCheckbox from '../util/EnableCheckbox';
 

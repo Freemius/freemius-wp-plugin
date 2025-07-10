@@ -1,4 +1,6 @@
 {
 	"name": "evrpress/freemius-button",
-	"require": {}
+	"require": {
+		"freemius/php-sdk": "^1.1"
+	}
 }

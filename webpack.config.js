@@ -45,10 +45,11 @@ const soundPluginOptions = {
 };
 
 const customEntries = {
-	'freemius-button/editor': './src/freemius-button/editor.js',
-	'freemius-button/view': './src/freemius-button/view.js',
-	'freemius-pricing/editor': './src/freemius-pricing/editor.js',
-	'freemius-pricing/view': './src/freemius-pricing/view.js',
+	'settings/index': './src/settings/index.js',
+	'button/index': './src/button/index.js',
+	'button/view': './src/button/view.js',
+	'scope/index': './src/scope/index.js',
+	'scope/view': './src/scope/view.js',
 };
 
 module.exports = {
@@ -69,6 +70,7 @@ module.exports = {
 			// Add additional rules as needed.
 		],
 	},
+
 	plugins: [
 		...defaultConfig.plugins,
 		new SoundsPlugin(soundPluginOptions),

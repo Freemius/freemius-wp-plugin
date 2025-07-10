@@ -17,6 +17,7 @@
 		"src",
 		"vendor",
 		"includes",
+		"schemas",
 		"*.php"
 	],
 	"dependencies": {
