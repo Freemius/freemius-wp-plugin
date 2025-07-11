@@ -8,7 +8,12 @@ import styled from '@emotion/styled';
 
 import { __ } from '@wordpress/i18n';
 
-import { __experimentalToolsPanel as ToolsPanel } from '@wordpress/components';
+import {
+	__experimentalToolsPanel as ToolsPanel,
+	Spinner,
+	PanelBody,
+	__experimentalToolsPanelItem as ToolsPanelItem,
+} from '@wordpress/components';
 import { useContext } from '@wordpress/element';
 
 /**
@@ -37,12 +42,12 @@ const Settings = (props) => {
 
 	const isEnabled = fromParent || freemius_enabled;
 
-	if (isLoading) {
-		return <p>Loading...</p>;
-	}
-
-	if (!structure) {
-		return <p>Loading...</p>;
+	if (isLoading || !structure) {
+		return (
+			<PanelBody title={__('Freemius', 'freemius')}>
+				<Spinner />
+			</PanelBody>
+		);
 	}
 
 	const resetAll = () => {};
@@ -52,7 +57,7 @@ const Settings = (props) => {
 
 		newValue = { ...freemius };
 
-		if (defaultValue === val) {
+		if (defaultValue === val || val === '' || val === undefined) {
 			delete newValue[key];
 		} else {
 			newValue[key] = val;
@@ -71,7 +76,7 @@ const Settings = (props) => {
 	};
 
 	const getPlaceholderFor = (key) => {
-		return getValueFor(key);
+		return data?.[key] || getValueFor(key);
 	};
 
 	return (
@@ -80,13 +85,28 @@ const Settings = (props) => {
 			resetAll={() => resetAll()}
 			icon={<FreemiusIcon />}
 			label={__('Freemius', 'freemius')}
+			dropdownMenuProps={{
+				popoverProps: {
+					placement: 'left-start',
+					offset: 259, // the width of the panel with paddings and border
+				},
+			}}
 		>
 			<PanelDescription>
 				<EnableCheckbox label={__('Enable Scope', 'freemius')} {...props} />
 			</PanelDescription>
 			{freemius_enabled && (
 				<>
-					<DataView />
+					<ToolsPanelItem
+						className="freemius-button-scope"
+						hasValue={() => {
+							return true;
+						}}
+						label={'Reset Scope'}
+						isShownByDefault={true}
+					>
+						<DataView />
+					</ToolsPanelItem>
 					{Object.entries(structure.properties).map(([key, item]) => {
 						const value = getValueFor(key);
 						const placeholder = getPlaceholderFor(key);

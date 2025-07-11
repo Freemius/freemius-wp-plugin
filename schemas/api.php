@@ -7,32 +7,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return array(
-	'public_key'  => array(
+	'public_key'   => array(
 		'type'        => 'string',
 		'label'       => __( 'Public Key', 'freemius' ),
 		'description' => __( 'Public Key', 'freemius' ),
 		'link'        => 'https://dashboard.freemius.com/#!/profile/',
 		'default'     => '',
 	),
-	'secret_key'  => array(
+	'secret_key'   => array(
 		'type'        => 'string',
 		'label'       => __( 'Secret Key', 'freemius' ),
 		'description' => __( 'Secret Key', 'freemius' ),
 		'default'     => '',
 	),
-	'entity_id'   => array(
+	'token'        => array(
 		'type'        => 'string',
-		'label'       => __( 'Entity ID', 'freemius' ),
-		'description' => __( 'Entity ID', 'freemius' ),
+		'label'       => __( 'Token', 'freemius' ),
+		'description' => __( 'Token', 'freemius' ),
 		'default'     => '',
 	),
-	'user_id'     => array(
+	'developer_id' => array(
+		'type'        => 'string',
+		'label'       => __( 'Developer ID', 'freemius' ),
+		'description' => __( 'Developer ID', 'freemius' ),
+		'default'     => '',
+	),
+	'user_id'      => array(
 		'type'        => 'string',
 		'label'       => __( 'User ID', 'freemius' ),
 		'description' => __( 'User ID', 'freemius' ),
 		'default'     => '',
 	),
-	'environment' => array(
+	'environment'  => array(
 		'type'        => 'string',
 		'label'       => __( 'Environment (sandbox/live)', 'freemius' ),
 		'description' => __( 'Environment (sandbox/live)', 'freemius' ),

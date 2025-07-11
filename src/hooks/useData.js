@@ -14,9 +14,11 @@ import {
 	Flex,
 	FlexItem,
 	FlexBlock,
+	Button,
 } from '@wordpress/components';
 
 import { FreemiusContext } from '../context';
+import { useDispatch } from '@wordpress/data';
 
 const DataViewContainer = styled.div`
 	grid-column: span 2;
@@ -27,6 +29,9 @@ const useData = () => {
 	const { settings, structure, isLoading } = useSettings('freemius_button');
 
 	const context = useContext(FreemiusContext);
+
+	const { selectBlock } = useDispatch('core/block-editor');
+
 	const contextData = context?.freemius;
 
 	const [freemiusPageMetaData, setFreemiusPageMeta] = useFreemiusPageMeta();
@@ -55,12 +60,18 @@ const useData = () => {
 		);
 	};
 
+	const selectScope = () => {
+		selectBlock(context?.clientID);
+	};
+
 	return {
 		data,
 		settings,
 		metaData,
 		contextData,
+		clientId: context?.clientID,
 		DataView,
+		selectScope,
 	};
 };
 

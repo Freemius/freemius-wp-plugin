@@ -54,6 +54,7 @@ function init() {
 	Button::get_instance();
 	Scope::get_instance();
 	Settings::get_instance();
+	Api::get_instance();
 }
 \add_action( 'plugins_loaded', __NAMESPACE__ . '\\init' );
 

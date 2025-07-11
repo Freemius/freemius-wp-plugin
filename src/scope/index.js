@@ -12,7 +12,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { InspectorControls } from '@wordpress/block-editor';
 import { addFilter } from '@wordpress/hooks';
 import { PanelBody } from '@wordpress/components';
-import { useContext, useEffect } from '@wordpress/element';
+import { useContext, useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -22,7 +22,9 @@ import './style.scss';
 import Broker from './Broker';
 import Consumer from './Consumer';
 import { FreemiusContext } from '../context';
-import { useSettings, useFreemiusPageMeta } from '../hooks';
+import { useSettings, useFreemiusPageMeta, useData } from '../hooks';
+import { useApiGet } from '../hooks';
+import MappedBlockEdit from './MappedBlockEdit';
 
 const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
@@ -41,7 +43,7 @@ const SUPPORTED_CONSUMER_BLOCKS = [
  * Broker
  */
 registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
-	extensionName: 'freemius-scope',
+	extensionName: 'freemius-broker',
 	attributes: {
 		freemius_enabled: {
 			type: 'boolean',
@@ -64,13 +66,21 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
  * Consumer
  */
 registerBlockExtension(SUPPORTED_CONSUMER_BLOCKS, {
-	extensionName: 'freemius-scope-paragraph',
+	extensionName: 'freemius-consumer',
 	attributes: {
 		freemius_mapping: {
-			type: 'string',
+			type: 'object',
 		},
 	},
-	classNameGenerator: () => null,
+	classNameGenerator: (attributes) => {
+		const { freemius_mapping, freemius_mapping_error } = attributes;
+
+		if (!freemius_mapping || !freemius_mapping.field) return '';
+
+		let className = 'has-freemius-mapping';
+		if (freemius_mapping_error) className += ' has-freemius-mapping-error';
+		return className;
+	},
 	inlineStyleGenerator: () => null,
 	Edit: Consumer,
 });
@@ -105,7 +115,16 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 					<BlockEdit key="edit" {...props} />
 				</FreemiusContext.Provider>
 			);
-		} else if (false && SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
+		}
+		if (SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
+			const { freemius_mapping } = attributes;
+
+			// no mapping, so just return the block edit
+			if (!freemius_mapping || !freemius_mapping.field) {
+				return <BlockEdit key="edit" {...props} />;
+			}
+
+			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
 		}
 
 		return <BlockEdit key="edit" {...props} />;
