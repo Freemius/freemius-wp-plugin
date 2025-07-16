@@ -17,6 +17,12 @@
 		_z-index: 100;
 		pointer-events: none;
 	}
+	&.is-freemius-invalid {
+		_opacity: 0.5;
+		&::before {
+			outline: 3px solid #ff5353;
+		}
+	}
 }
 
 .has-freemius-scope.has-child-selected .has-freemius-mapping,

@@ -41,8 +41,16 @@ export default function Edit(props) {
 
 	const { type } = attributes;
 
-	const { data, isLoading, DataView, selectScope, clientId, contextData } =
-		useData(scopeData);
+	const {
+		data,
+		isLoading,
+		DataView,
+		selectScope,
+		clientId,
+		contextData,
+		isFree,
+		isInvalid,
+	} = useData(scopeData);
 
 	const { options, modifiers, currentModifier, defaultOptions } =
 		useModifiers(type);

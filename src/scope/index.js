@@ -10,7 +10,7 @@ import { registerBlockExtension } from '@10up/block-components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 import { addFilter } from '@wordpress/hooks';
-import { useContext, useMemo } from '@wordpress/element';
+import { useContext, useMemo, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ import Consumer from './Consumer';
 import { FreemiusContext } from '../context';
 import MappedBlockEdit from './MappedBlockEdit';
 import Dump from '../util';
+import { useData } from '../hooks';
 
 const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
@@ -49,15 +50,23 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
 		freemius_modifications: {
 			type: 'object',
 		},
+		freemius_invalid: {
+			type: 'boolean',
+			default: false,
+		},
 		freemius: {
 			type: 'object',
 		},
 	},
 	classNameGenerator: (attributes) => {
-		const { freemius_enabled, freemius_modifications } = attributes;
+		const { freemius_enabled, freemius_invalid } = attributes;
 
 		if (!freemius_enabled) return '';
-		return 'has-freemius-scope';
+
+		let className = 'has-freemius-scope';
+		if (freemius_invalid) className += ' is-freemius-invalid';
+
+		return className;
 	},
 	inlineStyleGenerator: () => null,
 	Edit: Broker,
@@ -96,7 +105,12 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 		const { attributes, setAttributes, clientId } = props;
 
 		if (SUPPORTED_BROKER_BLOCKS.includes(props.name)) {
-			const { freemius_enabled, freemius, freemius_modifications } = attributes;
+			const {
+				freemius_enabled,
+				freemius,
+				freemius_invalid,
+				freemius_modifications,
+			} = attributes;
 
 			if (!freemius_enabled) {
 				return <BlockEdit key="edit" {...props} />;
@@ -107,7 +121,7 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 			// pass the clientID of the pricing table
 			const clientID = freemius_enabled ? clientId : parent ? parent : false;
 
-			const newFreemius = useMemo(
+			const data = useMemo(
 				() => ({
 					...parent?.freemius, // parent scope
 					...freemius, // block scope
@@ -119,19 +133,32 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 			const contextValue = useMemo(
 				() => ({
 					clientID,
-					freemius: newFreemius,
+					freemius: data,
 					attributes,
 					setAttributes,
 				}),
-				[clientID, newFreemius, attributes, setAttributes]
+				[clientID, data, attributes, setAttributes]
 			);
+
+			// pass the context value to the useData hook as we are out of context
+			const { isInvalid } = useData(contextValue);
+
+			// set the invalid state to the attributes
+			useEffect(() => {
+				if (isInvalid != undefined && isInvalid != freemius_invalid) {
+					setAttributes({
+						freemius_invalid: isInvalid,
+					});
+				}
+			}, [isInvalid]);
 
 			return (
 				<FreemiusContext.Provider value={contextValue}>
-					<Dump props={contextValue} title="contextValue" visible={false} />
+					<Dump props={isInvalid} title="isInvalid" visible={false} />
+					<Dump props={props} title="props" visible={false} />
 					<Dump props={parent} title="Parent" visible={false} />
 					<Dump props={attributes} title="Attributes" visible={false} />
-					<Dump props={newFreemius} title="New Freemius" visible={false} />
+					<Dump props={data} title="New Freemius" visible={false} />
 					<Dump
 						props={freemius_modifications}
 						title="Freemius Modifications"

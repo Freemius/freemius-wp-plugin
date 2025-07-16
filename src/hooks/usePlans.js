@@ -35,7 +35,7 @@ const usePlans = (product_id) => {
 
 			return {
 				name: plan.title,
-				id: plan.id,
+				id: parseInt(plan.id),
 			};
 		});
 	}, [plans]);

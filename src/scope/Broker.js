@@ -37,8 +37,6 @@ const Broker = (props) => {
 
 	return (
 		<InspectorControls>
-			<h2>isFree: {isFree ? 'true' : 'false'}</h2>
-			<h2>isInvalid: {isInvalid ? 'true' : 'false'}</h2>
 			{isEnabled ? (
 				<Settings {...props} />
 			) : (

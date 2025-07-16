@@ -26,6 +26,7 @@ import { useSettings, useFreemiusPageMeta, usePlans } from '../hooks';
 const DataViewContainer = styled.div`
 	grid-column: span 2;
 	overflow: hidden;
+	margin-bottom: 10px;
 `;
 
 const useData = (scopeData) => {
@@ -79,28 +80,40 @@ const useData = (scopeData) => {
 	const isFree =
 		isSettingsLoading || isPlansLoading ? undefined : !currentPlan?.pricing;
 
-	// the plan is invalid. undefined if data is still loading
+	// the plan is invalid if no Pricing and not free or when the plan is not defined. undefined if data is still loading.
 	const isInvalid =
 		isSettingsLoading || isPlansLoading
 			? undefined
-			: !currentPricing && !isFree;
+			: (!currentPricing && !isFree) || !data?.plan_id;
 
 	const DataView = useMemo(() => {
 		return () => (
 			<DataViewContainer>
-				{Object.entries(data).map(([key, value]) => (
-					<ItemGroup isBordered={true} size="small" key={key}>
-						<Item>
+				<ItemGroup isSeparated isBorderd size="small">
+					<Item>
+						<Flex>
+							<FlexBlock>isFree</FlexBlock>
+							<FlexBlock>{isFree ? 'true' : 'false'}</FlexBlock>
+						</Flex>
+					</Item>
+					<Item>
+						<Flex>
+							<FlexBlock>isInvalid</FlexBlock>
+							<FlexBlock>{isInvalid ? 'true' : 'false'}</FlexBlock>
+						</Flex>
+					</Item>
+					{Object.entries(data).map(([key, value]) => (
+						<Item key={key}>
 							<Flex>
 								<FlexBlock>{key}</FlexBlock>
 								<FlexBlock>{value}</FlexBlock>
 							</Flex>
 						</Item>
-					</ItemGroup>
-				))}
+					))}
+				</ItemGroup>
 			</DataViewContainer>
 		);
-	}, [data]);
+	}, [data, isFree, isInvalid]);
 
 	const selectScope = () => {
 		selectBlock(clientId);
