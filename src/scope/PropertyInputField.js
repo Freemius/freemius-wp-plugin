@@ -83,8 +83,6 @@ const PropertyInputField = (properties) => {
 			);
 			break;
 		case 'array':
-			console.log('sss', options);
-
 			InputComponent = (
 				<TreeSelect
 					__nextHasNoMarginBottom
@@ -255,8 +253,6 @@ function getSpecial(properties) {
 			isLoading,
 			error,
 		} = useApiGet(`products/${data.product_id}/pricing.json`);
-
-		console.log('plans', plans);
 
 		if (plans) {
 			return (

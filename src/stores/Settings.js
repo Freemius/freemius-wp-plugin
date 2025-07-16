@@ -1,5 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { createReduxStore, register } from '@wordpress/data';
+import { createReduxStore, register, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 const SETTINGS_STORE = 'freemius/settings';
@@ -298,6 +298,8 @@ const store = createReduxStore(SETTINGS_STORE, {
 	},
 });
 
-register(store);
+if (!select(SETTINGS_STORE)) {
+	register(store);
+}
 
 export { SETTINGS_STORE };

@@ -55,6 +55,7 @@ function init() {
 	Scope::get_instance();
 	Settings::get_instance();
 	Api::get_instance();
+	Blocks::get_instance();
 }
 \add_action( 'plugins_loaded', __NAMESPACE__ . '\\init' );
 

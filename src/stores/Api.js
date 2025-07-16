@@ -1,5 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { createReduxStore, register } from '@wordpress/data';
+import { createReduxStore, register, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 const API_STORE = 'freemius/api';
@@ -480,6 +480,8 @@ function generateCacheKey(endpoint, params = {}) {
 	return `${endpoint}:${JSON.stringify(normalizedParams)}`;
 }
 
-register(store);
+if (!select(API_STORE)) {
+	register(store);
+}
 
 export { API_STORE };

@@ -50,6 +50,8 @@ const customEntries = {
 	'button/view': './src/button/view.js',
 	'scope/index': './src/scope/index.js',
 	'scope/view': './src/scope/view.js',
+	'blocks/modifier/index': './src/blocks/modifier/index.js',
+	'blocks/modifier/view': './src/blocks/modifier/view.js',
 };
 
 module.exports = {

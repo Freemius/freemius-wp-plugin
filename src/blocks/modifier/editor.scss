@@ -1,0 +1,29 @@
+.block-editor-iframe__body {
+	.scope-missing::before {
+		content: 'Scope missing';
+		background-color: #ff5353;
+		color: #fff;
+		padding: 0.2em 0.5em;
+		border-radius: 0.5em;
+		font-size: 0.5em;
+		font-weight: bold;
+		text-transform: uppercase;
+		position: absolute;
+		top: -1em;
+	}
+}
+
+.wp-block-freemius-modifier {
+	display: flex;
+	gap: 0.5em;
+
+	&.is-style-link {
+	}
+
+	a {
+		text-decoration: none;
+		&.is-active {
+			text-decoration: underline;
+		}
+	}
+}

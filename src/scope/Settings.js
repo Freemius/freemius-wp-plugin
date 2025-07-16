@@ -13,6 +13,8 @@ import {
 	Spinner,
 	PanelBody,
 	__experimentalToolsPanelItem as ToolsPanelItem,
+	Button,
+	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useContext } from '@wordpress/element';
 
@@ -32,11 +34,11 @@ const PanelDescription = styled.div`
 const Settings = (props) => {
 	const { context, attributes, setAttributes } = props;
 
-	const { freemius_enabled, freemius } = attributes;
+	const { freemius_enabled, freemius, freemius_modifications } = attributes;
 
 	const { settings, structure, isLoading } = useSettings('freemius_button');
 
-	const { data, DataView } = useData();
+	const { data, DataView, selectScope } = useData();
 
 	const fromParent = useContext(FreemiusContext);
 
@@ -83,7 +85,6 @@ const Settings = (props) => {
 		<ToolsPanel
 			className={'freemius-button-scope-settings'}
 			resetAll={() => resetAll()}
-			icon={<FreemiusIcon />}
 			label={__('Freemius', 'freemius')}
 			dropdownMenuProps={{
 				popoverProps: {
@@ -94,6 +95,15 @@ const Settings = (props) => {
 		>
 			<PanelDescription>
 				<EnableCheckbox label={__('Enable Scope', 'freemius')} {...props} />
+				{freemius_modifications && (
+					<Button
+						onClick={() => setAttributes({ freemius_modifications: undefined })}
+						variant="secondary"
+					>
+						{__('Reset Modifications', 'freemius')}
+					</Button>
+				)}
+				<Spacer />
 			</PanelDescription>
 			{freemius_enabled && (
 				<>

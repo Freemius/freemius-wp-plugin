@@ -9,10 +9,8 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockExtension } from '@10up/block-components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-import { InspectorControls } from '@wordpress/block-editor';
 import { addFilter } from '@wordpress/hooks';
-import { PanelBody } from '@wordpress/components';
-import { useContext, useEffect, useState } from '@wordpress/element';
+import { useContext, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -22,9 +20,8 @@ import './style.scss';
 import Broker from './Broker';
 import Consumer from './Consumer';
 import { FreemiusContext } from '../context';
-import { useSettings, useFreemiusPageMeta, useData } from '../hooks';
-import { useApiGet } from '../hooks';
 import MappedBlockEdit from './MappedBlockEdit';
+import Dump from '../util';
 
 const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
@@ -49,12 +46,16 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
 			type: 'boolean',
 			default: false,
 		},
+		freemius_modifications: {
+			type: 'object',
+		},
 		freemius: {
 			type: 'object',
 		},
 	},
 	classNameGenerator: (attributes) => {
-		const { freemius_enabled } = attributes;
+		const { freemius_enabled, freemius_modifications } = attributes;
+
 		if (!freemius_enabled) return '';
 		return 'has-freemius-scope';
 	},
@@ -73,12 +74,17 @@ registerBlockExtension(SUPPORTED_CONSUMER_BLOCKS, {
 		},
 	},
 	classNameGenerator: (attributes) => {
-		const { freemius_mapping, freemius_mapping_error } = attributes;
+		const { freemius_mapping, freemius_mapping_error, invalid } = attributes;
 
 		if (!freemius_mapping || !freemius_mapping.field) return '';
 
 		let className = 'has-freemius-mapping';
 		if (freemius_mapping_error) className += ' has-freemius-mapping-error';
+
+		if (invalid) {
+			className += ' has-freemius-no-pricing';
+		}
+
 		return className;
 	},
 	inlineStyleGenerator: () => null,
@@ -90,28 +96,47 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 		const { attributes, setAttributes, clientId } = props;
 
 		if (SUPPORTED_BROKER_BLOCKS.includes(props.name)) {
-			const { freemius_enabled, freemius } = attributes;
+			const { freemius_enabled, freemius, freemius_modifications } = attributes;
 
 			if (!freemius_enabled) {
 				return <BlockEdit key="edit" {...props} />;
 			}
 
-			const fromParent = useContext(FreemiusContext);
+			const parent = useContext(FreemiusContext);
 
 			// pass the clientID of the pricing table
-			const clientID = freemius_enabled
-				? clientId
-				: fromParent
-				? fromParent
-				: false;
+			const clientID = freemius_enabled ? clientId : parent ? parent : false;
+
+			const newFreemius = useMemo(
+				() => ({
+					...parent?.freemius, // parent scope
+					...freemius, // block scope
+					...freemius_modifications, // block scope modifications
+				}),
+				[parent?.freemius, freemius, freemius_modifications]
+			);
+
+			const contextValue = useMemo(
+				() => ({
+					clientID,
+					freemius: newFreemius,
+					attributes,
+					setAttributes,
+				}),
+				[clientID, newFreemius, attributes, setAttributes]
+			);
 
 			return (
-				<FreemiusContext.Provider
-					value={{
-						clientID,
-						freemius: { ...fromParent?.freemius, ...freemius },
-					}}
-				>
+				<FreemiusContext.Provider value={contextValue}>
+					<Dump props={contextValue} title="contextValue" visible={false} />
+					<Dump props={parent} title="Parent" visible={false} />
+					<Dump props={attributes} title="Attributes" visible={false} />
+					<Dump props={newFreemius} title="New Freemius" visible={false} />
+					<Dump
+						props={freemius_modifications}
+						title="Freemius Modifications"
+						visible={false}
+					/>
 					<BlockEdit key="edit" {...props} />
 				</FreemiusContext.Provider>
 			);
@@ -125,6 +150,12 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 			}
 
 			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
+		}
+
+		if (props.name === 'freemius/modifier') {
+			const scopeData = useContext(FreemiusContext);
+
+			return <BlockEdit key="edit" {...props} scopeData={scopeData} />;
 		}
 
 		return <BlockEdit key="edit" {...props} />;

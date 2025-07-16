@@ -77,7 +77,7 @@ const useSettings = (setting) => {
 		structure,
 		loadSettings,
 		saveSettings,
-		isLoading,
+		isLoading: settings === undefined || structure === undefined || isLoading,
 		isSaving,
 		hasChanges,
 		saveMessage,

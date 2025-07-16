@@ -15,7 +15,8 @@ import { CheckboxControl, ToggleControl } from '@wordpress/components';
 const EnableCheckbox = (props) => {
 	const { label, attributes, setAttributes } = props;
 
-	const { freemius_enabled, metadata } = attributes;
+	const { freemius_enabled, freemius_modifications, freemius, metadata } =
+		attributes;
 
 	const setEnabled = (val) => {
 		const blockName = metadata?.name || '';
@@ -30,6 +31,13 @@ const EnableCheckbox = (props) => {
 				name: newName ? newName.trim() : undefined,
 			},
 		});
+
+		if (!val) {
+			setAttributes({
+				freemius_modifications: undefined,
+				freemius: undefined,
+			});
+		}
 	};
 
 	return (

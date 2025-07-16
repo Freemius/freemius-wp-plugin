@@ -316,7 +316,7 @@ export function useApi(endpoint, options = {}) {
 	return {
 		// Data and state
 		data,
-		isLoading,
+		isLoading: isLoading || !data,
 		error,
 		lastFetchTime,
 		isAnyLoading,
