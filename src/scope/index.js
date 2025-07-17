@@ -28,7 +28,7 @@ const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
 	'core/columns',
 	'core/column',
-	'core/buttons',
+	'core/button',
 ];
 
 const SUPPORTED_CONSUMER_BLOCKS = [
@@ -104,6 +104,16 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 	return (props) => {
 		const { attributes, setAttributes, clientId } = props;
 
+		if (SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
+			const { freemius_mapping } = attributes;
+
+			// no mapping, so just return the block edit
+			if (!freemius_mapping || !freemius_mapping.field) {
+				return <BlockEdit key="edit" {...props} />;
+			}
+
+			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
+		}
 		if (SUPPORTED_BROKER_BLOCKS.includes(props.name)) {
 			const {
 				freemius_enabled,
@@ -167,16 +177,6 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 					<BlockEdit key="edit" {...props} />
 				</FreemiusContext.Provider>
 			);
-		}
-		if (SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
-			const { freemius_mapping } = attributes;
-
-			// no mapping, so just return the block edit
-			if (!freemius_mapping || !freemius_mapping.field) {
-				return <BlockEdit key="edit" {...props} />;
-			}
-
-			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
 		}
 
 		if (props.name === 'freemius/modifier') {

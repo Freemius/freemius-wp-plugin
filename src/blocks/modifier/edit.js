@@ -63,9 +63,7 @@ export default function Edit(props) {
 	} = scopeData;
 
 	// for some reason this only returns the global scope data
-	// const context2 = useContext(FreemiusContext);
-
-	// console.log('context2', context2, 'scopeData', scopeData);
+	// const context = useContext(FreemiusContext);
 
 	// that's why we use out custom scopeData
 	const context = { ...data, ...scopeData?.freemius };

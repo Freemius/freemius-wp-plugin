@@ -4,48 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fe0a14cb97e34a8f707a99be04c6f8e",
-    "packages": [
-        {
-            "name": "freemius/php-sdk",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Freemius/freemius-php-sdk.git",
-                "reference": "67ab70b47dd6fa9ffbf19d7dd1fcb1b3a965a40c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Freemius/freemius-php-sdk/zipball/67ab70b47dd6fa9ffbf19d7dd1fcb1b3a965a40c",
-                "reference": "67ab70b47dd6fa9ffbf19d7dd1fcb1b3a965a40c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=5.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.6"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Freemius PHP SDK",
-            "homepage": "https://freemius.com",
-            "keywords": [
-                "freemius",
-                "php",
-                "sdk"
-            ],
-            "support": {
-                "issues": "https://github.com/Freemius/freemius-php-sdk/issues",
-                "source": "https://github.com/Freemius/freemius-php-sdk/tree/1.1.0"
-            },
-            "time": "2024-10-16T07:29:59+00:00"
-        }
-    ],
+    "content-hash": "78034b4357c27088edf22f4a0db61675",
+    "packages": [],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",

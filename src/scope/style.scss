@@ -78,3 +78,7 @@
 ._is-selected.has-freemius-scope::after {
 	background-color: transparent;
 }
+/* Hide the toolbar */
+body.freemius-checkout-preview .block-editor-block-popover {
+	display: none;
+}

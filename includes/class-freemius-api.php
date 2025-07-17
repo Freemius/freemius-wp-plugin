@@ -284,8 +284,6 @@ class Api {
 		try {
 			$endpoint = '/' . ltrim( $endpoint, '/' );
 
-			error_log( print_r( $endpoint, true ) );
-
 			$token = $settings['token'];
 
 			// Prepare request arguments.

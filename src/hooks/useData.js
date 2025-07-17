@@ -40,10 +40,10 @@ const useData = (scopeData) => {
 
 	const { selectBlock } = useDispatch('core/block-editor');
 
-	const contextData = scopeData?.freemius || context?.freemius;
+	const contextData = scopeData?.freemius || context?.freemius || {};
 
-	const [freemiusPageMetaData, setFreemiusPageMeta] = useFreemiusPageMeta();
-	const metaData = freemiusPageMetaData;
+	// const [freemiusPageMetaData, setFreemiusPageMeta] = useFreemiusPageMeta();
+	// const metaData = freemiusPageMetaData;
 
 	// TODO: review this if needed. Also check default plan_id
 	// we need this to get a price, also the plan_id
@@ -56,7 +56,7 @@ const useData = (scopeData) => {
 	const data = {
 		...defaults,
 		...settings,
-		...metaData,
+		//	...metaData,
 		...contextData,
 	};
 
@@ -123,7 +123,7 @@ const useData = (scopeData) => {
 		data,
 		settings,
 		isLoading: isSettingsLoading || isPlansLoading,
-		metaData,
+		//metaData,
 		contextData,
 		clientId,
 		currentPlan,

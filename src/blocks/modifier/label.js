@@ -2,17 +2,15 @@
  * External dependencies
  */
 
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * WordPress dependencies
  */
-import { useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { useModifiers } from '../../hooks';
 import { MODIFIERS } from '../../constants';
 
 export default function Label(attributes, { context }) {

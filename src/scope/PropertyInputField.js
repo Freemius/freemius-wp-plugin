@@ -20,7 +20,7 @@ import { useState, useRef, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useData, useApiGet } from '../hooks';
+import { useData, useApiGet, usePlans } from '../hooks';
 
 const PropertyInputField = (properties) => {
 	const {
@@ -182,7 +182,11 @@ const PropertyInputField = (properties) => {
 
 	return (
 		<>
-			<ExternalLink className="freemius-link" href={link} />
+			{link && (
+				<HStack justify="flex-end">
+					<ExternalLink href={link} />
+				</HStack>
+			)}
 			{InputComponent}
 		</>
 	);
@@ -242,41 +246,37 @@ function getSpecial(properties) {
 	if (!data?.product_id) return null;
 
 	if (props.id === 'plan_id') {
-		// const {
-		// 	data: plans,
-		// 	isLoading,
-		// 	error,
-		// } = useApiGet(`plugins/${data.product_id}/plans.json`);
+		const { plans, isLoading, error } = usePlans(data.product_id);
 
-		const {
-			data: plans,
-			isLoading,
-			error,
-		} = useApiGet(`products/${data.product_id}/pricing.json`);
+		if (isLoading || error) return null;
+
+		const currentPlan = plans.find((plan) => plan.id == value) || null;
 
 		if (plans) {
 			return (
-				<>
-					<TreeSelect
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-						label={label}
-						help={help}
-						onChange={onChange}
-						selectedId={value}
-						noOptionLabel={
-							inherited
-								? sprintf(__('[%s]', 'freemius'), data?.plan_id)
-								: sprintf(__('Use Inherited %s', 'freemius'), label)
-						}
-						tree={Object.entries(plans.plans).map(([i, plan]) => {
-							return {
-								name: `[${plan.id}] ${plan.title}`,
-								id: plan.id,
-							};
-						})}
-					/>
-				</>
+				<TreeSelect
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					label={label}
+					help={help}
+					onChange={onChange}
+					selectedId={value}
+					noOptionLabel={
+						inherited
+							? sprintf(
+									__('[%s] %s', 'freemius'),
+									currentPlan.id,
+									currentPlan.title
+							  )
+							: sprintf(__('Use Inherited %s', 'freemius'), label)
+					}
+					tree={Object.entries(plans).map(([i, plan]) => {
+						return {
+							name: `[${plan.id}] ${plan.title}`,
+							id: plan.id,
+						};
+					})}
+				/>
 			);
 		}
 	}

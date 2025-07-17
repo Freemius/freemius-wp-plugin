@@ -27,7 +27,7 @@ import { Icon, globe, page, button } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import './style.scss';
+//import './style.scss';
 import FsToolItem from './fs-tool-item';
 import EnableCheckbox from '../util/EnableCheckbox';
 
@@ -37,6 +37,8 @@ const PanelDescription = styled.div`
 
 const BlockEdit = (props) => {
 	const { attributes, setAttributes } = props;
+
+	return null;
 
 	const { freemius_enabled, freemius } = attributes;
 
@@ -269,18 +271,18 @@ const BlockEdit = (props) => {
 		}
 	};
 
-	if (!freemius_enabled) {
-		return (
-			<InspectorControls>
-				<PanelBody title={__('Freemius Button', 'freemius')}>
-					<EnableCheckbox
-						label={__('Freemius Checkout', 'freemius')}
-						{...props}
-					/>
-				</PanelBody>
-			</InspectorControls>
-		);
-	}
+	// if (!freemius_enabled) {
+	// 	return (
+	// 		<InspectorControls>
+	// 			<PanelBody title={__('Freemius Button', 'freemius')}>
+	// 				<EnableCheckbox
+	// 					label={__('Freemius Checkout', 'freemius')}
+	// 					{...props}
+	// 				/>
+	// 			</PanelBody>
+	// 		</InspectorControls>
+	// 	);
+	// }
 
 	const ScopeInfo = (props) => {
 		const { scope } = props;

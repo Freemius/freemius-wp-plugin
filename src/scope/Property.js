@@ -71,11 +71,8 @@ const Property = (props) => {
 	}
 
 	const onChangeHandler = (val) => {
-		console.log('onChangeHandler', val, typeof val);
-
 		if (onChange) {
 			if (val === '') {
-				console.log('onChangeHandler', 'empty');
 				onChange(undefined);
 				return;
 			}
@@ -97,7 +94,7 @@ const Property = (props) => {
 		<ToolsPanelItem
 			className="freemius-button-scope"
 			hasValue={() => {
-				return value != undefined || inherited;
+				return value != undefined;
 			}}
 			label={label}
 			onDeselect={() => onChangeHandler(undefined)}

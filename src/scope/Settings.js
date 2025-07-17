@@ -25,24 +25,22 @@ import EnableCheckbox from '../util/EnableCheckbox';
 import { FreemiusContext } from '../context';
 import { useSettings, useData } from '../hooks';
 import Property from './Property';
-import { FreemiusIcon } from '../icons';
+import ButtonSettings from './ButtonSettings';
 
 const PanelDescription = styled.div`
 	grid-column: span 2;
 `;
 
 const Settings = (props) => {
-	const { context, attributes, setAttributes } = props;
+	const { attributes, setAttributes, name } = props;
 
 	const { freemius_enabled, freemius, freemius_modifications } = attributes;
 
 	const { settings, structure, isLoading } = useSettings('freemius_button');
 
-	const { data, DataView, selectScope } = useData();
+	const { data, DataView } = useData();
 
 	const fromParent = useContext(FreemiusContext);
-
-	const isEnabled = fromParent || freemius_enabled;
 
 	if (isLoading || !structure) {
 		return (
@@ -52,7 +50,9 @@ const Settings = (props) => {
 		);
 	}
 
-	const resetAll = () => {};
+	const resetAll = () => {
+		setAttributes({ freemius: undefined });
+	};
 
 	const onChangeHandler = (key, val, defaultValue) => {
 		let newValue;
@@ -94,7 +94,14 @@ const Settings = (props) => {
 			}}
 		>
 			<PanelDescription>
-				<EnableCheckbox label={__('Enable Scope', 'freemius')} {...props} />
+				<EnableCheckbox
+					label={
+						props.name == 'core/button'
+							? __('Enable Checkout for this button', 'freemius')
+							: __('Enable Scope', 'freemius')
+					}
+					{...props}
+				/>
 				{freemius_modifications && (
 					<Button
 						onClick={() => setAttributes({ freemius_modifications: undefined })}
@@ -105,8 +112,10 @@ const Settings = (props) => {
 				)}
 				<Spacer />
 			</PanelDescription>
+
 			{freemius_enabled && (
 				<>
+					{name == 'core/button' && <ButtonSettings {...props} />}
 					<ToolsPanelItem
 						className="freemius-button-scope"
 						hasValue={() => {
@@ -117,6 +126,7 @@ const Settings = (props) => {
 					>
 						<DataView />
 					</ToolsPanelItem>
+
 					{Object.entries(structure.properties).map(([key, item]) => {
 						const value = getValueFor(key);
 						const placeholder = getPlaceholderFor(key);

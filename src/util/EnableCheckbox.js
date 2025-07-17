@@ -6,7 +6,7 @@
  */
 
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl, ToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,8 +15,7 @@ import { CheckboxControl, ToggleControl } from '@wordpress/components';
 const EnableCheckbox = (props) => {
 	const { label, attributes, setAttributes } = props;
 
-	const { freemius_enabled, freemius_modifications, freemius, metadata } =
-		attributes;
+	const { freemius_enabled, metadata } = attributes;
 
 	const setEnabled = (val) => {
 		const blockName = metadata?.name || '';
@@ -31,7 +30,6 @@ const EnableCheckbox = (props) => {
 				name: newName ? newName.trim() : undefined,
 			},
 		});
-
 		if (!val) {
 			setAttributes({
 				freemius_modifications: undefined,
@@ -45,15 +43,6 @@ const EnableCheckbox = (props) => {
 			__nextHasNoMarginBottom
 			label={label}
 			help={__('Scopes will pass down settings to child blocks.', 'freemius')}
-			checked={freemius_enabled || false}
-			onChange={setEnabled}
-		/>
-	);
-
-	return (
-		<CheckboxControl
-			__nextHasNoMarginBottom
-			label={label}
 			checked={freemius_enabled || false}
 			onChange={setEnabled}
 		/>
