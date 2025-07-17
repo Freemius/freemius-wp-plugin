@@ -53,15 +53,13 @@ const MappingSettings = (props) => {
 	return (
 		<>
 			{name == '_core/button' && (
-				<>
-					<ToggleControl
-						label={__('Enable Checkout', 'freemius')}
-						checked={freemius_enabled}
-						onChange={(value) => {
-							setAttributes({ freemius_enabled: value });
-						}}
-					/>
-				</>
+				<ToggleControl
+					label={__('Enable Checkout', 'freemius')}
+					checked={freemius_enabled}
+					onChange={(value) => {
+						setAttributes({ freemius_enabled: value });
+					}}
+				/>
 			)}
 			<DataView />
 			<Spacer />

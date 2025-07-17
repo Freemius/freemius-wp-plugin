@@ -21,7 +21,7 @@ import {
  * Internal dependencies
  */
 import { FreemiusContext } from '../context';
-import { useSettings, useFreemiusPageMeta, usePlans } from '../hooks';
+import { useSettings, usePlans } from '../hooks';
 
 const DataViewContainer = styled.div`
 	grid-column: span 2;
@@ -87,6 +87,10 @@ const useData = (scopeData) => {
 			: (!currentPricing && !isFree) || !data?.plan_id;
 
 	const DataView = useMemo(() => {
+		return () => {
+			<></>;
+		};
+
 		return () => (
 			<DataViewContainer>
 				<ItemGroup isSeparated isBorderd size="small">

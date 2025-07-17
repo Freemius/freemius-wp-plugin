@@ -76,6 +76,8 @@ class Button {
 			return;
 		}
 
+		return;
+
 		// load from assets.php
 		$freemius_dependencies = include FREEMIUS_PLUGIN_DIR . '/build/button/index.asset.php';
 

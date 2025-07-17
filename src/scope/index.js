@@ -16,13 +16,14 @@ import { useContext, useMemo, useEffect } from '@wordpress/element';
  * Internal dependencies
  */
 
-import './style.scss';
 import Broker from './Broker';
 import Consumer from './Consumer';
 import { FreemiusContext } from '../context';
 import MappedBlockEdit from './MappedBlockEdit';
 import Dump from '../util';
 import { useData } from '../hooks';
+
+import './style.scss';
 
 const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
@@ -37,6 +38,7 @@ const SUPPORTED_CONSUMER_BLOCKS = [
 	'core/button',
 ];
 
+//TODO: get rid of the registerBlockExtension as it triggers API call on every broker block
 /**
  * Broker
  */

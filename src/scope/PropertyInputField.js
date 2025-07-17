@@ -250,7 +250,7 @@ function getSpecial(properties) {
 
 		if (isLoading || error) return null;
 
-		const currentPlan = plans.find((plan) => plan.id == value) || null;
+		const currentPlan = plans.find((plan) => plan?.id == value) || null;
 
 		if (plans) {
 			return (
@@ -262,11 +262,11 @@ function getSpecial(properties) {
 					onChange={onChange}
 					selectedId={value}
 					noOptionLabel={
-						inherited
+						inherited && currentPlan
 							? sprintf(
 									__('[%s] %s', 'freemius'),
-									currentPlan.id,
-									currentPlan.title
+									currentPlan?.id,
+									currentPlan?.title
 							  )
 							: sprintf(__('Use Inherited %s', 'freemius'), label)
 					}

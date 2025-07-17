@@ -173,7 +173,7 @@ export default function Edit(props) {
 									label={__('Type', 'freemius')}
 									help={__('Select the type of modifier', 'freemius')}
 									onChange={(value) => {
-										setAttributes({ type: value });
+										setAttributes({ type: value ? value : undefined });
 									}}
 									selectedId={type}
 									noOptionLabel={__('Choose a type', 'freemius')}

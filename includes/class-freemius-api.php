@@ -36,7 +36,7 @@ class Api {
 	 *
 	 * @var int
 	 */
-	private $cache_expiry = 36;
+	private $cache_expiry = 3600;
 
 	/**
 	 * Freemius API base URL
@@ -286,6 +286,8 @@ class Api {
 
 			$token = $settings['token'];
 
+			$plugin_data = get_plugin_data( FREEMIUS_PLUGIN_DIR . '/freemius.php' );
+
 			// Prepare request arguments.
 			$request_args = array(
 				'method'  => strtoupper( $method ),
@@ -294,7 +296,7 @@ class Api {
 					'Content-Type'  => 'application/json',
 					'Accept'        => 'application/json',
 					'Authorization' => 'Bearer ' . $token,
-					'User-Agent'    => 'WordPress/' . get_bloginfo( 'version' ) . '; ',
+					'User-Agent'    => $plugin_data['Name'] . '/' . $plugin_data['Version'] . ';',
 				),
 			);
 
