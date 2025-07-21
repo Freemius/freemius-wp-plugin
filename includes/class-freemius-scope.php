@@ -24,6 +24,9 @@ class Scope {
 	 */
 	private static $instance = null;
 
+
+	private $scope = null;
+
 	/**
 	 * Constructor
 	 */
@@ -33,7 +36,10 @@ class Scope {
 		\add_action( 'enqueue_block_assets', array( $this, 'block_script_styles' ), 1 );
 
 		// Render the scope
-			\add_filter( 'render_block_core/group', array( $this, 'render_scope' ), 10, 3 );
+		\add_filter( 'render_block_core/group', array( $this, 'render_scope' ), 10, 3 );
+		\add_filter( 'render_block_core/columns', array( $this, 'render_scope' ), 10, 3 );
+		\add_filter( 'render_block_core/column', array( $this, 'render_scope' ), 10, 3 );
+		\add_filter( 'render_block_core/button', array( $this, 'render_scope' ), 10, 3 );
 	}
 
 	/**
@@ -69,13 +75,13 @@ class Scope {
 		}
 
 		// load from assets.php
-		$freemius_dependencies = include FREEMIUS_PLUGIN_DIR . '/build/scope/index.asset.php';
+		$deps = include FREEMIUS_PLUGIN_DIR . '/build/scope/index.asset.php';
 
 		\wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
 
 		// Freemius Scope
-		\wp_enqueue_script( 'freemius-scope', FREEMIUS_PLUGIN_URL . '/build/scope/index.js', $freemius_dependencies['dependencies'], $freemius_dependencies['version'], true );
-		\wp_enqueue_style( 'freemius-scope', FREEMIUS_PLUGIN_URL . '/build/scope/style-index.css', array(), $freemius_dependencies['version'] );
+		\wp_enqueue_script( 'freemius-scope', FREEMIUS_PLUGIN_URL . '/build/scope/index.js', $deps['dependencies'], $deps['version'], true );
+		\wp_enqueue_style( 'freemius-scope', FREEMIUS_PLUGIN_URL . '/build/scope/style-index.css', array(), $deps['version'] );
 	}
 
 
@@ -96,32 +102,24 @@ class Scope {
 			return $block_content;
 		}
 
+		if ( isset( $block['attrs']['freemius'] ) ) {
+
+			$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
+
+			//$data = array_merge( (array) $site_data, (array) $plugin_data );
+
+			$processor = new \WP_HTML_Tag_Processor( $block_content );
+			if ( $processor->next_tag( 'div' ) ) {
+				//if ( ! $this->scope ) {
+					$site_data   = \get_option( 'freemius_button', array() );
+					$this->scope = $site_data;
+					$processor->set_attribute( 'data-freemius', wp_json_encode( $site_data ) );
+
+				//}
+				$processor->set_attribute( 'data-freemius-scope', wp_json_encode( $plugin_data ) );
+				$block_content = $processor->get_updated_html();
+			}
+		}
 		return $block_content;
-
-		// merge the data from the site, the page and the block
-		$site_data   = \get_option( 'freemius_button', array() );
-		$page_data   = \get_post_meta( get_the_ID(), 'freemius_button', true );
-		$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
-
-		$data = array_merge( (array) $site_data, (array) $page_data, (array) $plugin_data );
-
-		/**
-		 * Filter the data that will be passed to the Freemius checkout.
-		 *
-		 * @param array $data The data that will be passed to the Freemius checkout.
-		 */
-		$data = \apply_filters( 'freemius_button_data', $data );
-
-		$extra  = '';
-		$extra .= '<script type="application/json" class="freemius-button-data">' . wp_json_encode( $data ) . '</script>';
-
-		\wp_enqueue_script( 'freemius-button-checkout', 'https://checkout.freemius.com/js/v1/', array(), 'v1', true );
-
-		// load from assets.php
-		$dependecied = include FREEMIUS_PLUGIN_DIR . '/build/freemius-button/view.asset.php';
-		\wp_enqueue_script( 'freemius-button-frontend', FREEMIUS_PLUGIN_URL . '/build/freemius-button/view.js', $dependecied['dependencies'], $dependecied['version'], true );
-		\wp_enqueue_style( 'freemius-button-frontend', FREEMIUS_PLUGIN_URL . '/build/freemius-button/view.css', array(), $dependecied['version'] );
-
-		return $extra . $block_content;
 	}
 }

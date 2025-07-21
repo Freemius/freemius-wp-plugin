@@ -25,10 +25,14 @@ const useModifiers = (type = null) => {
 
 	const product_id = data?.product_id;
 
-	const { options: currencyOptions } = useCurrency(product_id);
-	const { options: billingCycleOptions } = useBillingCycle(product_id);
-	const { options: licensesOptions } = useLicenses(product_id);
-	const { options: plansOptions } = usePlans(product_id);
+	const { options: currencyOptions, isLoading: isCurrencyLoading } =
+		useCurrency(product_id);
+	const { options: billingCycleOptions, isLoading: isBillingCycleLoading } =
+		useBillingCycle(product_id);
+	const { options: licensesOptions, isLoading: isLicensesLoading } =
+		useLicenses(product_id);
+	const { options: plansOptions, isLoading: isPlansLoading } =
+		usePlans(product_id);
 
 	// Memoize default options to prevent recreation
 	const defaultOptions = useMemo(
@@ -68,7 +72,16 @@ const useModifiers = (type = null) => {
 		return MODIFIERS.find((modifier) => modifier.id === type);
 	}, [MODIFIERS, type]);
 
-	return { options, modifiers: MODIFIERS, currentModifier };
+	return {
+		options,
+		modifiers: MODIFIERS,
+		currentModifier,
+		isLoading:
+			isCurrencyLoading ||
+			isBillingCycleLoading ||
+			isLicensesLoading ||
+			isPlansLoading,
+	};
 };
 
 export default useModifiers;

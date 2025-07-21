@@ -12,18 +12,3 @@
 		top: -1em;
 	}
 }
-
-.wp-block-freemius-modifier {
-	display: flex;
-	gap: 0.5em;
-
-	&.is-style-link {
-	}
-
-	a {
-		text-decoration: none;
-		&.is-active {
-			text-decoration: underline;
-		}
-	}
-}

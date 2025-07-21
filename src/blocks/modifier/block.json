@@ -32,6 +32,12 @@
 		},
 		"labels": {
 			"type": "object"
+		},
+		"options": {
+			"type": "array"
+		},
+		"current": {
+			"type": "string"
 		}
 	},
 	"styles": [

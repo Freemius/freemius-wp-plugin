@@ -87,10 +87,6 @@ const useData = (scopeData) => {
 			: (!currentPricing && !isFree) || !data?.plan_id;
 
 	const DataView = useMemo(() => {
-		return () => {
-			<></>;
-		};
-
 		return () => (
 			<DataViewContainer>
 				<ItemGroup isSeparated isBorderd size="small">

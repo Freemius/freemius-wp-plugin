@@ -35,11 +35,12 @@ import './editor.scss';
 
 import { useData, useCurrency, useModifiers } from '../../hooks';
 import { FreemiusContext } from '../../context';
+import { ModifierButtons } from './ModifierButtons';
 
 export default function Edit(props) {
 	const { attributes, setAttributes, isSelected, scopeData } = props;
 
-	const { type } = attributes;
+	const { type, options, disabled = [], current } = attributes;
 
 	const {
 		data,
@@ -52,8 +53,25 @@ export default function Edit(props) {
 		isInvalid,
 	} = useData(scopeData);
 
-	const { options, modifiers, currentModifier, defaultOptions } =
-		useModifiers(type);
+	const {
+		options: optionsFromHooks,
+		isLoading: isLoadingModifiers,
+		modifiers,
+		currentModifier,
+		defaultOptions,
+	} = useModifiers(type);
+
+	useEffect(() => {
+		if (isLoading || isLoadingModifiers) return;
+
+		const enabled = optionsFromHooks.filter(
+			(option) => !disabled.includes(option.id)
+		);
+
+		if (JSON.stringify(optionsFromHooks) !== JSON.stringify(enabled)) {
+			setAttributes({ options: enabled });
+		}
+	}, [optionsFromHooks, isLoading, isLoadingModifiers, disabled]);
 
 	const isInScope = !!scopeData;
 
@@ -73,6 +91,22 @@ export default function Edit(props) {
 		...context,
 		...scopeAttributes?.freemius_modifications,
 	};
+
+	useEffect(() => {
+		if (isLoading || isLoadingModifiers || !contextWithModifications[type])
+			return;
+		const newCurrent = (
+			contextWithModifications[type] || defaultOptions
+		).toString();
+		if (current !== newCurrent) {
+			setAttributes({ current: newCurrent });
+		}
+	}, [
+		contextWithModifications[type],
+		defaultOptions,
+		isLoading,
+		isLoadingModifiers,
+	]);
 
 	// unset modification if it's the same as the one from the scope
 	const changeScope = (property, value) => {
@@ -181,7 +215,7 @@ export default function Edit(props) {
 								/>
 							</BaseControl>
 
-							{type && options.length > 0 && (
+							{type && optionsFromHooks.length > 0 && (
 								<BaseControl
 									__nextHasNoMarginBottom
 									label={__('Options', 'freemius')}
@@ -190,7 +224,7 @@ export default function Edit(props) {
 										'freemius'
 									)}
 								>
-									<ModifierToggles {...props} options={options} />
+									<ModifierToggles {...props} options={optionsFromHooks} />
 								</BaseControl>
 							)}
 							<pre>{JSON.stringify(attributes, null, 2)}</pre>
@@ -201,64 +235,15 @@ export default function Edit(props) {
 			</InspectorControls>
 			<div {...blockProps}>
 				<ModifierButtons
-					changeScope={changeScope}
-					currentValue={contextWithModifications[type] || defaultOptions}
 					{...props}
-					options={options}
+					onChange={(value) => {
+						changeScope(type, value);
+					}}
 				/>
 			</div>
 		</>
 	);
 }
-
-const ModifierButtons = (props) => {
-	const { attributes, changeScope, currentValue, options = [] } = props;
-
-	const {
-		modifications,
-		type,
-		labels = {},
-		className = '',
-		disabled = [],
-	} = attributes;
-
-	const enabled = options.filter((option) => !disabled.includes(option.id));
-
-	if (className.includes('is-style-unstyled')) {
-		return null;
-	} else if (className.includes('is-style-link')) {
-		return enabled.map((option) => (
-			<a
-				key={option.id}
-				href={currentValue == option.id ? '#' : ''}
-				onClick={() => changeScope(type, option.id)}
-				className={classnames({
-					'is-active': currentValue == option.id,
-					'wp-block-button__link': false,
-				})}
-			>
-				{labels[option.id] || option.name}
-			</a>
-		));
-	} else {
-		// default is button
-		return enabled.map((option) => (
-			<Button
-				key={option.id}
-				className={classnames({
-					'is-active': currentValue == option.id,
-					'wp-block-button__link': false,
-				})}
-				onClick={() => changeScope(type, option.id)}
-				isPressed={currentValue == option.id}
-			>
-				{labels[option.id] || option.name}
-			</Button>
-		));
-	}
-
-	return null;
-};
 
 const ModifierToggles = (props) => {
 	const { attributes, setAttributes, options = [] } = props;

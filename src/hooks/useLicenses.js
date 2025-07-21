@@ -45,7 +45,7 @@ const useLicenses = (product_id) => {
 	const options = useMemo(() => {
 		return licenses.map((option) => {
 			return {
-				name: option ? option : __('Unlimited', 'freemius'),
+				name: option ? `${option}` : __('Unlimited', 'freemius'),
 				id: option ? option : null,
 			};
 		});
