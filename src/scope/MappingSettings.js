@@ -36,14 +36,24 @@ import { useApiGet, useMultipleApi, useMapping } from '../hooks';
 const MappingSettings = (props) => {
 	const { context, attributes, setAttributes, name } = props;
 
-	const { content, invalid, freemius_enabled } = attributes;
+	const { content, invalid, freemius_enabled, freemius_mapping } = attributes;
 
-	const { options, setMapping, isError, errorMessage, value } =
+	const { options, isLoading, setMapping, isError, errorMessage, value } =
 		useMapping(props);
 
 	const inContext = useContext(FreemiusContext);
 
 	const { data, selectScope, DataView, isFree, isInvalid } = useData();
+
+	useEffect(() => {
+		if (isLoading) {
+			return;
+		}
+
+		if (options.field === 'billing_cycle' && !freemius_mapping?.labels) {
+			setMapping('labels', options.labels);
+		}
+	}, [options.labels, options.field, isLoading, freemius_mapping]);
 
 	// not in context, so we don't need to do anything
 	if (!inContext) {
@@ -115,7 +125,6 @@ const MappingSettings = (props) => {
 						]}
 					/>
 				</BaseControl>
-
 				{options.field && (
 					<>
 						{options.field === 'price' && (
@@ -144,6 +153,25 @@ const MappingSettings = (props) => {
 										},
 									]}
 								/>
+							</BaseControl>
+						)}
+						{options.field === 'billing_cycle' && (
+							<BaseControl __nextHasNoMarginBottom>
+								{Object.entries(options.labels).map(([key, value], i) => (
+									<TextControl
+										key={i}
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={sprintf(__('Label for %s', 'freemius'), key)}
+										value={value}
+										onChange={(value) => {
+											setMapping('labels', {
+												...options.labels,
+												[key]: value,
+											});
+										}}
+									/>
+								))}
 							</BaseControl>
 						)}
 						<BaseControl __nextHasNoMarginBottom>

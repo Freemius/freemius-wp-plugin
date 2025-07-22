@@ -20,7 +20,6 @@ import Broker from './Broker';
 import Consumer from './Consumer';
 import { FreemiusContext } from '../context';
 import MappedBlockEdit from './MappedBlockEdit';
-import Dump from '../util';
 import { useData } from '../hooks';
 
 import './style.scss';
@@ -56,6 +55,9 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
 			type: 'boolean',
 			default: false,
 		},
+		freemius_matrix: {
+			type: 'array',
+		},
 		freemius: {
 			type: 'object',
 		},
@@ -89,7 +91,8 @@ registerBlockExtension(SUPPORTED_CONSUMER_BLOCKS, {
 
 		if (!freemius_mapping || !freemius_mapping.field) return '';
 
-		let className = 'has-freemius-mapping';
+		let className =
+			'has-freemius-mapping has-freemius-mapping-' + freemius_mapping.field;
 		if (freemius_mapping_error) className += ' has-freemius-mapping-error';
 
 		if (invalid) {
@@ -102,6 +105,9 @@ registerBlockExtension(SUPPORTED_CONSUMER_BLOCKS, {
 	Edit: Consumer,
 });
 
+/**
+ * Content provider for broker and consumer blocks
+ */
 const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 	return (props) => {
 		const { attributes, setAttributes, clientId } = props;
@@ -166,16 +172,6 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 
 			return (
 				<FreemiusContext.Provider value={contextValue}>
-					<Dump props={isInvalid} title="isInvalid" visible={false} />
-					<Dump props={props} title="props" visible={false} />
-					<Dump props={parent} title="Parent" visible={false} />
-					<Dump props={attributes} title="Attributes" visible={false} />
-					<Dump props={data} title="New Freemius" visible={false} />
-					<Dump
-						props={freemius_modifications}
-						title="Freemius Modifications"
-						visible={false}
-					/>
 					<BlockEdit key="edit" {...props} />
 				</FreemiusContext.Provider>
 			);
@@ -195,4 +191,41 @@ addFilter(
 	'editor.BlockEdit',
 	'freemius/scope/content-provider',
 	freemiusContentProvider
+);
+
+/**
+ * Add scope and mapping to broker and consumer blocks
+ *
+ * @param {Object} props - The block props.
+ * @param {string} blockType - The block type.
+ * @param {Object} attributes - The block attributes.
+ * @returns {Object} The updated block props.
+ */
+function addDataAttributes(props, blockType, attributes) {
+	let extraProps = {};
+
+	// mapping
+	if (attributes.freemius_mapping && attributes.freemius_mapping.field) {
+		extraProps['data-freemius-mapping'] = JSON.stringify(
+			attributes.freemius_mapping
+		);
+	}
+
+	// scope
+	if (attributes.freemius_enabled) {
+		extraProps['data-freemius-scope'] = JSON.stringify({
+			...(attributes.freemius || {}),
+			...(attributes.freemius_modifications || {}),
+		});
+	}
+
+	return {
+		...props,
+		...extraProps,
+	};
+}
+addFilter(
+	'blocks.getSaveContent.extraProps',
+	'freemius/scope/add-data-attributes',
+	addDataAttributes
 );

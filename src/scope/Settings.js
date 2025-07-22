@@ -16,7 +16,7 @@ import {
 	Button,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
-import { useContext } from '@wordpress/element';
+import { useContext, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -34,13 +34,24 @@ const PanelDescription = styled.div`
 const Settings = (props) => {
 	const { attributes, setAttributes, name } = props;
 
-	const { freemius_enabled, freemius, freemius_modifications } = attributes;
+	const {
+		freemius_enabled,
+		freemius,
+		freemius_modifications,
+		freemius_matrix,
+	} = attributes;
 
 	const { settings, structure, isLoading } = useSettings('freemius_button');
 
-	const { data, DataView } = useData();
+	const { data, DataView, matrix } = useData();
 
 	const fromParent = useContext(FreemiusContext);
+
+	useEffect(() => {
+		if (matrix !== freemius_matrix) {
+			//setAttributes({ freemius_matrix: matrix });
+		}
+	}, [matrix, fromParent]);
 
 	if (isLoading || !structure) {
 		return (

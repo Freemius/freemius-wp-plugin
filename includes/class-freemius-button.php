@@ -30,18 +30,18 @@ class Button {
 	private function __construct() {
 
 		// Enqueue the block script and styles
-		\add_action( 'enqueue_block_assets', array( $this, 'block_script_styles' ), 1 );
+		// \add_action( 'enqueue_block_assets', array( $this, 'block_script_styles' ), 1 );
 
 		// Render the button
 		\add_filter( 'render_block_core/button', array( $this, 'render_button' ), 10, 3 );
 
-		// Register the post meta
-		\add_action( 'init', array( $this, 'register_post_meta' ) );
-		\add_action( 'rest_api_init', array( $this, 'register_post_meta' ) );
+		// // Register the post meta
+		// \add_action( 'init', array( $this, 'register_post_meta' ) );
+		// \add_action( 'rest_api_init', array( $this, 'register_post_meta' ) );
 
-		// Register the setting
-		\add_action( 'init', array( $this, 'register_my_setting' ) );
-		\add_action( 'rest_api_init', array( $this, 'register_my_setting' ) );
+		// // Register the setting
+		// \add_action( 'init', array( $this, 'register_my_setting' ) );
+		// \add_action( 'rest_api_init', array( $this, 'register_my_setting' ) );
 	}
 
 	/**
@@ -105,35 +105,36 @@ class Button {
 		if ( ! isset( $block['attrs'] ) ) {
 			return $block_content;
 		}
+
 		if ( ! isset( $block['attrs']['freemius_enabled'] ) || $block['attrs']['freemius_enabled'] === false ) {
 			return $block_content;
 		}
 
-		// merge the data from the site, the page and the block
-		$site_data   = \get_option( 'freemius_button', array() );
-		$page_data   = \get_post_meta( get_the_ID(), 'freemius_button', true );
-		$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
+		// // merge the data from the site, the page and the block
+		// $site_data = \get_option( 'freemius_button', array() );
+		// // $page_data   = \get_post_meta( get_the_ID(), 'freemius_button', true );
+		// $plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
 
-		$data = array_merge( (array) $site_data, (array) $page_data, (array) $plugin_data );
+		// $data = array_merge( (array) $site_data, (array) $plugin_data );
 
-		/**
-		 * Filter the data that will be passed to the Freemius checkout.
-		 *
-		 * @param array $data The data that will be passed to the Freemius checkout.
-		 */
-		$data = \apply_filters( 'freemius_button_data', $data );
+		// /**
+		// * Filter the data that will be passed to the Freemius checkout.
+		// *
+		// * @param array $data The data that will be passed to the Freemius checkout.
+		// */
+		// $data = \apply_filters( 'freemius_button_data', $data );
 
-		$extra  = '';
-		$extra .= '<script type="application/json" class="freemius-button-data">' . wp_json_encode( $data ) . '</script>';
+		// $extra = '';
+		// $extra .= '<script type="application/json" class="freemius-button-data">' . wp_json_encode( $data ) . '</script>';
 
 		\wp_enqueue_script( 'freemius-button-checkout', 'https://checkout.freemius.com/js/v1/', array(), 'v1', true );
 
 		// load from assets.php
 		$dependecied = include FREEMIUS_PLUGIN_DIR . '/build/button/view.asset.php';
 		\wp_enqueue_script( 'freemius-button-view', FREEMIUS_PLUGIN_URL . '/build/button/view.js', $dependecied['dependencies'], $dependecied['version'], true );
-		\wp_enqueue_style( 'freemius-button-view', FREEMIUS_PLUGIN_URL . '/build/button/view.css', array(), $dependecied['version'] );
+		// \wp_enqueue_style( 'freemius-button-view', FREEMIUS_PLUGIN_URL . '/build/button/view.css', array(), $dependecied['version'] );
 
-		return $extra . $block_content;
+		return $block_content;
 	}
 
 

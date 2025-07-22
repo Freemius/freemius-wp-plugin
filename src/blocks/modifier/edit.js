@@ -25,6 +25,7 @@ import {
 	Flex,
 	FlexItem,
 	FlexBlock,
+	Spinner,
 } from '@wordpress/components';
 
 /**
@@ -54,7 +55,7 @@ export default function Edit(props) {
 	} = useData(scopeData);
 
 	const {
-		options: optionsFromHooks,
+		options: allOptions,
 		isLoading: isLoadingModifiers,
 		modifiers,
 		currentModifier,
@@ -64,14 +65,14 @@ export default function Edit(props) {
 	useEffect(() => {
 		if (isLoading || isLoadingModifiers) return;
 
-		const enabled = optionsFromHooks.filter(
+		const enabled = allOptions.filter(
 			(option) => !disabled.includes(option.id)
 		);
 
-		if (JSON.stringify(optionsFromHooks) !== JSON.stringify(enabled)) {
+		if (JSON.stringify(options) !== JSON.stringify(enabled)) {
 			setAttributes({ options: enabled });
 		}
-	}, [optionsFromHooks, isLoading, isLoadingModifiers, disabled]);
+	}, [options, allOptions, isLoading, isLoadingModifiers, disabled]);
 
 	const isInScope = !!scopeData;
 
@@ -167,11 +168,11 @@ export default function Edit(props) {
 	}, []);
 
 	// nothing is disabled if type is not set
-	useEffect(() => {
-		if (!type) {
-			setAttributes({ disabled: undefined });
-		}
-	}, [type]);
+	// useEffect(() => {
+	// 	if (!type) {
+	// 		setAttributes({ disabled: undefined });
+	// 	}
+	// }, [type]);
 
 	const blockProps = useBlockProps({
 		style: {},
@@ -207,7 +208,11 @@ export default function Edit(props) {
 									label={__('Type', 'freemius')}
 									help={__('Select the type of modifier', 'freemius')}
 									onChange={(value) => {
-										setAttributes({ type: value ? value : undefined });
+										setAttributes({
+											type: value ? value : undefined,
+											disabled: undefined,
+											labels: undefined,
+										});
 									}}
 									selectedId={type}
 									noOptionLabel={__('Choose a type', 'freemius')}
@@ -215,7 +220,7 @@ export default function Edit(props) {
 								/>
 							</BaseControl>
 
-							{type && optionsFromHooks.length > 0 && (
+							{type && allOptions.length > 0 && (
 								<BaseControl
 									__nextHasNoMarginBottom
 									label={__('Options', 'freemius')}
@@ -224,7 +229,7 @@ export default function Edit(props) {
 										'freemius'
 									)}
 								>
-									<ModifierToggles {...props} options={optionsFromHooks} />
+									<ModifierToggles {...props} options={allOptions} />
 								</BaseControl>
 							)}
 							<pre>{JSON.stringify(attributes, null, 2)}</pre>
@@ -234,12 +239,16 @@ export default function Edit(props) {
 				</PanelBody>
 			</InspectorControls>
 			<div {...blockProps}>
-				<ModifierButtons
-					{...props}
-					onChange={(value) => {
-						changeScope(type, value);
-					}}
-				/>
+				{isLoading || isLoadingModifiers ? (
+					<Spinner />
+				) : (
+					<ModifierButtons
+						{...props}
+						onChange={(value) => {
+							changeScope(type, value);
+						}}
+					/>
+				)}
 			</div>
 		</>
 	);

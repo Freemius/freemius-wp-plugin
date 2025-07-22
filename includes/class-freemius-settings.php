@@ -138,6 +138,28 @@ class Settings {
 	 * Register settings
 	 */
 	public function register_settings() {
+
+		// Register API settings
+		\register_setting(
+			'freemius_settings',
+			'freemius_button',
+			array(
+				'type'              => 'object',
+				'label'             => __( 'Freemius Button', 'freemius' ),
+				'description'       => __( 'Define the site wide default values for the Freemius Button. You can override these values on a per-page basis.', 'freemius' ),
+				'sanitize_callback' => array( $this, 'sanitize_schema' ),
+				'default'           => array(),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'                 => 'object',
+						'properties'           => $this->get_button_schema(),
+						'additionalProperties' => false,
+
+					),
+
+				),
+			)
+		);
 		// Register general settings
 		\register_setting(
 			'freemius_settings',
@@ -229,6 +251,16 @@ class Settings {
 
 		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/api.php';
 
+		return $schema;
+	}
+
+	/**
+	 * Get button settings schema
+	 *
+	 * @return array The schema.
+	 */
+	public function get_button_schema() {
+		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/button.php';
 		return $schema;
 	}
 }

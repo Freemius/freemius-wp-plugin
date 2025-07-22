@@ -19,25 +19,29 @@ export const ModifierButtons = (props) => {
 		options = [],
 		current = '',
 		className = '',
+		type,
 	} = attributes;
 
-	const TagName = className.includes('is-style-link') ? 'a' : 'button';
+	return options.map((option) => {
+		const isActive = current == option.id;
+		const buttonClasses = classnames({
+			'is-active': isActive,
+			'wp-block-button__link': !className.includes('is-style-link'),
+		});
 
-	//const enabled = options.filter((option) => !disabled.includes(option.id));
-
-	return options.map((option) => (
-		<a
-			key={option.id}
-			href={current == option.id ? '#' : ''}
-			onClick={() => {
-				onChange(option.id);
-			}}
-			className={classnames({
-				'is-active': current == option.id,
-				'wp-block-button__link': !className.includes('is-style-link'),
-			})}
-		>
-			{labels[option.id] || option.name}
-		</a>
-	));
+		return (
+			<a
+				key={option.id}
+				onClick={() => {
+					onChange(option.id);
+				}}
+				className={buttonClasses}
+				data-option-id={option.id}
+				data-wp-on--click="actions.switchModifier"
+				data-wp-context={JSON.stringify({ optionId: option.id })}
+			>
+				{labels[option.id] || option.name}
+			</a>
+		);
+	});
 };

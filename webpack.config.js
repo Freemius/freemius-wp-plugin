@@ -1,7 +1,4 @@
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
-
-// Import the helper to find and generate the entry points in the src directory
-const { getWebpackEntryPoints } = require('@wordpress/scripts/utils/config');
+let defaultConfig = require('@wordpress/scripts/config/webpack.config');
 
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const SoundsPlugin = require('sounds-webpack-plugin');
@@ -46,36 +43,39 @@ const soundPluginOptions = {
 
 const customEntries = {
 	'settings/index': './src/settings/index.js',
-	'button/index': './src/button/index.js',
 	'button/view': './src/button/view.js',
 	'scope/index': './src/scope/index.js',
 	'scope/view': './src/scope/view.js',
-	'blocks/modifier/index': './src/blocks/modifier/index.js',
-	'blocks/modifier/view': './src/blocks/modifier/view.js',
+
+	//'blocks/modifier/index': './src/blocks/modifier/index.js',
+	//'blocks/modifier/view': './src/blocks/modifier/view.js',
 };
 
-module.exports = {
+// Add any a new entry point by extending the webpack config.
+module.exports = [
 	...defaultConfig,
-	performance: {
-		hints: false,
-		maxEntrypointSize: 512000,
-		maxAssetSize: 512000,
-	},
-	entry: {
-		...getWebpackEntryPoints(),
-		...customEntries,
-	},
-	module: {
-		...defaultConfig.module,
-		rules: [
-			...defaultConfig.module.rules,
-			// Add additional rules as needed.
+	{
+		...defaultConfig[0],
+		performance: {
+			hints: false,
+			maxEntrypointSize: 512000,
+			maxAssetSize: 512000,
+		},
+		entry: {
+			...defaultConfig[0].entry,
+			...customEntries,
+		},
+		module: {
+			...defaultConfig[0].module,
+			rules: [
+				...defaultConfig[0].module.rules,
+				// Add additional rules as needed.
+			],
+		},
+		plugins: [
+			...defaultConfig[0].plugins,
+			new SoundsPlugin(soundPluginOptions),
+			new RemoveEmptyScriptsPlugin(),
 		],
 	},
-
-	plugins: [
-		...defaultConfig.plugins,
-		new SoundsPlugin(soundPluginOptions),
-		new RemoveEmptyScriptsPlugin(),
-	],
-};
+];

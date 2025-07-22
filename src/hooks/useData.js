@@ -76,6 +76,35 @@ const useData = (scopeData) => {
 
 	const clientId = scopeData?.clientID || context?.clientID;
 
+	const matrix = useMemo(() => {
+		if (!plans) return [];
+
+		return plans.map((plan) => {
+			const pricingByCurrency = {};
+
+			plan?.pricing?.forEach((pricing) => {
+				const currency = pricing.currency?.toLowerCase();
+
+				if (!pricingByCurrency[currency]) {
+					pricingByCurrency[currency] = {};
+				}
+
+				pricingByCurrency[currency] = {
+					monthly: pricing.monthly_price,
+					annual: pricing.annual_price,
+					lifetime: pricing.lifetime_price,
+				};
+			});
+
+			return {
+				name: plan.name,
+				title: plan.title,
+				description: plan.description,
+				pricing: pricingByCurrency,
+			};
+		});
+	}, [plans]);
+
 	// the plan is free. undefined if data is still loading
 	const isFree =
 		isSettingsLoading || isPlansLoading ? undefined : !currentPlan?.pricing;
@@ -132,6 +161,7 @@ const useData = (scopeData) => {
 		currentPricing,
 		DataView,
 		selectScope,
+		matrix,
 	};
 };
 

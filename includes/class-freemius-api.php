@@ -136,6 +136,15 @@ class Api {
 	}
 
 	/**
+	 * Set cache expiry time in seconds
+	 *
+	 * @param int $expiry Cache expiry time in seconds.
+	 */
+	public function set_cache_expiry( $expiry ) {
+		$this->cache_expiry = $expiry;
+	}
+
+	/**
 	 * Get Freemius API settings
 	 *
 	 * @return array|null
@@ -201,12 +210,25 @@ class Api {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function proxy_get_request( $request ) {
+
 		$endpoint     = $request->get_param( 'endpoint' );
 		$query_params = $request->get_query_params();
 
 		// Remove endpoint from query params.
 		unset( $query_params['endpoint'] );
 		unset( $query_params['_locale'] );
+
+		return $this->get_request( $endpoint, $query_params );
+	}
+
+	/**
+	 * Make a GET request to Freemius API
+	 *
+	 * @param string $endpoint API endpoint.
+	 * @param array  $query_params Request parameters.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function get_request( $endpoint, $query_params = array() ) {
 
 		// Generate cache key.
 		$cache_key = $this->generate_cache_key( 'GET', $endpoint, $query_params );

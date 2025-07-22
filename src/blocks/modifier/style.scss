@@ -6,9 +6,17 @@
 	}
 
 	a {
+		cursor: pointer;
 		text-decoration: none;
+		opacity: 0.5;
 		&.is-active {
 			text-decoration: underline;
+			opacity: 1;
 		}
 	}
+}
+
+[data-freemius-scope] {
+	outline: 2px solid #ff5353;
+	outline-offset: 2px;
 }

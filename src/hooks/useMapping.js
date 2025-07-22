@@ -24,6 +24,11 @@ const useMapping = (props) => {
 		prefix: '',
 		suffix: '',
 		currency_symbol: 'show',
+		labels: {
+			monthly: __('Monthly', 'freemius'),
+			annual: __('Annually', 'freemius'),
+			lifetime: __('Lifetime', 'freemius'),
+		},
 		format_price: true,
 		show_currency: true,
 		...freemius_mapping,
@@ -35,13 +40,12 @@ const useMapping = (props) => {
 		setAttributes({
 			freemius_mapping: {
 				...freemius_mapping,
-				[key]: value,
+				[key]:
+					typeof value === 'object' && value !== null
+						? { ...freemius_mapping?.[key], ...value }
+						: value,
 			},
 		});
-	};
-
-	const is = (check) => {
-		return options?.field === check;
 	};
 
 	const value = getMappingValue(options);
@@ -128,12 +132,14 @@ const getMappingValue = (options) => {
 			if (symbol === 'symbol') {
 				content = content.replace(/[\d\s.,]/g, '').trim();
 			}
+		} else if (options.field === 'billing_cycle') {
+			content = options.labels[mappingData.billing_cycle];
 		}
 
 		content = options.prefix + content + options.suffix;
 
 		return content;
-	}, [mappingData, options]);
+	}, [mappingData, options, isPlansLoading]);
 
 	if (isPlansLoading || isDataLoading) {
 		return undefined;

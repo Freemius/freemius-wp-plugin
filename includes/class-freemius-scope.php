@@ -27,6 +27,7 @@ class Scope {
 
 	private $scope = null;
 
+
 	/**
 	 * Constructor
 	 */
@@ -102,24 +103,74 @@ class Scope {
 			return $block_content;
 		}
 
-		if ( isset( $block['attrs']['freemius'] ) ) {
-
-			$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
-
-			//$data = array_merge( (array) $site_data, (array) $plugin_data );
-
-			$processor = new \WP_HTML_Tag_Processor( $block_content );
-			if ( $processor->next_tag( 'div' ) ) {
-				//if ( ! $this->scope ) {
-					$site_data   = \get_option( 'freemius_button', array() );
-					$this->scope = $site_data;
-					$processor->set_attribute( 'data-freemius', wp_json_encode( $site_data ) );
-
-				//}
-				$processor->set_attribute( 'data-freemius-scope', wp_json_encode( $plugin_data ) );
-				$block_content = $processor->get_updated_html();
-			}
+		if ( ! isset( $block['attrs']['freemius'] ) ) {
+			// return '3' . $block_content;
 		}
+
+		$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
+
+		// $data = array_merge( (array) $site_data, (array) $plugin_data );
+
+		$processor = new \WP_HTML_Tag_Processor( $block_content );
+		if ( $processor->next_tag( 'div' ) ) {
+
+			// $processor->set_attribute( 'data-freemius-scope', wp_json_encode( $plugin_data ) );
+
+			$block_content = '';
+			// if ( ! $this->scope ) {
+
+				$this->scope = \get_option( 'freemius_button', array() );
+
+				$extra = '<script type="application/json" class="freemius-scope-data">' . wp_json_encode( $this->scope ) . '</script>';
+
+				$extra .= '<script type="application/json" class="freemius-matrix-data">' . wp_json_encode( $this->get_matrix( $this->scope ) ) . '</script>';
+
+				$block_content .= $extra;
+			// }
+
+			$block_content .= $processor->get_updated_html();
+		}
+
 		return $block_content;
+	}
+
+	private function get_matrix( $scope ) {
+
+		$product_id = $scope['product_id'];
+
+		$api = Api::get_instance();
+
+		$result = $api->get_request( 'products/' . $product_id . '/pricing.json' );
+
+		$plans = $result->get_data();
+
+		$matrix = array();
+
+		foreach ( $plans['plans'] as $plan ) {
+			$planId = $plan['id'];
+
+			$pricingByCurrency = array();
+
+			if ( ! empty( $plan['pricing'] ) ) {
+				foreach ( $plan['pricing'] as $pricing ) {
+					$currency = strtolower( $pricing['currency'] ?? 'unknown' );
+					$licenses = $pricing['licenses'] !== null ? (string) $pricing['licenses'] : 'unlimited';
+
+					// Add prices grouped by billing cycle and licenses
+					$pricingByCurrency[ $currency ]['monthly'][ $licenses ]  = $pricing['monthly_price'];
+					$pricingByCurrency[ $currency ]['annual'][ $licenses ]   = $pricing['annual_price'];
+					$pricingByCurrency[ $currency ]['lifetime'][ $licenses ] = $pricing['lifetime_price'];
+				}
+			}
+
+			$matrix[ $planId ] = array(
+				'name'        => $plan['name'] ?? null,
+				'title'       => $plan['title'] ?? null,
+				'description' => $plan['description'] ?? null,
+				'pricing'     => $pricingByCurrency,
+			);
+		}
+
+		return $matrix;
 	}
 }
