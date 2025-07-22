@@ -103,37 +103,23 @@ class Scope {
 			return $block_content;
 		}
 
-		if ( ! isset( $block['attrs']['freemius'] ) ) {
-			// return '3' . $block_content;
-		}
+		$this->scope = \get_option( 'freemius_button', array() );
 
-		$plugin_data = isset( $block['attrs']['freemius'] ) ? $block['attrs']['freemius'] : array();
+		$extra = '<script type="application/json" class="freemius-scope-data">' . wp_json_encode( $this->scope ) . '</script>';
 
-		// $data = array_merge( (array) $site_data, (array) $plugin_data );
+		$extra .= '<script type="application/json" class="freemius-matrix-data">' . wp_json_encode( $this->get_matrix( $this->scope ) ) . '</script>';
 
-		$processor = new \WP_HTML_Tag_Processor( $block_content );
-		if ( $processor->next_tag( 'div' ) ) {
-
-			// $processor->set_attribute( 'data-freemius-scope', wp_json_encode( $plugin_data ) );
-
-			$block_content = '';
-			// if ( ! $this->scope ) {
-
-				$this->scope = \get_option( 'freemius_button', array() );
-
-				$extra = '<script type="application/json" class="freemius-scope-data">' . wp_json_encode( $this->scope ) . '</script>';
-
-				$extra .= '<script type="application/json" class="freemius-matrix-data">' . wp_json_encode( $this->get_matrix( $this->scope ) ) . '</script>';
-
-				$block_content .= $extra;
-			// }
-
-			$block_content .= $processor->get_updated_html();
-		}
+		$block_content = $extra . $block_content;
 
 		return $block_content;
 	}
 
+	/**
+	 * Get the matrix of all pricing options
+	 *
+	 * @param array $scope The scope.
+	 * @return array The matrix.
+	 */
 	private function get_matrix( $scope ) {
 
 		$product_id = $scope['product_id'];
@@ -149,7 +135,7 @@ class Scope {
 		foreach ( $plans['plans'] as $plan ) {
 			$planId = $plan['id'];
 
-			$pricingByCurrency = array();
+			$pricing_by_currency = array();
 
 			if ( ! empty( $plan['pricing'] ) ) {
 				foreach ( $plan['pricing'] as $pricing ) {
@@ -157,9 +143,9 @@ class Scope {
 					$licenses = $pricing['licenses'] !== null ? (string) $pricing['licenses'] : 'unlimited';
 
 					// Add prices grouped by billing cycle and licenses
-					$pricingByCurrency[ $currency ]['monthly'][ $licenses ]  = $pricing['monthly_price'];
-					$pricingByCurrency[ $currency ]['annual'][ $licenses ]   = $pricing['annual_price'];
-					$pricingByCurrency[ $currency ]['lifetime'][ $licenses ] = $pricing['lifetime_price'];
+					$pricing_by_currency[ $currency ]['monthly'][ $licenses ]  = $pricing['monthly_price'];
+					$pricing_by_currency[ $currency ]['annual'][ $licenses ]   = $pricing['annual_price'];
+					$pricing_by_currency[ $currency ]['lifetime'][ $licenses ] = $pricing['lifetime_price'];
 				}
 			}
 
@@ -167,7 +153,7 @@ class Scope {
 				'name'        => $plan['name'] ?? null,
 				'title'       => $plan['title'] ?? null,
 				'description' => $plan['description'] ?? null,
-				'pricing'     => $pricingByCurrency,
+				'pricing'     => $pricing_by_currency,
 			);
 		}
 

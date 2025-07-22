@@ -170,8 +170,6 @@ store('freemius/modifier', {
 	callbacks: {
 		init: (event) => {
 			const ctx = getContext();
-			// This is called by the core/cover blocks inside this block.
-			// Adds the element reference to the `slides` array.
 			const { ref } = getElement();
 		},
 	},

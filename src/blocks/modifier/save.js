@@ -17,15 +17,9 @@ import './style.scss';
 import { ModifierButtons } from './ModifierButtons';
 
 export default function Save(props) {
-	const { attributes, setAttributes, isSelected, scopeData } = props;
+	const { attributes } = props;
 
-	const {
-		type,
-		options = [],
-		labels = {},
-		current = '',
-		className = '',
-	} = attributes;
+	const { type, current = '' } = attributes;
 
 	const blockProps = useBlockProps.save({
 		className: classnames({}, ''),

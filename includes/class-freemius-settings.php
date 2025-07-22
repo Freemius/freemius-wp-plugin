@@ -230,6 +230,24 @@ class Settings {
 		return $sanitized;
 	}
 
+
+	/**
+	 * Sanitize the schema
+	 *
+	 * @param array $settings The settings.
+	 * @return array The sanitized settings.
+	 */
+	public function sanitize_schema( $settings ) {
+
+		foreach ( $settings as $key => $value ) {
+			if ( $settings[ $key ] === '' ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Get general settings schema
 	 *

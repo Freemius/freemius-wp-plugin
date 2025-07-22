@@ -91,8 +91,7 @@ registerBlockExtension(SUPPORTED_CONSUMER_BLOCKS, {
 
 		if (!freemius_mapping || !freemius_mapping.field) return '';
 
-		let className =
-			'has-freemius-mapping has-freemius-mapping-' + freemius_mapping.field;
+		let className = 'has-freemius-mapping';
 		if (freemius_mapping_error) className += ' has-freemius-mapping-error';
 
 		if (invalid) {

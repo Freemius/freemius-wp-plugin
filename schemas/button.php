@@ -30,6 +30,15 @@ return array(
 		'isRequired'       => true,
 		'isShownByDefault' => true,
 	),
+	'plan_id'                       => array(
+		'label'       => __( 'Plan', 'freemius' ),
+		'type'        => 'integer',
+		'default'     => '',
+		'description' => __(
+			'The ID of the plan that will load with the checkout. When selling multiple plans you can set the param when calling the open() method.',
+			'freemius'
+		),
+	),
 	'pricing_id'                    => array(
 		'label'       => __( 'Pricing ID', 'freemius' ),
 		'type'        => 'string',
@@ -83,15 +92,6 @@ return array(
 		'default'     => '',
 		'description' => __(
 			"An optional icon that loads at the checkout and will override the product's icon uploaded to the Freemius Dashboard. Use a secure path to the image over HTTPS. While the checkout will remain PCI compliant, credit-card automatic prefill by the browser will not work.",
-			'freemius'
-		),
-	),
-	'plan_id'                       => array(
-		'label'       => __( 'Plan ID', 'freemius' ),
-		'type'        => 'integer',
-		'default'     => '',
-		'description' => __(
-			'The ID of the plan that will load with the checkout. When selling multiple plans you can set the param when calling the open() method.',
 			'freemius'
 		),
 	),

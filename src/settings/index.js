@@ -27,7 +27,6 @@ import {
 	BaseControl,
 	ExternalLink,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -97,6 +96,7 @@ const FreemiusSettings = () => {
 		} else {
 			newSettings[setting][key] = value;
 		}
+		console.log(newSettings);
 		setSettings(newSettings);
 	};
 
@@ -157,6 +157,7 @@ const FreemiusSettings = () => {
 											__nextHasNoMarginBottom
 											__next40pxDefaultSize
 											value={getValueFor(setting, key)}
+											type={prop.input_type ? prop.input_type : 'text'}
 											onChange={(value) => updateSetting(setting, key, value)}
 											label={getLabelFor(prop)}
 											help={prop.description}

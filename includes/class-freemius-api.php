@@ -171,37 +171,6 @@ class Api {
 		return $this->api_settings;
 	}
 
-	/**
-	 * Generate authentication signature for Freemius API
-	 *
-	 * @param string $method HTTP method.
-	 * @param string $endpoint API endpoint.
-	 * @param array  $params Request parameters.
-	 * @param string $timestamp Unix timestamp.
-	 * @return string
-	 */
-	private function generate_signature( $method, $endpoint, $params, $timestamp ) {
-		$settings = $this->get_api_settings();
-		if ( null === $settings ) {
-			return '';
-		}
-
-		$canonical_string  = strtoupper( $method ) . '&';
-		$canonical_string .= urlencode( $this->api_base_url . $endpoint ) . '&';
-
-		// Sort parameters.
-		ksort( $params );
-		$param_string = '';
-		foreach ( $params as $key => $value ) {
-			if ( ! empty( $param_string ) ) {
-				$param_string .= '&';
-			}
-			$param_string .= $key . '=' . $value;
-		}
-		$canonical_string .= urlencode( $param_string );
-
-		return base64_encode( hash_hmac( 'sha1', $canonical_string, $settings['secret_key'], true ) );
-	}
 
 	/**
 	 * Handle GET proxy requests with caching
@@ -400,7 +369,7 @@ class Api {
 			'method'   => $method,
 			'endpoint' => $endpoint,
 			'data'     => $data,
-			'seed'     => 123,
+			'seed'     => 123,  // artificially change cache invalidation.
 		);
 
 		return 'freemius_api_' . md5( wp_json_encode( $key_data ) );

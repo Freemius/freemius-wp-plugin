@@ -279,8 +279,14 @@ const store = createReduxStore(SETTINGS_STORE, {
 
 					const settings = SETTINGS.reduce((acc, setting) => {
 						acc[setting] = allSettings[setting] || {};
+						if (Object.keys(acc[setting]).length === 0) {
+							acc[setting] = {};
+						}
+						console.log('ss', acc[setting]);
 						return acc;
 					}, {});
+
+					console.log('ss', allSettings);
 
 					dispatch.setStructure(structure);
 					dispatch.setSettings(settings);

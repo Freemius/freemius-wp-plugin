@@ -101,9 +101,10 @@ const ButtonSettings = (props) => {
 	};
 
 	const openCheckout = () => {
-		// build arguments starting from global, page and button
+		// build arguments starting from scope and current button
+		const merged = { ...data, ...freemius };
 
-		const { product_id, public_key } = data;
+		const { product_id, public_key } = merged;
 		if (!product_id || !public_key) {
 			setLoading(false);
 			alert(__('Please fill in product_id and public_key', 'freemius'));
@@ -111,7 +112,7 @@ const ButtonSettings = (props) => {
 		}
 
 		// do not modify the original object
-		const data_copy = { ...data };
+		const data_copy = { ...merged };
 
 		// add class to the body
 		document.body.classList.add('freemius-checkout-preview');
@@ -125,19 +126,19 @@ const ButtonSettings = (props) => {
 		data_copy.cancel = function () {
 			setPreview(false);
 			setLoading(false);
-			if (data.cancel) {
-				new Function(data.cancel).apply(this);
+			if (merged.cancel) {
+				new Function(merged.cancel).apply(this);
 			}
 		};
 
-		if (data.purchaseCompleted) {
+		if (merged.purchaseCompleted) {
 			data_copy.purchaseCompleted = function (data) {
-				new Function('data', data.purchaseCompleted).apply(this, [data]);
+				new Function('data', merged.purchaseCompleted).apply(this, [data]);
 			};
 		}
-		if (data.success) {
+		if (merged.success) {
 			data_copy.success = function (data) {
-				new Function('data', data.success).apply(this, [data]);
+				new Function('data', merged.success).apply(this, [data]);
 			};
 		}
 
@@ -150,8 +151,8 @@ const ButtonSettings = (props) => {
 				setLoading(false);
 			}
 
-			if (data.track) {
-				new Function('event', 'data', data.track).apply(this, [event, data]);
+			if (merged.track) {
+				new Function('event', 'data', merged.track).apply(this, [event, data]);
 			}
 		};
 

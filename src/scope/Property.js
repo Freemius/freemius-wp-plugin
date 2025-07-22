@@ -1,27 +1,20 @@
 /**
  * WordPress dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
-	TextControl,
-	CheckboxControl,
-	ExternalLink,
-	TextareaControl,
 	__experimentalToolsPanelItem as ToolsPanelItem,
-	__experimentalNumberControl as NumberControl,
-	TreeSelect,
-	__experimentalHStack as HStack,
-	Button,
-	Modal,
 } from '@wordpress/components';
-import { useState, useRef, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { useData, useApiGet } from '../hooks';
+import { useData } from '../hooks';
 import PropertyInputField from './PropertyInputField';
+
+const FREEMIUS_LINK_BASE =
+	'https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/';
 
 const Property = (props) => {
 	const {
@@ -42,11 +35,7 @@ const Property = (props) => {
 
 	const overwrite = '';
 	let the_label = label;
-	const the_link =
-		link ||
-		'https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/#' +
-			id;
-	//const inherited = !!placeholder && value == undefined;
+	const the_link = link || FREEMIUS_LINK_BASE + '#' + id;
 
 	const { data } = useData();
 
@@ -87,8 +76,6 @@ const Property = (props) => {
 			}
 		}
 	};
-
-	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	return (
 		<ToolsPanelItem

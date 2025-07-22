@@ -7,41 +7,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return array(
-	'public_key'   => array(
+	'token'       => array(
 		'type'        => 'string',
-		'label'       => __( 'Public Key', 'freemius' ),
-		'description' => __( 'Public Key', 'freemius' ),
-		'link'        => 'https://dashboard.freemius.com/#!/profile/',
-		'default'     => '',
-	),
-	'secret_key'   => array(
-		'type'        => 'string',
-		'label'       => __( 'Secret Key', 'freemius' ),
-		'description' => __( 'Secret Key', 'freemius' ),
-		'default'     => '',
-	),
-	'token'        => array(
-		'type'        => 'string',
+		'input_type'  => 'password',
 		'label'       => __( 'Token', 'freemius' ),
-		'description' => __( 'Token', 'freemius' ),
+		'description' => __(
+			'Go to the Freemius Developer Dashboard. Open the Settings page of the relevant product. Click on the API Token tab. Copy the API Bearer Authorization Token from the UI.',
+			'freemius'
+		),
+		'link'        => 'https://dashboard.freemius.com/',
 		'default'     => '',
 	),
-	'developer_id' => array(
-		'type'        => 'string',
-		'label'       => __( 'Developer ID', 'freemius' ),
-		'description' => __( 'Developer ID', 'freemius' ),
-		'default'     => '',
-	),
-	'user_id'      => array(
-		'type'        => 'string',
-		'label'       => __( 'User ID', 'freemius' ),
-		'description' => __( 'User ID', 'freemius' ),
-		'default'     => '',
-	),
-	'environment'  => array(
+	'environment' => array(
 		'type'        => 'string',
 		'label'       => __( 'Environment (sandbox/live)', 'freemius' ),
-		'description' => __( 'Environment (sandbox/live)', 'freemius' ),
+		'description' => __( 'Not implemented (yet)', 'freemius' ),
 		'default'     => 'sandbox',
 		'enum'        => array( 'sandbox', 'live' ),
 	),
