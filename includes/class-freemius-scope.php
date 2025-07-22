@@ -122,11 +122,23 @@ class Scope {
 	 */
 	private function get_matrix( $scope ) {
 
+		if ( ! is_array( $scope ) ) {
+			return array();
+		}
+
+		if ( isset( $scope['product_id'] ) ) {
+			return array();
+		}
+
 		$product_id = $scope['product_id'];
 
 		$api = Api::get_instance();
 
 		$result = $api->get_request( 'products/' . $product_id . '/pricing.json' );
+
+		if ( is_wp_error( $result ) ) {
+			return array();
+		}
 
 		$plans = $result->get_data();
 

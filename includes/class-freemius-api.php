@@ -267,7 +267,7 @@ class Api {
 		if ( null === $settings ) {
 			return new \WP_Error(
 				'freemius_api_not_configured',
-				__( 'Freemius API is not configured. Please check your API settings.', 'freemius-button' ),
+				__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius-button' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -369,7 +369,7 @@ class Api {
 			'method'   => $method,
 			'endpoint' => $endpoint,
 			'data'     => $data,
-			'seed'     => 123,  // artificially change cache invalidation.
+			'seed'     => 1234,  // artificially change cache invalidation.
 		);
 
 		return 'freemius_api_' . md5( wp_json_encode( $key_data ) );

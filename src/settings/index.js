@@ -18,7 +18,6 @@ import {
 	SelectControl,
 	__experimentalNumberControl as NumberControl,
 	TextareaControl,
-	Button,
 	Notice,
 	Flex,
 	FlexItem,
@@ -27,6 +26,7 @@ import {
 	BaseControl,
 	ExternalLink,
 } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -66,6 +66,10 @@ const FreemiusSettings = () => {
 		saveMessage,
 		saveMessageType,
 	} = useSettings();
+
+	const [activeTab, setActiveTab] = useState(
+		window.location.hash.replace('#', '') || 'general'
+	);
 
 	const getValueFor = (setting, key) => {
 		const type = structure[setting].properties[key].type;
@@ -113,7 +117,7 @@ const FreemiusSettings = () => {
 	}
 
 	const tabs = Object.entries(structure).map(([setting, schema], i) => ({
-		name: `setting-${i}`,
+		name: setting,
 		title: schema.title,
 		content: (
 			<TabContainer>
@@ -214,7 +218,18 @@ const FreemiusSettings = () => {
 						{saveMessage}
 					</Notice>
 				)}
-				<TabPanel tabs={tabs}>{(tab) => <div>{tab.content}</div>}</TabPanel>
+				<TabPanel
+					tabs={tabs}
+					initialTabName={activeTab ? `freemius_${activeTab}` : null}
+					onSelect={(tab) => {
+						const hash = tab.replace('freemius_', '');
+						if (window.location.hash !== `#${hash}`) {
+							window.history.pushState(null, '', `#${hash}`);
+						}
+					}}
+				>
+					{(tab) => <>{tab.content}</>}
+				</TabPanel>
 				<Flex justify="flex-start">
 					<FlexItem>
 						<SaveButton />

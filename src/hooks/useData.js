@@ -113,7 +113,10 @@ const useData = (scopeData) => {
 	const isInvalid =
 		isSettingsLoading || isPlansLoading
 			? undefined
-			: (!currentPricing && !isFree) || !data?.plan_id;
+			: (!currentPricing && !isFree) ||
+			  !data?.plan_id ||
+			  !data?.product_id ||
+			  !data?.public_key;
 
 	const DataView = useMemo(() => {
 		return () => (

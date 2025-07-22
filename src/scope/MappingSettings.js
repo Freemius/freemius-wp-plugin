@@ -62,15 +62,6 @@ const MappingSettings = (props) => {
 
 	return (
 		<>
-			{name == '_core/button' && (
-				<ToggleControl
-					label={__('Enable Checkout', 'freemius')}
-					checked={freemius_enabled}
-					onChange={(value) => {
-						setAttributes({ freemius_enabled: value });
-					}}
-				/>
-			)}
 			<DataView />
 			<Spacer />
 			<Button
@@ -85,9 +76,19 @@ const MappingSettings = (props) => {
 			</Button>
 			<Spacer />
 			{isError && (
-				<Notice status="error" isDismissible={false}>
-					{errorMessage}
-				</Notice>
+				<>
+					<Notice status="error" isDismissible={false}>
+						{errorMessage}
+					</Notice>
+					<Spacer />
+					<Button
+						variant="secondary"
+						href={`admin.php?page=freemius-settings#editor_settings`}
+					>
+						{__('Update Settings', 'freemius')}
+					</Button>
+					<Spacer />
+				</>
 			)}
 			<>
 				<BaseControl __nextHasNoMarginBottom>
