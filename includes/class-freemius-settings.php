@@ -37,6 +37,9 @@ class Settings {
 		// Register settings
 		\add_action( 'init', array( $this, 'register_settings' ) );
 		\add_action( 'rest_api_init', array( $this, 'register_settings' ) );
+
+		// Add plugin action links
+		\add_filter( 'plugin_action_links_freemius/freemius.php', array( $this, 'add_plugin_action_links' ) );
 	}
 
 	/**
@@ -81,6 +84,25 @@ class Settings {
 		echo '<div id="freemius-settings-root" class="wrap">';
 		echo '<div id="freemius-settings-app"></div>';
 		echo '</div>';
+	}
+
+	/**
+	 * Add plugin action links
+	 *
+	 * @param array $links The current array of links.
+	 * @return array The modified array of links.
+	 */
+	public function add_plugin_action_links( $links ) {
+		$settings_link = sprintf(
+			'<a href="%s">%s</a>',
+			\admin_url( 'options-general.php?page=freemius-settings' ),
+			__( 'Settings', 'freemius' )
+		);
+
+		// Add the settings link to the beginning of the links array
+		array_unshift( $links, $settings_link );
+
+		return $links;
 	}
 
 	/**
