@@ -62,7 +62,6 @@ const FreemiusSettings = () => {
 		settings,
 		structure,
 		isLoading,
-		saveSettings,
 		setSettings,
 		saveMessage,
 		saveMessageType,
@@ -100,7 +99,6 @@ const FreemiusSettings = () => {
 		} else {
 			newSettings[setting][key] = value;
 		}
-		console.log(newSettings);
 		setSettings(newSettings);
 	};
 
@@ -132,7 +130,6 @@ const FreemiusSettings = () => {
 
 							return (
 								<BaseControl __nextHasNoMarginBottom key={key}>
-									<pre hidden>{JSON.stringify(prop, null, 2)}</pre>
 									{prop.link && <ExternalLink href={prop.link} />}
 									{prop.enum ? (
 										<SelectControl
@@ -208,7 +205,6 @@ const FreemiusSettings = () => {
 		<>
 			<FreemiusHeader />
 			<ContentContainer>
-				<pre>{JSON.stringify(settings, null, 2)}</pre>
 				{saveMessage && (
 					<Notice
 						status={saveMessageType}

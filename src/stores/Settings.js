@@ -101,6 +101,9 @@ const actions = {
 
 				const settings = SETTINGS.reduce((acc, setting) => {
 					acc[setting] = allSettings[setting] || {};
+					if (Object.keys(acc[setting]).length === 0) {
+						acc[setting] = {};
+					}
 					return acc;
 				}, {});
 
@@ -260,45 +263,7 @@ const store = createReduxStore(SETTINGS_STORE, {
 		getSettings:
 			() =>
 			async ({ dispatch }) => {
-				dispatch.setLoading(true);
-				dispatch.setError(null);
-
-				try {
-					const [schema, allSettings] = await Promise.all([
-						apiFetch({
-							path: '/wp/v2/settings',
-							method: 'OPTIONS',
-						}),
-						apiFetch({
-							path: '/wp/v2/settings',
-						}),
-					]);
-
-					const structure = SETTINGS.reduce((acc, setting) => {
-						acc[setting] = schema.schema.properties[setting];
-						return acc;
-					}, {});
-
-					const settings = SETTINGS.reduce((acc, setting) => {
-						acc[setting] = allSettings[setting] || {};
-						if (Object.keys(acc[setting]).length === 0) {
-							acc[setting] = {};
-						}
-						return acc;
-					}, {});
-
-					dispatch.setStructure(structure);
-					dispatch.setSettings(settings);
-				} catch (error) {
-					console.error('Failed to load settings:', error);
-					dispatch.setError(error);
-					dispatch.setSaveMessage(
-						__('Failed to load settings', 'freemius'),
-						'error'
-					);
-				} finally {
-					dispatch.setLoading(false);
-				}
+				await dispatch.reloadSettings();
 			},
 	},
 });
