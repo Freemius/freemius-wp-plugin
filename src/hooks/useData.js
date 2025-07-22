@@ -34,7 +34,7 @@ const useData = (scopeData) => {
 		settings,
 		structure,
 		isLoading: isSettingsLoading,
-	} = useSettings('freemius_button');
+	} = useSettings('freemius_editor_settings');
 
 	const context = useContext(FreemiusContext);
 

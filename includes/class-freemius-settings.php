@@ -142,11 +142,11 @@ class Settings {
 		// Register API settings
 		\register_setting(
 			'freemius_settings',
-			'freemius_button',
+			'freemius_editor_settings',
 			array(
 				'type'              => 'object',
-				'label'             => __( 'Freemius Button', 'freemius' ),
-				'description'       => __( 'Define the site wide default values for the Freemius Button. You can override these values on a per-page basis.', 'freemius' ),
+				'label'             => __( 'Editor Settings', 'freemius' ),
+				'description'       => __( 'Define the site wide default values for the Freemius Editor. You can override these values on a per-page basis.', 'freemius' ),
 				'sanitize_callback' => array( $this, 'sanitize_schema' ),
 				'default'           => array(),
 				'show_in_rest'      => array(

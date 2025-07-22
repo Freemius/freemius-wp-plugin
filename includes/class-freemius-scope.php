@@ -103,7 +103,7 @@ class Scope {
 			return $block_content;
 		}
 
-		$this->scope = \get_option( 'freemius_button', array() );
+		$this->scope = \get_option( 'freemius_editor_settings', array() );
 
 		$extra = '<script type="application/json" class="freemius-scope-data">' . wp_json_encode( $this->scope ) . '</script>';
 

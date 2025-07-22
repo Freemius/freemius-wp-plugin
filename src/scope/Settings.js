@@ -41,7 +41,9 @@ const Settings = (props) => {
 		freemius_matrix,
 	} = attributes;
 
-	const { settings, structure, isLoading } = useSettings('freemius_button');
+	const { settings, structure, isLoading } = useSettings(
+		'freemius_editor_settings'
+	);
 
 	const { data, DataView, matrix } = useData();
 

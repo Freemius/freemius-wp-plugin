@@ -51,7 +51,11 @@ const TabDescription = styled.p`
 	color: #666;
 `;
 
-const SETTINGS = ['freemius_general', 'freemius_api', 'freemius_button'];
+const SETTINGS = [
+	'freemius_general',
+	'freemius_api',
+	'freemius_editor_settings',
+];
 
 const FreemiusSettings = () => {
 	const {

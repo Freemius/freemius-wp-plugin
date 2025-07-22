@@ -17,7 +17,7 @@ const useBillingCycle = (product_id) => {
 	const isLoading = false;
 	const error = null;
 
-	const { settings, structure } = useSettings('freemius_button');
+	const { settings, structure } = useSettings('freemius_editor_settings');
 
 	const defaultOptions =
 		settings?.billing_cycle ||

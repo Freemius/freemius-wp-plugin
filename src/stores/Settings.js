@@ -4,7 +4,11 @@ import { __ } from '@wordpress/i18n';
 
 const SETTINGS_STORE = 'freemius/settings';
 
-const SETTINGS = ['freemius_general', 'freemius_api', 'freemius_button'];
+const SETTINGS = [
+	'freemius_general',
+	'freemius_api',
+	'freemius_editor_settings',
+];
 
 const DEFAULT_STATE = {
 	settings: {},
@@ -102,8 +106,6 @@ const actions = {
 
 				dispatch.setStructure(structure);
 				dispatch.setSettings(settings);
-
-				alert('X');
 			} catch (error) {
 				console.error('Failed to reload settings:', error);
 				dispatch.setError(error);
@@ -282,11 +284,8 @@ const store = createReduxStore(SETTINGS_STORE, {
 						if (Object.keys(acc[setting]).length === 0) {
 							acc[setting] = {};
 						}
-						console.log('ss', acc[setting]);
 						return acc;
 					}, {});
-
-					console.log('ss', allSettings);
 
 					dispatch.setStructure(structure);
 					dispatch.setSettings(settings);

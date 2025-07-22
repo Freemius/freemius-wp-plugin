@@ -22,7 +22,7 @@ const useCurrency = (product_id) => {
 		product_id ? `products/${product_id}/plans/currencies.json` : null
 	);
 
-	const { settings, structure } = useSettings('freemius_button');
+	const { settings, structure } = useSettings('freemius_editor_settings');
 
 	const defaultOptions =
 		settings?.currency || structure?.properties?.currency?.default || null;

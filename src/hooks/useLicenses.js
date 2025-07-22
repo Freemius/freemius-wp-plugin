@@ -20,7 +20,7 @@ const useLicenses = (product_id) => {
 		error,
 	} = useApiGet(product_id ? `products/${product_id}/pricing.json` : null);
 
-	const { settings, structure } = useSettings('freemius_button');
+	const { settings, structure } = useSettings('freemius_editor_settings');
 
 	const defaultOptions =
 		settings?.licenses || structure?.properties?.licenses?.default || null;

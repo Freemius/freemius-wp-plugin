@@ -20,7 +20,7 @@ const usePlans = (product_id) => {
 		error,
 	} = useApiGet(product_id ? `products/${product_id}/pricing.json` : null);
 
-	const { settings, structure } = useSettings('freemius_button');
+	const { settings, structure } = useSettings('freemius_editor_settings');
 
 	let defaultOptions =
 		settings?.plan_id || structure?.properties?.plan_id?.default || null;
