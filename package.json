@@ -23,7 +23,7 @@
 		"@10up/block-components": "^1.19.3",
 		"@emotion/styled": "^11.14.0",
 		"@wordpress/data": "^10.26.0",
-		"@wordpress/dom-ready": "^4.26.0",
+		"@wordpress/dom-ready": "^4.27.0",
 		"@wordpress/element": "^6.26.0",
 		"@wordpress/i18n": "^5.26.0"
 	},
