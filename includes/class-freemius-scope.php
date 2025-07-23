@@ -122,11 +122,12 @@ class Scope {
 	 */
 	private function get_matrix( $scope ) {
 
+		// TODO: handling empty scope with proper error notice
 		if ( ! is_array( $scope ) ) {
 			return array();
 		}
 
-		if ( isset( $scope['product_id'] ) ) {
+		if ( ! isset( $scope['product_id'] ) ) {
 			return array();
 		}
 

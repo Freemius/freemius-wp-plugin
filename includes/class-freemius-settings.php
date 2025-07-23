@@ -161,27 +161,6 @@ class Settings {
 	 */
 	public function register_settings() {
 
-		// Register API settings
-		\register_setting(
-			'freemius_settings',
-			'freemius_editor_settings',
-			array(
-				'type'              => 'object',
-				'label'             => __( 'Editor Settings', 'freemius' ),
-				'description'       => __( 'Define the site wide default values for the Freemius Editor. You can override these values on a per-page basis.', 'freemius' ),
-				'sanitize_callback' => array( $this, 'sanitize_schema' ),
-				'default'           => array(),
-				'show_in_rest'      => array(
-					'schema' => array(
-						'type'                 => 'object',
-						'properties'           => $this->get_button_schema(),
-						'additionalProperties' => false,
-
-					),
-
-				),
-			)
-		);
 		// Register general settings
 		\register_setting(
 			'freemius_settings',
@@ -219,6 +198,28 @@ class Settings {
 						'properties'           => $this->get_api_schema(),
 						'additionalProperties' => false,
 					),
+				),
+			)
+		);
+
+		// Register API settings
+		\register_setting(
+			'freemius_settings',
+			'freemius_editor_settings',
+			array(
+				'type'              => 'object',
+				'label'             => __( 'Editor Settings', 'freemius' ),
+				'description'       => __( 'Define the site wide default values. You can override these values on a per-scope basis.', 'freemius' ),
+				'sanitize_callback' => array( $this, 'sanitize_schema' ),
+				'default'           => array(),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'                 => 'object',
+						'properties'           => $this->get_button_schema(),
+						'additionalProperties' => false,
+
+					),
+
 				),
 			)
 		);

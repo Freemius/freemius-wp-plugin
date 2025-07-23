@@ -230,8 +230,9 @@ const FreemiusSettings = () => {
 				>
 					{(tab) => <>{tab.content}</>}
 				</TabPanel>
-				<Flex justify="flex-start">
+				<Flex justify="flex-start" wrap={true}>
 					<FlexItem>
+						<Spacer />
 						<SaveButton />
 					</FlexItem>
 				</Flex>

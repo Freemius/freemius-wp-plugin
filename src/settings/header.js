@@ -25,30 +25,35 @@ const FreemiusHeader = () => {
 		<Flex className="freemius-header">
 			<FreemiusIcon />
 			<Flex justify="end" align="center">
-				<FlexItem>
-					<Button href="https://docs.freemius.com/api" target="_blank">
-						{__('API Documentation', 'freemius')}
-					</Button>
-					<Button
-						href="https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/"
-						target="_blank"
-					>
-						{__('Checkout Documentation', 'freemius')}
-					</Button>
-					<Button
-						href="https://wordpress.org/support/plugin/freemius/"
-						target="_blank"
-					>
-						{__('Get Support', 'freemius')}
-					</Button>{' '}
-					<Button
-						href="https://github.com/Freemius/freemius-wp-plugin"
-						target="_blank"
-					>
-						{__('GitHub Repo', 'freemius')}
-					</Button>
-					<SaveButton />
-				</FlexItem>
+				<Button
+					href="https://docs.freemius.com/api"
+					target="_blank"
+					variant="tertiary"
+				>
+					{__('API Documentation', 'freemius')}
+				</Button>
+				<Button
+					href="https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/"
+					target="_blank"
+					variant="ter"
+				>
+					{__('Checkout Documentation', 'freemius')}
+				</Button>
+				<Button
+					href="https://wordpress.org/support/plugin/freemius/"
+					target="_blank"
+					variant="ter"
+				>
+					{__('Get Support', 'freemius')}
+				</Button>
+				<Button
+					href="https://github.com/Freemius/freemius-wp-plugin"
+					target="_blank"
+					variant="ter"
+				>
+					{__('GitHub Repo', 'freemius')}
+				</Button>
+				<SaveButton />
 			</Flex>
 		</Flex>
 	);
