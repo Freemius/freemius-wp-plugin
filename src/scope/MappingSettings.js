@@ -7,17 +7,11 @@
 
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls, BlockControls } from '@wordpress/block-editor';
 import {
-	PanelBody,
-	ToolbarGroup,
 	TreeSelect,
-	ToolbarButton,
-	Spinner,
 	Notice,
 	BaseControl,
 	TextControl,
-	ToggleControl,
 	Button,
 	SelectControl,
 	__experimentalSpacer as Spacer,
@@ -27,23 +21,23 @@ import { useContext, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useData, useModifiers } from '../hooks';
+import { useData } from '../hooks';
 
 import { FreemiusContext } from '../context';
-import { FreemiusIcon } from '../icons';
-import { useApiGet, useMultipleApi, useMapping } from '../hooks';
+import { useMapping } from '../hooks';
 
 const MappingSettings = (props) => {
-	const { context, attributes, setAttributes, name } = props;
+	const { attributes } = props;
 
-	const { content, invalid, freemius_enabled, freemius_mapping } = attributes;
+	const { freemius_mapping } = attributes;
 
 	const { options, isLoading, setMapping, isError, errorMessage, value } =
 		useMapping(props);
 
 	const inContext = useContext(FreemiusContext);
 
-	const { data, selectScope, DataView, isFree, isInvalid } = useData();
+	const { data, selectScope, DataView, isFree, isInvalid, isApiAvailable } =
+		useData();
 
 	useEffect(() => {
 		if (isLoading) {
@@ -75,17 +69,29 @@ const MappingSettings = (props) => {
 				{__('Select Scope', 'freemius')}
 			</Button>
 			<Spacer />
+			{!isApiAvailable && (
+				<>
+					<Notice status="warning" isDismissible={false}>
+						{__(
+							'Freemius API is not configured. Please add your API token in the Freemius settings.',
+							'freemius'
+						)}
+					</Notice>
+					<Spacer />
+				</>
+			)}
 			{isError && (
 				<>
 					<Notice status="error" isDismissible={false}>
 						{errorMessage}
 					</Notice>
 					<Spacer />
+
 					<Button
 						variant="secondary"
 						href={`admin.php?page=freemius-settings#editor_settings`}
 					>
-						{__('Update Settings', 'freemius')}
+						{__('Update your Settings', 'freemius')}
 					</Button>
 					<Spacer />
 				</>

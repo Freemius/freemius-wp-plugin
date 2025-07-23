@@ -64,6 +64,7 @@ export function useApi(endpoint, options = {}) {
 		clearError,
 		clearCache,
 		clearServerCache,
+		resetApiHealth,
 	} = useDispatch(API_STORE);
 
 	const cacheKey = useMemo(
@@ -76,12 +77,16 @@ export function useApi(endpoint, options = {}) {
 		error: storeError,
 		cachedData,
 		isAnyLoading,
+		apiHealth,
+		isApiAvailable,
 	} = useSelect(
 		(select) => ({
 			isLoading: select(API_STORE).isLoading(cacheKey),
 			error: select(API_STORE).getError(),
 			cachedData: select(API_STORE).getCachedData(cacheKey),
 			isAnyLoading: select(API_STORE).isAnyLoading(),
+			apiHealth: select(API_STORE).getApiHealth(),
+			isApiAvailable: select(API_STORE).isApiAvailable(),
 		}),
 		[cacheKey]
 	);
@@ -106,6 +111,22 @@ export function useApi(endpoint, options = {}) {
 	const refetch = useCallback(
 		async (forceRefresh = false, isRetryAttempt = false) => {
 			if (!enabled || !endpoint) return;
+
+			// Check if API is blocked and return early if so
+			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+				const blockError = new Error(
+					'API is temporarily blocked due to consecutive failures'
+				);
+				blockError.code = 'API_BLOCKED';
+				setLocalError(blockError);
+				setHasErrored(true);
+				setIsRetrying(false);
+
+				if (onError) {
+					onError(blockError);
+				}
+				return;
+			}
 
 			// Don't retry if we've exceeded max retries and this is a retry attempt
 			if (isRetryAttempt && retryCount >= maxRetries) {
@@ -137,7 +158,16 @@ export function useApi(endpoint, options = {}) {
 				setLocalError(err);
 				setHasErrored(true);
 
-				// Handle retry logic
+				// Don't retry if API is blocked
+				if (err.code === 'API_BLOCKED') {
+					setIsRetrying(false);
+					if (onError) {
+						onError(err);
+					}
+					return;
+				}
+
+				// Handle retry logic for other errors
 				if (isRetryAttempt) {
 					setRetryCount((prev) => prev + 1);
 
@@ -158,7 +188,10 @@ export function useApi(endpoint, options = {}) {
 					onError(err);
 				}
 
-				throw err;
+				// Don't throw for API_BLOCKED to prevent uncaught promise rejections
+				if (err.code !== 'API_BLOCKED') {
+					throw err;
+				}
 			}
 		},
 		[
@@ -172,6 +205,7 @@ export function useApi(endpoint, options = {}) {
 			retryCount,
 			retryDelay,
 			resetErrorState,
+			apiHealth,
 		]
 	);
 
@@ -285,18 +319,33 @@ export function useApi(endpoint, options = {}) {
 
 	// Immediate fetch on mount
 	useEffect(() => {
-		if (immediate && enabled && endpoint && !data && !hasErrored) {
+		if (
+			immediate &&
+			enabled &&
+			endpoint &&
+			!data &&
+			!hasErrored &&
+			isApiAvailable
+		) {
 			externalRefetch();
 		}
-	}, [immediate, enabled, endpoint, data, hasErrored, externalRefetch]);
+	}, [
+		immediate,
+		enabled,
+		endpoint,
+		data,
+		hasErrored,
+		isApiAvailable,
+		externalRefetch,
+	]);
 
 	// Auto-refetch interval
 	useEffect(() => {
 		if (!refetchInterval || !enabled || !endpoint) return;
 
 		const interval = setInterval(() => {
-			// Only refetch if not loading, not retrying, and no persistent errors
-			if (!isLoading && !isRetrying && !hasErrored) {
+			// Only refetch if not loading, not retrying, no persistent errors, and API is available
+			if (!isLoading && !isRetrying && !hasErrored && isApiAvailable) {
 				externalRefetch(true); // Force refresh on interval
 			}
 		}, refetchInterval);
@@ -309,6 +358,7 @@ export function useApi(endpoint, options = {}) {
 		isLoading,
 		isRetrying,
 		hasErrored,
+		isApiAvailable,
 		externalRefetch,
 	]);
 
@@ -323,6 +373,8 @@ export function useApi(endpoint, options = {}) {
 		retryCount,
 		hasErrored,
 		isRetrying,
+		isApiAvailable,
+		apiHealth,
 
 		// Actions
 		refetch: externalRefetch,
@@ -332,6 +384,7 @@ export function useApi(endpoint, options = {}) {
 		clearError: resetErrorState,
 		clearCache,
 		clearServerCache,
+		resetApiHealth,
 
 		// Utilities
 		cacheKey,

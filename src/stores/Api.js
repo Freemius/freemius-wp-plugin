@@ -10,6 +10,12 @@ const DEFAULT_STATE = {
 	error: null,
 	lastError: null,
 	ongoingRequests: {}, // Track ongoing requests to prevent duplicates
+	apiHealth: {
+		isHealthy: true,
+		lastFailureTime: null,
+		consecutiveFailures: 0,
+		blockUntil: null, // Block API requests until this timestamp
+	},
 };
 
 const actions = {
@@ -63,6 +69,24 @@ const actions = {
 		};
 	},
 
+	recordApiFailure() {
+		return {
+			type: 'RECORD_API_FAILURE',
+		};
+	},
+
+	recordApiSuccess() {
+		return {
+			type: 'RECORD_API_SUCCESS',
+		};
+	},
+
+	resetApiHealth() {
+		return {
+			type: 'RESET_API_HEALTH',
+		};
+	},
+
 	/**
 	 * Fetch data from Freemius API proxy
 	 *
@@ -73,6 +97,16 @@ const actions = {
 	fetchFromApi(endpoint, params = {}, forceRefresh = false) {
 		return async ({ dispatch, select }) => {
 			const cacheKey = generateCacheKey(endpoint, params);
+
+			// Check API health - if blocked, reject immediately
+			const apiHealth = select.getApiHealth();
+			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+				const error = new Error(
+					'API is temporarily blocked due to consecutive failures'
+				);
+				error.code = 'API_BLOCKED';
+				throw error;
+			}
 
 			// Return cached data if available and not forcing refresh
 			if (!forceRefresh) {
@@ -107,10 +141,12 @@ const actions = {
 					});
 
 					dispatch.setCacheData(cacheKey, response);
+					dispatch.recordApiSuccess(); // Record successful API call
 					return response;
 				} catch (error) {
 					console.error('Freemius API fetch error:', error);
 					dispatch.setError(error);
+					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
 					dispatch.setLoading(cacheKey, false);
@@ -135,6 +171,16 @@ const actions = {
 		return async ({ dispatch, select }) => {
 			const requestId = generateCacheKey(endpoint, data);
 
+			// Check API health - if blocked, reject immediately
+			const apiHealth = select.getApiHealth();
+			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+				const error = new Error(
+					'API is temporarily blocked due to consecutive failures'
+				);
+				error.code = 'API_BLOCKED';
+				throw error;
+			}
+
 			// Check if there's already an ongoing request for this operation
 			const ongoingRequest = select.getOngoingRequest(requestId);
 			if (ongoingRequest) {
@@ -156,11 +202,13 @@ const actions = {
 
 					// Clear cache after successful write operation
 					dispatch.clearCache();
+					dispatch.recordApiSuccess(); // Record successful API call
 
 					return response;
 				} catch (error) {
 					console.error('Freemius API post error:', error);
 					dispatch.setError(error);
+					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
 					dispatch.setLoading(requestId, false);
@@ -185,6 +233,16 @@ const actions = {
 		return async ({ dispatch, select }) => {
 			const requestId = generateCacheKey(endpoint, data);
 
+			// Check API health - if blocked, reject immediately
+			const apiHealth = select.getApiHealth();
+			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+				const error = new Error(
+					'API is temporarily blocked due to consecutive failures'
+				);
+				error.code = 'API_BLOCKED';
+				throw error;
+			}
+
 			// Check if there's already an ongoing request for this operation
 			const ongoingRequest = select.getOngoingRequest(requestId);
 			if (ongoingRequest) {
@@ -206,11 +264,13 @@ const actions = {
 
 					// Clear cache after successful write operation
 					dispatch.clearCache();
+					dispatch.recordApiSuccess(); // Record successful API call
 
 					return response;
 				} catch (error) {
 					console.error('Freemius API put error:', error);
 					dispatch.setError(error);
+					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
 					dispatch.setLoading(requestId, false);
@@ -234,6 +294,16 @@ const actions = {
 		return async ({ dispatch, select }) => {
 			const requestId = endpoint;
 
+			// Check API health - if blocked, reject immediately
+			const apiHealth = select.getApiHealth();
+			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+				const error = new Error(
+					'API is temporarily blocked due to consecutive failures'
+				);
+				error.code = 'API_BLOCKED';
+				throw error;
+			}
+
 			// Check if there's already an ongoing request for this operation
 			const ongoingRequest = select.getOngoingRequest(requestId);
 			if (ongoingRequest) {
@@ -254,11 +324,13 @@ const actions = {
 
 					// Clear cache after successful write operation
 					dispatch.clearCache();
+					dispatch.recordApiSuccess(); // Record successful API call
 
 					return response;
 				} catch (error) {
 					console.error('Freemius API delete error:', error);
 					dispatch.setError(error);
+					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
 					dispatch.setLoading(requestId, false);
@@ -360,6 +432,44 @@ const store = createReduxStore(API_STORE, {
 					ongoingRequests: newOngoingRequests,
 				};
 
+			case 'RECORD_API_FAILURE':
+				return {
+					...state,
+					apiHealth: {
+						...state.apiHealth,
+						isHealthy: false,
+						lastFailureTime: Date.now(),
+						consecutiveFailures: state.apiHealth.consecutiveFailures + 1,
+						blockUntil: state.apiHealth.blockUntil
+							? state.apiHealth.blockUntil
+							: Date.now() + 30000, // Block for 30 seconds
+					},
+				};
+
+			case 'RECORD_API_SUCCESS':
+				return {
+					...state,
+					apiHealth: {
+						...state.apiHealth,
+						isHealthy: true,
+						consecutiveFailures: 0,
+						lastFailureTime: null,
+						blockUntil: null,
+					},
+				};
+
+			case 'RESET_API_HEALTH':
+				return {
+					...state,
+					apiHealth: {
+						...state.apiHealth,
+						isHealthy: true,
+						consecutiveFailures: 0,
+						lastFailureTime: null,
+						blockUntil: null,
+					},
+				};
+
 			default:
 				return state;
 		}
@@ -458,6 +568,37 @@ const store = createReduxStore(API_STORE, {
 		 */
 		getOngoingRequest(state, cacheKey) {
 			return state.ongoingRequests[cacheKey] || null;
+		},
+
+		/**
+		 * Get API health status
+		 *
+		 * @param {Object} state Store state
+		 * @return {Object} API health status
+		 */
+		getApiHealth(state) {
+			return state.apiHealth;
+		},
+
+		/**
+		 * Check if API is currently available
+		 *
+		 * @param {Object} state Store state
+		 * @return {boolean} Whether API is available
+		 */
+		isApiAvailable(state) {
+			const { blockUntil } = state.apiHealth;
+			return !blockUntil || Date.now() >= blockUntil;
+		},
+
+		/**
+		 * Check if any request is loading
+		 *
+		 * @param {Object} state Store state
+		 * @return {boolean} Whether any request is loading
+		 */
+		isAnyLoading(state) {
+			return Object.values(state.isLoading).some(Boolean);
 		},
 	},
 });

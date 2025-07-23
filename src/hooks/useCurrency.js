@@ -18,6 +18,7 @@ const useCurrency = (product_id) => {
 		data: availableCurrencies,
 		isLoading,
 		error,
+		isApiAvailable,
 	} = useApiGet(
 		product_id ? `products/${product_id}/plans/currencies.json` : null
 	);
@@ -48,6 +49,7 @@ const useCurrency = (product_id) => {
 		defaultOptions,
 		isLoading,
 		error,
+		isApiAvailable,
 	};
 };
 

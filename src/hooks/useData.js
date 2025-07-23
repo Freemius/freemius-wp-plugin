@@ -60,7 +60,11 @@ const useData = (scopeData) => {
 		...contextData,
 	};
 
-	const { plans, isLoading: isPlansLoading } = usePlans(data?.product_id);
+	const {
+		plans,
+		isLoading: isPlansLoading,
+		isApiAvailable,
+	} = usePlans(data?.product_id);
 
 	const currentPlan = useMemo(() => {
 		return plans?.find((plan) => plan.id == data?.plan_id);
@@ -155,6 +159,7 @@ const useData = (scopeData) => {
 		data,
 		settings,
 		isLoading: isSettingsLoading || isPlansLoading,
+		isApiAvailable,
 		//metaData,
 		contextData,
 		clientId,
