@@ -73,10 +73,21 @@ const useData = (scopeData) => {
 		return plans?.find((plan) => plan.pricing);
 	}, [plans]);
 
-	// add the default plan
-	const data = defaultPlan
-		? { plan_id: +defaultPlan.id, ...dataWithoutWithDefaultPlan }
-		: dataWithoutWithDefaultPlan;
+	const data = useMemo(() => {
+		let data = { ...dataWithoutWithDefaultPlan };
+
+		// add the default plan if no plan_id is set
+		if (defaultPlan && !data.plan_id) {
+			data.plan_id = +defaultPlan.id;
+		}
+
+		// special case for licenses
+		if (data?.licenses === 0) {
+			data.licenses = null;
+		}
+
+		return data;
+	}, [defaultPlan, dataWithoutWithDefaultPlan]);
 
 	const currentPlan = useMemo(() => {
 		return plans?.find((plan) => plan.id == data?.plan_id);
@@ -173,7 +184,9 @@ const useData = (scopeData) => {
 						<Item key={key}>
 							<Flex>
 								<FlexBlock>{key}</FlexBlock>
-								<FlexBlock>{value}</FlexBlock>
+								<FlexBlock>
+									{value === null ? <i>{'null'}</i> : <span>{value}</span>}
+								</FlexBlock>
 							</Flex>
 						</Item>
 					))}

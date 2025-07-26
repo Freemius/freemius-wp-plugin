@@ -67,6 +67,9 @@ function getMappingContent(scopeData, mappingData) {
 		case 'billing_cycle':
 			content = md.labels?.[sd.billing_cycle] ?? sd.billing_cycle;
 			break;
+		case 'licenses':
+			content = md.labels?.[sd.licenses || 'unlimited'] ?? sd.licenses;
+			break;
 		case 'price':
 			content =
 				matrix[sd.plan_id]?.pricing?.[sd.currency]?.[sd.billing_cycle]?.[

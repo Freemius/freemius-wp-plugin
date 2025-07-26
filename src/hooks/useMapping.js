@@ -11,7 +11,7 @@ import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useData, usePlans } from './';
+import { useData, usePlans, useLicenses } from './';
 import { CURRENCIES } from '../constants/currencies';
 
 const useMapping = (props) => {
@@ -19,25 +19,40 @@ const useMapping = (props) => {
 
 	const { freemius_mapping, content } = attributes;
 
+	const { data, isLoading } = useData();
+
+	const { licenses, isLoading: isLicensesLoading } = useLicenses(
+		data?.product_id
+	);
+
+	const defaultLabels = useMemo(() => {
+		return {
+			licenses: licenses.reduce((acc, license) => {
+				const key = license || 0; // 0 is unlimited
+				acc[key] = license || __('Unlimited', 'freemius');
+				return acc;
+			}, {}),
+			billing_cycle: {
+				monthly: __('Monthly', 'freemius'),
+				annual: __('Annually', 'freemius'),
+				lifetime: __('Lifetime', 'freemius'),
+			},
+		};
+	}, [licenses]);
+
 	// defined default options
 	const options = {
 		prefix: '',
 		suffix: '',
 		currency_symbol: 'show',
-		labels: {
-			monthly: __('Monthly', 'freemius'),
-			annual: __('Annually', 'freemius'),
-			lifetime: __('Lifetime', 'freemius'),
-		},
 		format_price: true,
 		show_currency: true,
+		labels: defaultLabels[freemius_mapping?.field] || {},
 		...freemius_mapping,
 	};
 
-	const { data, isLoading } = useData();
-
 	const setMapping = (key, value) => {
-		setAttributes({
+		let newMapping = {
 			freemius_mapping: {
 				...freemius_mapping,
 				[key]:
@@ -45,7 +60,12 @@ const useMapping = (props) => {
 						? { ...freemius_mapping?.[key], ...value }
 						: value,
 			},
-		});
+		};
+		// update labels when field is changed
+		if (key === 'field') {
+			newMapping.freemius_mapping.labels = defaultLabels[value] || undefined;
+		}
+		setAttributes(newMapping);
 	};
 
 	const value = getMappingValue(options);
@@ -76,6 +96,8 @@ const useMapping = (props) => {
 		value,
 		options,
 		setMapping,
+		defaultLabels,
+		isLoading: isLicensesLoading || isLoading,
 		isError,
 		errorMessage: errorMessage.join(', '),
 	};
@@ -134,6 +156,8 @@ const getMappingValue = (options) => {
 			}
 		} else if (options.field === 'billing_cycle') {
 			content = options.labels[mappingData.billing_cycle];
+		} else if (options.field === 'licenses') {
+			content = options.labels[mappingData.licenses || 0]; // 0 is unlimited
 		}
 
 		content = options.prefix + content + options.suffix;
@@ -146,22 +170,6 @@ const getMappingValue = (options) => {
 	}
 
 	return newContent;
-};
-
-const mapCurrentCurrencySymbol = (content, currency) => {
-	const currencySymbol = CURRENCIES[currency]?.symbol;
-	const position = CURRENCIES[currency]?.position;
-
-	return position === 'left'
-		? currencySymbol + content
-		: content + currencySymbol;
-};
-
-const formatPrice = (price) => {
-	return new Intl.NumberFormat('de-DE', {
-		style: 'currency',
-		currency: 'EUR',
-	}).format(price);
 };
 
 export default useMapping;

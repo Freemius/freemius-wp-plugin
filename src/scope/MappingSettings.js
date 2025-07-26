@@ -31,8 +31,15 @@ const MappingSettings = (props) => {
 
 	const { freemius_mapping } = attributes;
 
-	const { options, isLoading, setMapping, isError, errorMessage, value } =
-		useMapping(props);
+	const {
+		options,
+		isLoading,
+		setMapping,
+		setLabels,
+		isError,
+		errorMessage,
+		value,
+	} = useMapping(props);
 
 	const inContext = useContext(FreemiusContext);
 
@@ -46,6 +53,9 @@ const MappingSettings = (props) => {
 
 		// make sure the labels made it to the frontend
 		if (options.field === 'billing_cycle' && !freemius_mapping?.labels) {
+			setMapping('labels', options.labels);
+		}
+		if (options.field === 'licenses' && !freemius_mapping?.labels) {
 			setMapping('labels', options.labels);
 		}
 	}, [options.labels, options.field, isLoading, freemius_mapping]);
@@ -164,6 +174,25 @@ const MappingSettings = (props) => {
 							</BaseControl>
 						)}
 						{options.field === 'billing_cycle' && (
+							<BaseControl __nextHasNoMarginBottom>
+								{Object.entries(options.labels).map(([key, value], i) => (
+									<TextControl
+										key={i}
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={sprintf(__('Label for %s', 'freemius'), key)}
+										value={value}
+										onChange={(value) => {
+											setMapping('labels', {
+												...options.labels,
+												[key]: value,
+											});
+										}}
+									/>
+								))}
+							</BaseControl>
+						)}
+						{options.field === 'licenses' && (
 							<BaseControl __nextHasNoMarginBottom>
 								{Object.entries(options.labels).map(([key, value], i) => (
 									<TextControl

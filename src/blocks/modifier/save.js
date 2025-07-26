@@ -19,14 +19,14 @@ import { ModifierButtons } from './ModifierButtons';
 export default function Save(props) {
 	const { attributes } = props;
 
-	const { type, current = '' } = attributes;
+	const { type, current } = attributes;
 
 	const blockProps = useBlockProps.save({
 		className: classnames({}, ''),
 		'data-wp-interactive': 'freemius/modifier',
 		'data-wp-init': 'callbacks.init',
 		'data-wp-context': JSON.stringify({
-			current: current,
+			current: current === null ? 'null' : current,
 			type: type,
 		}),
 	});

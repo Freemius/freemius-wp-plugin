@@ -47,7 +47,7 @@ const useLicenses = (product_id) => {
 		return licenses.map((option) => {
 			return {
 				name: option ? `${option}` : __('Unlimited', 'freemius'),
-				id: option ? option : null,
+				id: option ? option : 0, // 0 is unlimited
 			};
 		});
 	}, [licenses]);

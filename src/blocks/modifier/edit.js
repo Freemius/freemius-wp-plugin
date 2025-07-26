@@ -94,20 +94,18 @@ export default function Edit(props) {
 	};
 
 	useEffect(() => {
-		if (isLoading || isLoadingModifiers || !contextWithModifications[type])
+		if (
+			isLoading ||
+			isLoadingModifiers ||
+			contextWithModifications[type] === undefined
+		)
 			return;
-		const newCurrent = (
-			contextWithModifications[type] || defaultOptions
-		).toString();
+		const newCurrent = contextWithModifications[type].toString();
+
 		if (current !== newCurrent) {
 			setAttributes({ current: newCurrent });
 		}
-	}, [
-		contextWithModifications[type],
-		defaultOptions,
-		isLoading,
-		isLoadingModifiers,
-	]);
+	}, [contextWithModifications[type], isLoading, isLoadingModifiers]);
 
 	// unset modification if it's the same as the one from the scope
 	const changeScope = (property, value) => {
@@ -225,8 +223,6 @@ export default function Edit(props) {
 									<ModifierToggles {...props} options={allOptions} />
 								</BaseControl>
 							)}
-							<pre>{JSON.stringify(attributes, null, 2)}</pre>
-							<pre>{JSON.stringify(scopeData, null, 2)}</pre>
 						</>
 					)}
 				</PanelBody>
