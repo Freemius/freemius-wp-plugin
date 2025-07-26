@@ -167,13 +167,6 @@ export default function Edit(props) {
 		};
 	}, []);
 
-	// nothing is disabled if type is not set
-	// useEffect(() => {
-	// 	if (!type) {
-	// 		setAttributes({ disabled: undefined });
-	// 	}
-	// }, [type]);
-
 	const blockProps = useBlockProps({
 		style: {},
 		className: classnames('modifier', {

@@ -44,6 +44,7 @@ const MappingSettings = (props) => {
 			return;
 		}
 
+		// make sure the labels made it to the frontend
 		if (options.field === 'billing_cycle' && !freemius_mapping?.labels) {
 			setMapping('labels', options.labels);
 		}

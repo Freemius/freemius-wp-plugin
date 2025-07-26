@@ -311,7 +311,7 @@ class Api {
 				}
 			}
 
-			// use our dummy token for playground
+			// check for dummy token for playground
 			if ( $token === $this->dummy_token ) {
 				$response = $this->get_dummy_response( $endpoint );
 			} else {
@@ -345,7 +345,6 @@ class Api {
 				$error_message = isset( $decoded_response['error']['message'] )
 					? $decoded_response['error']['message']
 					: __( 'Unknown Freemius API error.', 'freemius-button' );
-				// error_log( print_r( $error_message, true ) );
 				return new \WP_Error(
 					'freemius_api_error',
 					$error_message,
