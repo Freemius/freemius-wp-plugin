@@ -34,7 +34,7 @@ const useData = (scopeData) => {
 		settings,
 		structure,
 		isLoading: isSettingsLoading,
-	} = useSettings('freemius_editor_settings');
+	} = useSettings('freemius_defaults');
 
 	const context = useContext(FreemiusContext);
 

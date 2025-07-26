@@ -4,11 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 const SETTINGS_STORE = 'freemius/settings';
 
-const SETTINGS = [
-	'freemius_general',
-	'freemius_api',
-	'freemius_editor_settings',
-];
+const SETTINGS = ['freemius_settings', 'freemius_defaults'];
 
 const DEFAULT_STATE = {
 	settings: {},

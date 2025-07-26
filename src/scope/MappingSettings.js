@@ -89,7 +89,7 @@ const MappingSettings = (props) => {
 
 					<Button
 						variant="secondary"
-						href={`admin.php?page=freemius-settings#editor_settings`}
+						href={`admin.php?page=freemius-settings#defaults`}
 					>
 						{__('Update your Settings', 'freemius')}
 					</Button>

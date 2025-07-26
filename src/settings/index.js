@@ -51,11 +51,7 @@ const TabDescription = styled.p`
 	color: #666;
 `;
 
-const SETTINGS = [
-	'freemius_general',
-	'freemius_api',
-	'freemius_editor_settings',
-];
+const SETTINGS = ['freemius_settings', 'freemius_defaults'];
 
 const FreemiusSettings = () => {
 	const {
@@ -68,7 +64,7 @@ const FreemiusSettings = () => {
 	} = useSettings();
 
 	const [activeTab, setActiveTab] = useState(
-		window.location.hash.replace('#', '') || 'general'
+		window.location.hash.replace('#', '') || 'settings'
 	);
 
 	const getValueFor = (setting, key) => {

@@ -164,7 +164,7 @@ class Settings {
 		// Register general settings
 		\register_setting(
 			'freemius_settings',
-			'freemius_general',
+			'freemius_settings',
 			array(
 				'type'              => 'object',
 				'label'             => __( 'General Settings', 'freemius' ),
@@ -185,27 +185,7 @@ class Settings {
 		// Register API settings
 		\register_setting(
 			'freemius_settings',
-			'freemius_api',
-			array(
-				'type'              => 'object',
-				'label'             => __( 'API Settings', 'freemius' ),
-				'description'       => __( 'API settings for the Freemius plugin', 'freemius' ),
-				'sanitize_callback' => array( $this, 'sanitize_settings' ),
-				'default'           => array(),
-				'show_in_rest'      => array(
-					'schema' => array(
-						'type'                 => 'object',
-						'properties'           => $this->get_api_schema(),
-						'additionalProperties' => false,
-					),
-				),
-			)
-		);
-
-		// Register API settings
-		\register_setting(
-			'freemius_settings',
-			'freemius_editor_settings',
+			'freemius_defaults',
 			array(
 				'type'              => 'object',
 				'label'             => __( 'Editor Settings', 'freemius' ),
