@@ -45,6 +45,14 @@ class Api {
 	 */
 	private $api_base_url = 'https://api.freemius.com/v1';
 
+
+	/**
+	 * Dummy token for playground
+	 *
+	 * @var string
+	 */
+	private $dummy_token = '1234567890';
+
 	/**
 	 * Constructor
 	 */
@@ -154,7 +162,7 @@ class Api {
 			return $this->api_settings;
 		}
 
-		$this->api_settings = \get_option( 'freemius_api', array() );
+		$this->api_settings = \get_option( 'freemius_settings', array() );
 
 		if ( empty( $this->api_settings['token'] ) ) {
 			return null;
@@ -303,8 +311,12 @@ class Api {
 				}
 			}
 
-			// Make the HTTP request.
-			$response = wp_remote_request( $url, $request_args );
+			// use our dummy token for playground
+			if ( $token === $this->dummy_token ) {
+				$response = $this->get_dummy_response( $endpoint );
+			} else {
+				$response = wp_remote_request( $url, $request_args );
+			}
 
 			if ( is_wp_error( $response ) ) {
 				return new \WP_Error(
@@ -369,6 +381,7 @@ class Api {
 			'method'   => $method,
 			'endpoint' => $endpoint,
 			'data'     => $data,
+			'settings' => $this->get_api_settings(), // include settings to invalidate cache when settings change
 			'seed'     => 1234,  // artificially change cache invalidation.
 		);
 
@@ -409,6 +422,40 @@ class Api {
 		return new \WP_REST_Response(
 			array( 'message' => __( 'Cache cleared successfully.', 'freemius-button' ) ),
 			200
+		);
+	}
+
+
+	/**
+	 * This is used to do not make an API request to the Freemius API but use dummy data instead.
+	 * Intended to be used on the playground not not expose any token.
+	 *
+	 * @param bool|array $value Filtered value, or false to proceed.
+	 * @param array      $args HTTP request arguments.
+	 * @param string     $url The request URL.
+	 * @return bool|array Replaced value, or false to proceed.
+	 */
+	private function get_dummy_response( string $endpoint ) {
+
+		include_once __DIR__ . '/dummy-response.php';
+
+		if ( substr( $endpoint, -strlen( '/currencies.json' ) ) === '/currencies.json' ) {
+			$body = $currencies;
+		}
+
+		if ( substr( $endpoint, -strlen( '/pricing.json' ) ) === '/pricing.json' ) {
+			$body = $pricing;
+		}
+
+		return array(
+			'response'           => array(
+				'code'    => 200,
+				'message' => 'OK',
+			),
+			'body'               => $body,
+			'headers'            => array(),
+			'cookies'            => array(),
+			'http_response_code' => 200,
 		);
 	}
 }
