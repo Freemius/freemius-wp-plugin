@@ -15,13 +15,15 @@ import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	Button,
 	__experimentalSpacer as Spacer,
+	Notice,
+	TextControl,
 } from '@wordpress/components';
-import { useContext, useEffect } from '@wordpress/element';
+import { useContext, useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import EnableCheckbox from '../util/EnableCheckbox';
+import EnableCheckbox from './EnableCheckbox';
 import { FreemiusContext } from '../context';
 import { useSettings, useData } from '../hooks';
 import Property from './Property';
@@ -45,15 +47,7 @@ const Settings = (props) => {
 		'freemius_editor_settings'
 	);
 
-	const { data, DataView, matrix } = useData();
-
-	const fromParent = useContext(FreemiusContext);
-
-	useEffect(() => {
-		if (matrix !== freemius_matrix) {
-			//setAttributes({ freemius_matrix: matrix });
-		}
-	}, [matrix, fromParent]);
+	const { data, DataView, errorMessage } = useData();
 
 	if (isLoading || !structure) {
 		return (
@@ -68,11 +62,9 @@ const Settings = (props) => {
 	};
 
 	const onChangeHandler = (key, val, defaultValue) => {
-		let newValue;
+		let newValue = { ...freemius };
 
-		newValue = { ...freemius };
-
-		if (defaultValue === val || val === '' || val === undefined) {
+		if (defaultValue === val || val === undefined) {
 			delete newValue[key];
 		} else {
 			newValue[key] = val;
@@ -94,11 +86,14 @@ const Settings = (props) => {
 		return data?.[key] || getValueFor(key);
 	};
 
+	const [test, setTest] = useState('');
+
 	return (
 		<ToolsPanel
 			className={'freemius-button-scope-settings'}
 			resetAll={() => resetAll()}
 			label={__('Freemius', 'freemius')}
+			shouldRenderPlaceholderItems={true}
 			dropdownMenuProps={{
 				popoverProps: {
 					placement: 'left-start',
@@ -110,8 +105,16 @@ const Settings = (props) => {
 				<EnableCheckbox
 					label={
 						props.name == 'core/button'
-							? __('Enable Checkout for this button', 'freemius')
-							: __('Enable Scope', 'freemius')
+							? __('Enable Freemius Checkout', 'freemius')
+							: __('Enable Freemius', 'freemius')
+					}
+					help={
+						props.name == 'core/button'
+							? __(
+									'Open a Freemius Checkout when the button is clicked.',
+									'freemius'
+							  )
+							: __('Enable Freemius for this area.', 'freemius')
 					}
 					{...props}
 				/>
@@ -124,22 +127,16 @@ const Settings = (props) => {
 					</Button>
 				)}
 				<Spacer />
+				{errorMessage && (
+					<Notice status="error" isDismissible={false}>
+						{errorMessage}
+					</Notice>
+				)}
 			</PanelDescription>
 
 			{freemius_enabled && (
 				<>
 					{name == 'core/button' && <ButtonSettings {...props} />}
-					<ToolsPanelItem
-						className="freemius-button-scope"
-						hasValue={() => {
-							return true;
-						}}
-						label={'Reset Scope'}
-						isShownByDefault={true}
-					>
-						<DataView />
-					</ToolsPanelItem>
-
 					{Object.entries(structure.properties).map(([key, item]) => {
 						const value = getValueFor(key);
 						const placeholder = getPlaceholderFor(key);
@@ -166,6 +163,15 @@ const Settings = (props) => {
 							/>
 						);
 					})}
+					<ToolsPanelItem
+						className="freemius-button-scope"
+						hasValue={() => {
+							return true;
+						}}
+						label={''}
+						//onDeselect={() => onChangeHandler(undefined)}
+						ShownByDefault={true}
+					></ToolsPanelItem>
 				</>
 			)}
 		</ToolsPanel>

@@ -60,20 +60,18 @@ const Property = (props) => {
 	}
 
 	const onChangeHandler = (val) => {
-		if (onChange) {
-			if (val === '') {
-				onChange(undefined);
-				return;
-			}
+		if (val === '' || val === undefined) {
+			onChange(undefined);
+			return;
+		}
 
-			switch (type) {
-				case 'integer':
-				case 'number':
-					onChange(parseInt(val));
-					break;
-				default:
-					onChange(val);
-			}
+		switch (type) {
+			case 'integer':
+			case 'number':
+				onChange(parseInt(val));
+				break;
+			default:
+				onChange(val);
 		}
 	};
 
@@ -81,11 +79,11 @@ const Property = (props) => {
 		<ToolsPanelItem
 			className="freemius-button-scope"
 			hasValue={() => {
-				return value != undefined;
+				return value !== undefined;
 			}}
 			label={label}
 			onDeselect={() => onChangeHandler(undefined)}
-			isShownByDefault={(false && isRequired) || inherited}
+			isShownByDefault={isRequired}
 		>
 			<BaseControl __nextHasNoMarginBottom help={overwrite}>
 				<PropertyInputField

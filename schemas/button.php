@@ -26,7 +26,7 @@ return array(
 		'label'            => __( 'Public Key', 'freemius' ),
 		'type'             => 'string',
 		'default'          => '',
-		'description'      => __( 'Require product public key.', 'freemius' ),
+		'description'      => __( 'Required product public key.', 'freemius' ),
 		'isRequired'       => true,
 		'isShownByDefault' => true,
 	),
@@ -218,7 +218,7 @@ return array(
 		'code'        => true,
 		'default'     => null,
 		'description' => __(
-			'A callback handler that will execute once a user closes the checkout by clicking the close icon. This handler only executes when the checkout is running in a dialog mode.',
+			'A callback handler that will execute once a user closes the checkout by clicking the close icon. This handler only executes when the checkout is running in a dialog mode. You can use `data` in your code.',
 			'freemius'
 		),
 	),
@@ -228,7 +228,7 @@ return array(
 		'code'        => true,
 		'default'     => null,
 		'description' => __(
-			'An after successful purchase/subscription completion callback handler.',
+			'An after successful purchase/subscription completion callback handler. You can use `data` in your code.',
 			'freemius'
 		),
 	),
@@ -238,7 +238,7 @@ return array(
 		'code'        => true,
 		'default'     => null,
 		'description' => __(
-			'An optional callback handler, similar to purchaseCompleted. The main difference is that this callback will only execute after the user clicks the “Got It”” button that appears in the after purchase screen as a declaration that they successfully received the after purchase email. This callback is obsolete when the checkout is running in a dashboard mode.”',
+			'An optional callback handler, similar to purchaseCompleted. The main difference is that this callback will only execute after the user clicks the “Got It”” button that appears in the after purchase screen as a declaration that they successfully received the after purchase email. This callback is obsolete when the checkout is running in a dashboard mode. You can use `data` in your code.',
 			'freemius'
 		),
 	),
@@ -248,7 +248,7 @@ return array(
 		'code'        => true,
 		'default'     => null,
 		'description' => __(
-			'An optional callback handler for advanced tracking, which will be called on multiple checkout events such as updates in the currency, billing cycle, licenses #, etc.',
+			'An optional callback handler for advanced tracking, which will be called on multiple checkout events such as updates in the currency, billing cycle, licenses #, etc. You can use `data` and `event` in your code.',
 			'freemius'
 		),
 	),

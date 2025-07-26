@@ -8,7 +8,6 @@ import {
 	CheckboxControl,
 	ExternalLink,
 	TextareaControl,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalNumberControl as NumberControl,
 	TreeSelect,
 	__experimentalHStack as HStack,
@@ -20,7 +19,7 @@ import { useState, useRef, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useData, useApiGet, usePlans } from '../hooks';
+import { useData, usePlans } from '../hooks';
 
 const PropertyInputField = (properties) => {
 	const {
@@ -28,12 +27,8 @@ const PropertyInputField = (properties) => {
 		help,
 		type,
 		link,
-		isDeprecated,
-		isRequired,
-		inherited,
 		placeholder,
 		value,
-		code,
 		onChange,
 		defaultValue,
 		formatedPlaceholder,
@@ -55,9 +50,7 @@ const PropertyInputField = (properties) => {
 					label={label}
 					help={help}
 					indeterminate={!!placeholder && value == undefined}
-					onChange={(val) => {
-						onChange(val);
-					}}
+					onChange={onChange}
 				/>
 			);
 			break;
@@ -76,6 +69,7 @@ const PropertyInputField = (properties) => {
 					placeholder={formatedPlaceholder}
 					onChange={onChange}
 					onWheel={(e) => {
+						// do not allow to change the value by scrolling
 						e.target.blur();
 						return false;
 					}}
@@ -140,17 +134,16 @@ const PropertyInputField = (properties) => {
 								__next40pxDefaultSize
 								help={help}
 							>
-								<HStack justify="flex-end">
-									<ExternalLink href={link}>
-										{__('Documentation', 'freemius')}
-									</ExternalLink>
-								</HStack>
+								{link && (
+									<HStack justify="flex-end">
+										<ExternalLink href={link}>
+											{__('Documentation', 'freemius')}
+										</ExternalLink>
+									</HStack>
+								)}
 								<CodeEditor
-									value={value || ''}
+									value={value}
 									onChange={onChange}
-									codemirrorProps={{
-										placeholder: formatedPlaceholder,
-									}}
 									rows={value ? 10 : 3}
 								/>
 							</BaseControl>
@@ -193,7 +186,7 @@ const PropertyInputField = (properties) => {
 };
 
 const CodeEditor = (props) => {
-	const { type, value, onChange, codemirrorProps } = props;
+	const { value, onChange, codemirrorProps } = props;
 	const textarea = useRef(null);
 	const editorRef = useRef(null);
 
@@ -202,10 +195,10 @@ const CodeEditor = (props) => {
 
 		const editor = initCodeEditor(textarea.current, codemirrorProps);
 		if (editor) {
+			editor.setValue(value || '');
 			editor.on('change', () => {
-				onChange(editor.getValue());
+				onChange(editor.getValue() || undefined);
 			});
-			editor.setValue(value);
 			editor
 				.getWrapperElement()
 				.classList.add('components-text-control__input');
@@ -252,6 +245,17 @@ function getSpecial(properties) {
 
 		const currentPlan = plans.find((plan) => plan?.id == value) || null;
 
+		let noOptionLabel = '';
+		if (value === undefined || !inherited) {
+			noOptionLabel = __('Use Default Plan', 'freemius');
+		} else {
+			noOptionLabel = sprintf(
+				__('[%s] %s', 'freemius'),
+				currentPlan?.id,
+				currentPlan?.title
+			);
+		}
+
 		if (plans) {
 			return (
 				<TreeSelect
@@ -261,15 +265,7 @@ function getSpecial(properties) {
 					help={help}
 					onChange={onChange}
 					selectedId={value}
-					noOptionLabel={
-						inherited && currentPlan
-							? sprintf(
-									__('[%s] %s', 'freemius'),
-									currentPlan?.id,
-									currentPlan?.title
-							  )
-							: sprintf(__('Use Inherited %s', 'freemius'), label)
-					}
+					noOptionLabel={noOptionLabel}
 					tree={Object.entries(plans).map(([i, plan]) => {
 						return {
 							name: `[${plan.id}] ${plan.title}`,

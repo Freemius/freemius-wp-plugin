@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 /**
  * WordPress dependencies
  */
-
+import { __ } from '@wordpress/i18n';
 import { useContext, useMemo } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -53,18 +53,30 @@ const useData = (scopeData) => {
 		billing_cycle: 'annual',
 	};
 
-	const data = {
-		...defaults,
-		...settings,
-		//	...metaData,
-		...contextData,
-	};
+	const dataWithoutWithDefaultPlan = useMemo(
+		() => ({
+			...defaults,
+			...settings,
+			...contextData,
+		}),
+		[settings, contextData]
+	);
 
 	const {
 		plans,
 		isLoading: isPlansLoading,
 		isApiAvailable,
-	} = usePlans(data?.product_id);
+	} = usePlans(dataWithoutWithDefaultPlan?.product_id);
+
+	// get the first, non-free plan
+	const defaultPlan = useMemo(() => {
+		return plans?.find((plan) => plan.pricing);
+	}, [plans]);
+
+	// add the default plan
+	const data = defaultPlan
+		? { plan_id: +defaultPlan.id, ...dataWithoutWithDefaultPlan }
+		: dataWithoutWithDefaultPlan;
 
 	const currentPlan = useMemo(() => {
 		return plans?.find((plan) => plan.id == data?.plan_id);
@@ -122,7 +134,26 @@ const useData = (scopeData) => {
 			  !data?.product_id ||
 			  !data?.public_key;
 
+	const errorMessage = useMemo(() => {
+		let message = [];
+
+		if (!data?.product_id) {
+			message.push(__('Product ID is required', 'freemius'));
+		}
+		if (!data?.public_key) {
+			message.push(__('Public Key is required', 'freemius'));
+		}
+		if (!data?.plan_id) {
+			message.push(__('Plan ID is required.', 'freemius'));
+		}
+
+		return message.join(', ');
+	}, [isInvalid, data]);
+
 	const DataView = useMemo(() => {
+		return () => <></>;
+
+		// only for development
 		return () => (
 			<DataViewContainer>
 				<ItemGroup isSeparated isBorderd size="small">
@@ -169,6 +200,7 @@ const useData = (scopeData) => {
 		currentPricing,
 		DataView,
 		selectScope,
+		errorMessage,
 		matrix,
 	};
 };

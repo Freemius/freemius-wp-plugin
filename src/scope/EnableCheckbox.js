@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+
 /**
  * WordPress dependencies
  */
 
-import { __ } from '@wordpress/i18n';
 import { ToggleControl } from '@wordpress/components';
 
 /**
@@ -13,14 +13,14 @@ import { ToggleControl } from '@wordpress/components';
  */
 
 const EnableCheckbox = (props) => {
-	const { label, attributes, setAttributes } = props;
+	const { label, help, attributes, setAttributes } = props;
 
 	const { freemius_enabled, metadata } = attributes;
 
 	const setEnabled = (val) => {
 		const blockName = metadata?.name || '';
-		const suffix = `(${__('FS Scope', 'freemius')})`;
-		const cleanName = blockName.replace(suffix, '');
+		const suffix = `(Freemius)`;
+		const cleanName = blockName.replace(/\(.*\)$/, '');
 		const newName = cleanName + (val ? ' ' + suffix : '');
 
 		setAttributes({
@@ -42,7 +42,7 @@ const EnableCheckbox = (props) => {
 		<ToggleControl
 			__nextHasNoMarginBottom
 			label={label}
-			help={__('Scopes will pass down settings to child blocks.', 'freemius')}
+			help={help}
 			checked={freemius_enabled || false}
 			onChange={setEnabled}
 		/>
