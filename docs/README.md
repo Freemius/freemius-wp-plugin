@@ -23,7 +23,7 @@ The plugin also allows you to add Freemius Checkout to any button of your WordPr
 1. Install the plugin via the WordPress admin panel.
 2. Activate the plugin.
 3. Go to the Freemius settings page (Settings => Freemius) and enter your Freemius Token.
-4. Go to the "Editor Settings" page and enter `product_id`, `public_key`, one of your `plan_id`s.
+4. Go to the "Editor Settings" page and enter `product_id`, `public_key`.
 
 ## Checkout Button
 
