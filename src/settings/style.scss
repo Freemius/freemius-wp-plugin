@@ -1,0 +1,33 @@
+#wpcontent {
+	padding-left: 0;
+}
+#freemius-settings-app {
+	margin: 0;
+
+	.freemius-header {
+		margin: 0;
+		padding: 20px;
+		background-color: #fff;
+		border-bottom: 1px solid #ddd;
+		max-height: 80px;
+		box-sizing: border-box;
+
+		svg {
+			max-height: 40px;
+			max-width: 40px;
+			aspect-ratio: 1/1;
+		}
+	}
+
+	.freemius-settings-container {
+		max-width: 800px;
+		margin: 20px 0;
+		.components-card {
+			margin: 0;
+			margin-bottom: 20px;
+		}
+	}
+	.components-external-link {
+		float: right;
+	}
+}

@@ -1,0 +1,17 @@
+.wp-block-freemius-modifier {
+	display: flex;
+	gap: 0.5em;
+
+	&.is-style-link {
+	}
+
+	a {
+		cursor: pointer;
+		text-decoration: none;
+		opacity: 0.9;
+		&.is-active {
+			text-decoration: underline;
+			opacity: 1;
+		}
+	}
+}

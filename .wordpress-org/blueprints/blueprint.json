@@ -1,12 +1,16 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"landingPage": "/wp-admin/post.php?post=4&action=edit",
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "latest"
+	},
 	"features": {
 		"networking": true
 	},
 	"login": true,
 	"siteOptions": {
-		"blogname": "Freemius"
+		"blogname": "Freemius for WordPress"
 	},
 	"steps": [
 		{
@@ -20,11 +24,26 @@
 			}
 		},
 		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "wordpress.org/themes",
+				"slug": "ollie"
+			}
+		},
+		{
 			"step": "importWxr",
 			"file": {
 				"resource": "url",
 				"url": "https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/content.xml"
 			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; update_option( 'freemius_settings', array( 'token' => '1234567890' ) );"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php require '/wordpress/wp-load.php'; update_option( 'freemius_defaults', array( 'public_key' => 'pk_1efa30140fc34f21e5b89959bb877', 'product_id' => 19794 ) );"
 		}
 	]
 }

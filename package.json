@@ -1,35 +1,38 @@
 {
 	"name": "freemius",
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"author": "Xaver",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
-		"build": "wp-scripts build",
+		"build": "wp-scripts build  --experimental-modules",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start"
+		"start": "wp-scripts start  --experimental-modules"
 	},
 	"files": [
 		"build",
 		"src",
 		"vendor",
 		"includes",
+		"schemas",
 		"*.php"
 	],
 	"dependencies": {
 		"@10up/block-components": "^1.19.3",
 		"@emotion/styled": "^11.14.0",
-		"@wordpress/data": "^10.26.0",
-		"@wordpress/dom-ready": "^4.26.0",
-		"@wordpress/element": "^6.26.0",
-		"@wordpress/i18n": "^5.26.0"
+		"@wordpress/data": "^10.27.0",
+		"@wordpress/dom-ready": "^4.27.0",
+		"@wordpress/element": "^6.27.0",
+		"@wordpress/i18n": "^6.0.0",
+		"@wordpress/interactivity": "^6.27.0",
+		"classnames": "^2.5.1"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.26.0",
-		"@wordpress/scripts": "^30.19.0",
+		"@wordpress/env": "^10.27.0",
+		"@wordpress/scripts": "^30.20.0",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
 	}

@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "freemius/modifier",
+	"version": "0.1.0",
+	"title": "Freemius Modifier",
+	"category": "widgets",
+	"description": "Change the scope of the current block.",
+	"example": {
+		"attributes": {
+			"type": "billing_cycle"
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": false,
+		"color": false,
+		"interactivity": true
+	},
+	"attributes": {
+		"type": {
+			"type": "string"
+		},
+		"disabled": {
+			"type": "array"
+		},
+		"invalid": {
+			"type": "boolean"
+		},
+		"labels": {
+			"type": "object"
+		},
+		"options": {
+			"type": "array"
+		},
+		"current": {
+			"type": "string"
+		}
+	},
+	"styles": [
+		{ "name": "button", "label": "Button", "isDefault": true },
+		{ "name": "link", "label": "Link" },
+		{ "name": "dropdown", "label": "Dropdown" }
+	],
+	"textdomain": "freemius",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js"
+}
