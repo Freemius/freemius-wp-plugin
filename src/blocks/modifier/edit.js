@@ -9,15 +9,12 @@ import { __ } from '@wordpress/i18n';
 
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 
-import { useContext, useEffect, useState, useRef } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect, useRef } from '@wordpress/element';
 
 import {
 	Button,
 	PanelBody,
 	Notice,
-	PanelRow,
-	SelectControl,
 	TreeSelect,
 	BaseControl,
 	ToggleControl,
@@ -34,8 +31,7 @@ import {
 
 import './editor.scss';
 
-import { useData, useCurrency, useModifiers } from '../../hooks';
-import { FreemiusContext } from '../../context';
+import { useData, useModifiers } from '../../hooks';
 import { ModifierButtons } from './ModifierButtons';
 
 export default function Edit(props) {
@@ -43,23 +39,12 @@ export default function Edit(props) {
 
 	const { type, options, disabled = [], current } = attributes;
 
-	const {
-		data,
-		isLoading,
-		DataView,
-		selectScope,
-		clientId,
-		contextData,
-		isFree,
-		isInvalid,
-	} = useData(scopeData);
+	const { data, isLoading, DataView, selectScope } = useData(scopeData);
 
 	const {
 		options: allOptions,
 		isLoading: isLoadingModifiers,
 		modifiers,
-		currentModifier,
-		defaultOptions,
 	} = useModifiers(type);
 
 	useEffect(() => {
@@ -107,7 +92,6 @@ export default function Edit(props) {
 		}
 	}, [contextWithModifications[type], isLoading, isLoadingModifiers]);
 
-	// unset modification if it's the same as the one from the scope
 	const changeScope = (property, value) => {
 		let newModifications = { ...scopeAttributes?.freemius_modifications };
 
@@ -167,8 +151,8 @@ export default function Edit(props) {
 
 	const blockProps = useBlockProps({
 		style: {},
-		className: classnames('modifier', {
-			'scope-missing': !isInScope && !type,
+		className: classnames({
+			'freemius-scope-missing': !isInScope && !type,
 		}),
 	});
 
@@ -179,7 +163,7 @@ export default function Edit(props) {
 					{!isInScope && (
 						<Notice status="warning" isDismissible={false}>
 							{__(
-								'A scope is missing for this modifier. Please define a scope in a parent group block.',
+								'A scope is missing for this modifier. Please enable Freemius in a parent group block.',
 								'freemius'
 							)}
 						</Notice>
@@ -188,6 +172,12 @@ export default function Edit(props) {
 						<>
 							<BaseControl __nextHasNoMarginBottom>
 								<DataView />
+								<h2>
+									{__(
+										'This is a modifier, which allows you to change the properties of the next parent scope.',
+										'freemius'
+									)}
+								</h2>
 								<Button onClick={() => selectScope()} variant="secondary">
 									{__('Select Scope', 'freemius')}
 								</Button>

@@ -63,12 +63,21 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
 		},
 	},
 	classNameGenerator: (attributes) => {
-		const { freemius_enabled, freemius_invalid } = attributes;
+		const {
+			freemius_enabled,
+			freemius_invalid,
+			freemius_modifications = {},
+		} = attributes;
 
 		if (!freemius_enabled) return '';
 
 		let className = 'has-freemius-scope';
 		if (freemius_invalid) className += ' is-freemius-invalid';
+
+		// TODO: need to be implemented on the frontend as well
+		// Object.keys(freemius_modifications).forEach((key) => {
+		// 	className += ` has-freemius-${key}-${freemius_modifications[key]}`;
+		// });
 
 		return className;
 	},

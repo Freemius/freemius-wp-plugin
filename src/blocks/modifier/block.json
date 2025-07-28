@@ -14,11 +14,8 @@
 	"supports": {
 		"html": false,
 		"anchor": true,
-		"align": ["wide", "full"],
-		"color": {
-			"background": true,
-			"text": true
-		},
+		"align": false,
+		"color": false,
 		"interactivity": true
 	},
 	"attributes": {
@@ -43,8 +40,8 @@
 	},
 	"styles": [
 		{ "name": "button", "label": "Button", "isDefault": true },
-		{ "name": "unstyled", "label": "Unstyled" },
-		{ "name": "link", "label": "Link" }
+		{ "name": "link", "label": "Link" },
+		{ "name": "dropdown", "label": "Dropdown" }
 	],
 	"textdomain": "freemius",
 	"editorScript": "file:./index.js",

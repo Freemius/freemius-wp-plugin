@@ -25,6 +25,7 @@ export default function Save(props) {
 		className: classnames({}, ''),
 		'data-wp-interactive': 'freemius/modifier',
 		'data-wp-init': 'callbacks.init',
+		'data-freemius-modifier-type': type,
 		'data-wp-context': JSON.stringify({
 			current: current === null ? 'null' : current,
 			type: type,
@@ -37,7 +38,7 @@ export default function Save(props) {
 
 	return (
 		<div {...blockProps}>
-			<ModifierButtons {...props} />
+			<ModifierButtons {...props} isSave={true} />
 		</div>
 	);
 }

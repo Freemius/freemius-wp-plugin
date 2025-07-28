@@ -46,10 +46,16 @@ function getMappingContent(scopeData, mappingData) {
 		document.querySelector('.freemius-matrix-data').textContent
 	);
 
+	// get the default plan if not defined in the scope data
+	const plan_id =
+		scopeData.plan_id ??
+		Object.values(matrix).find((plan) => plan.pricing !== null)?.id;
+
 	const sd = {
 		currency: 'usd',
 		licenses: '1',
 		billing_cycle: 'annual',
+		plan_id: plan_id,
 		...scopeData,
 	};
 
@@ -68,7 +74,7 @@ function getMappingContent(scopeData, mappingData) {
 			content = md.labels?.[sd.billing_cycle] ?? sd.billing_cycle;
 			break;
 		case 'licenses':
-			content = md.labels?.[sd.licenses || 'unlimited'] ?? sd.licenses;
+			content = md.labels?.[sd.licenses] ?? sd.licenses;
 			break;
 		case 'price':
 			content =
@@ -77,7 +83,7 @@ function getMappingContent(scopeData, mappingData) {
 				] ?? 0;
 
 			// it's an invalid plan
-			if (!content && matrix[sd.plan_id]?.pricing?.length === undefined) {
+			if (!content && matrix[sd.plan_id]?.pricing !== null) {
 				content = '-';
 				break;
 			}
@@ -115,19 +121,23 @@ store('freemius/modifier', {
 	actions: {
 		switchModifier: (event) => {
 			const context = getContext();
-			const { optionId } = context;
+
+			// get the option id from the event target or the context
+			const optionId =
+				event.target.tagName === 'SELECT'
+					? JSON.parse(event.target.selectedOptions[0]?.dataset?.wpContext)
+							?.optionId
+					: context.optionId;
 
 			// Update the current value
 			context.current = optionId;
 
+			// get the scope data and update it with the changes
+			const scope = event.target.closest('[data-freemius-scope]');
+
 			const globalScope = JSON.parse(
 				document.querySelector('.freemius-scope-data').textContent
 			);
-
-			const modifierContainer = event.target.closest('[data-wp-interactive]');
-
-			// get the scope data and update it with the changes
-			const scope = event.target.closest('[data-freemius-scope]');
 
 			const scopeData = JSON.parse(scope?.dataset?.freemiusScope || '{}');
 			const newScopeData = {
@@ -154,20 +164,21 @@ store('freemius/modifier', {
 				}
 			});
 
-			if (modifierContainer) {
-				const buttons = modifierContainer.querySelectorAll(
-					'[data-wp-on--click]'
-				);
-				buttons.forEach((button) => {
-					const buttonOptionId = button.dataset.optionId;
-					if (buttonOptionId == optionId) {
-						button.classList.add('is-active');
-					} else {
-						button.classList.remove('is-active');
-						//button.removeAttribute('href');
-					}
-				});
-			}
+			const modifierContainer = event.target.closest(
+				'[data-freemius-modifier-type]'
+			);
+
+			const buttons = modifierContainer.querySelectorAll('[data-wp-on--click]');
+			buttons.forEach((button) => {
+				const buttonOptionId = button.dataset.optionId;
+				if (buttonOptionId == optionId) {
+					button.classList.add('is-active');
+				} else {
+					button.classList.remove('is-active');
+				}
+			});
+
+			//modifierContainer.querySelector('select').value = optionId;
 		},
 	},
 	callbacks: {

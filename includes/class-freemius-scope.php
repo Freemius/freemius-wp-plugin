@@ -24,8 +24,12 @@ class Scope {
 	 */
 	private static $instance = null;
 
-
-	private $scope = null;
+	/**
+	 * Whether the scope has been added to the content
+	 *
+	 * @var boolean
+	 */
+	private $scope_added = false;
 
 
 	/**
@@ -103,13 +107,30 @@ class Scope {
 			return $block_content;
 		}
 
-		$this->scope = \get_option( 'freemius_defaults', array() );
+		if ( $this->scope_added ) {
+			return $block_content;
+		}
 
-		$extra = '<script type="application/json" class="freemius-scope-data">' . wp_json_encode( $this->scope ) . '</script>';
+		$defaults = \get_option( 'freemius_defaults', array() );
 
-		$extra .= '<script type="application/json" class="freemius-matrix-data">' . wp_json_encode( $this->get_matrix( $this->scope ) ) . '</script>';
+		/**
+		 * Filter the defaults for the scope
+		 *
+		 * @param array $defaults The defaults.
+		 * @return array The defaults.
+		 */
+		$defaults = apply_filters( 'freemius_scope_defaults', $defaults );
 
-		$block_content = $extra . $block_content;
+		// Prevent json_encode from rounding floats.
+		// TODO: recosinder this, as it's maybe not working on all hosts
+		\ini_set( 'serialize_precision', '-1' );
+
+		// add defaults to the block content
+		$extra  = '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $defaults ) . '</script>';
+		$extra .= '<script type="application/json" class="freemius-matrix-data">' . \wp_json_encode( $this->get_matrix( $defaults ) ) . '</script>';
+
+		$block_content     = $extra . $block_content;
+		$this->scope_added = true;
 
 		return $block_content;
 	}
@@ -163,10 +184,11 @@ class Scope {
 			}
 
 			$matrix[ $planId ] = array(
+				'id'          => $planId,
 				'name'        => $plan['name'] ?? null,
 				'title'       => $plan['title'] ?? null,
 				'description' => $plan['description'] ?? null,
-				'pricing'     => $pricing_by_currency,
+				'pricing'     => ! empty( $pricing_by_currency ) ? $pricing_by_currency : null,
 			);
 		}
 

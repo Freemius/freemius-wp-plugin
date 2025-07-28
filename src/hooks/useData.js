@@ -154,12 +154,12 @@ const useData = (scopeData) => {
 		if (!data?.public_key) {
 			message.push(__('Public Key is required', 'freemius'));
 		}
-		if (!data?.plan_id) {
+		if (!isPlansLoading && !data?.plan_id) {
 			message.push(__('Plan ID is required.', 'freemius'));
 		}
 
 		return message.join(', ');
-	}, [isInvalid, data]);
+	}, [isInvalid, data, isPlansLoading]);
 
 	const DataView = useMemo(() => {
 		return () => <></>;

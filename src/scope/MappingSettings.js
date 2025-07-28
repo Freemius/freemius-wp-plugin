@@ -15,6 +15,7 @@ import {
 	Button,
 	SelectControl,
 	__experimentalSpacer as Spacer,
+	Flex,
 } from '@wordpress/components';
 import { useContext, useEffect } from '@wordpress/element';
 
@@ -69,16 +70,40 @@ const MappingSettings = (props) => {
 		<>
 			<DataView />
 			<Spacer />
-			<Button
-				onClick={selectScope}
-				variant="secondary"
-				label={__(
-					'Select the scope where these settings are defined.',
-					'freemius'
+			{options.field ? (
+				<h2>
+					{__(
+						'This Block is enabled for mapping. It uses the data from a Freemius enabled parent block.',
+						'freemius'
+					)}
+				</h2>
+			) : (
+				<h2>{__('This Block can be used for mapping.', 'freemius')}</h2>
+			)}
+			<Flex>
+				<Button
+					onClick={selectScope}
+					variant="secondary"
+					label={__(
+						'Select the scope where these settings are defined.',
+						'freemius'
+					)}
+				>
+					{__('Select Scope', 'freemius')}
+				</Button>
+				{options.field && (
+					<Button
+						onClick={() => {
+							setMapping('field', undefined);
+						}}
+						variant="tertiary"
+						isDestructive
+						label={__('Clear Mapping', 'freemius')}
+					>
+						{__('Clear Mapping', 'freemius')}
+					</Button>
 				)}
-			>
-				{__('Select Scope', 'freemius')}
-			</Button>
+			</Flex>
 			<Spacer />
 			{!isApiAvailable && (
 				<>
@@ -113,7 +138,7 @@ const MappingSettings = (props) => {
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						label={__('Mapping', 'freemius')}
-						help={__('Select the mapping for the field', 'freemius')}
+						help={__('Select which field you like to map.', 'freemius')}
 						onChange={(value) => {
 							setMapping('field', value);
 						}}

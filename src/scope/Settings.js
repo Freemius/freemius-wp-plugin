@@ -16,15 +16,12 @@ import {
 	Button,
 	__experimentalSpacer as Spacer,
 	Notice,
-	TextControl,
 } from '@wordpress/components';
-import { useContext, useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import EnableCheckbox from './EnableCheckbox';
-import { FreemiusContext } from '../context';
 import { useSettings, useData } from '../hooks';
 import Property from './Property';
 import ButtonSettings from './ButtonSettings';
@@ -36,16 +33,11 @@ const PanelDescription = styled.div`
 const Settings = (props) => {
 	const { attributes, setAttributes, name } = props;
 
-	const {
-		freemius_enabled,
-		freemius,
-		freemius_modifications,
-		freemius_matrix,
-	} = attributes;
+	const { freemius_enabled, freemius, freemius_modifications } = attributes;
 
-	const { settings, structure, isLoading } = useSettings('freemius_defaults');
+	const { structure, isLoading } = useSettings('freemius_defaults');
 
-	const { data, DataView, errorMessage } = useData();
+	const { data, errorMessage } = useData();
 
 	if (isLoading || !structure) {
 		return (
@@ -83,8 +75,6 @@ const Settings = (props) => {
 	const getPlaceholderFor = (key) => {
 		return data?.[key] || getValueFor(key);
 	};
-
-	const [test, setTest] = useState('');
 
 	return (
 		<ToolsPanel

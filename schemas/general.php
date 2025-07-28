@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return array(
-	'token'       => array(
+	'token' => array(
 		'type'        => 'string',
 		'input_type'  => 'password',
 		'label'       => __( 'Token', 'freemius' ),
@@ -18,17 +18,17 @@ return array(
 		'link'        => 'https://dashboard.freemius.com/',
 		'default'     => '',
 	),
-	'environment' => array(
-		'type'        => 'string',
-		'label'       => __( 'Environment (sandbox/live)', 'freemius' ),
-		'description' => __( 'Not implemented (yet)', 'freemius' ),
-		'default'     => 'sandbox',
-		'enum'        => array( 'sandbox', 'live' ),
-	),
-	'debug_mode'  => array(
-		'type'        => 'boolean',
-		'label'       => __( 'Enable debug mode', 'freemius' ),
-		'description' => __( 'Not implemented (yet)', 'freemius' ),
-		'default'     => false,
-	),
+	// 'environment' => array(
+	//  'type'        => 'string',
+	//  'label'       => __( 'Environment (sandbox/live)', 'freemius' ),
+	//  'description' => __( 'Not implemented (yet)', 'freemius' ),
+	//  'default'     => 'sandbox',
+	//  'enum'        => array( 'sandbox', 'live' ),
+	// ),
+	// 'debug_mode'  => array(
+	//  'type'        => 'boolean',
+	//  'label'       => __( 'Enable debug mode', 'freemius' ),
+	//  'description' => __( 'Not implemented (yet)', 'freemius' ),
+	//  'default'     => false,
+	// ),
 );

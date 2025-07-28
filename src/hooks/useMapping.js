@@ -90,7 +90,7 @@ const useMapping = (props) => {
 		errorMessage.push(__('Plan ID is required', 'freemius'));
 	}
 
-	const isError = errorMessage.length > 0;
+	const isError = !isLoading && !isLicensesLoading && errorMessage.length > 0;
 
 	return {
 		value,
@@ -124,7 +124,8 @@ const getMappingValue = (options) => {
 			price: currentPricing?.[data?.billing_cycle + '_price'] || undefined, // Free plan has no pricing
 			currency: data?.currency,
 			title: currentPlan?.title,
-			licenses: currentPricing?.licenses,
+			licenses:
+				currentPricing?.licenses === null ? 0 : currentPricing?.licenses, // handle unlimited license
 			billing_cycle: data?.billing_cycle,
 			description: currentPlan?.description,
 		};
@@ -155,9 +156,10 @@ const getMappingValue = (options) => {
 				content = content.replace(/[\d\s.,]/g, '').trim();
 			}
 		} else if (options.field === 'billing_cycle') {
-			content = options.labels[mappingData.billing_cycle];
+			content =
+				options.labels[mappingData.billing_cycle] ?? mappingData.billing_cycle;
 		} else if (options.field === 'licenses') {
-			content = options.labels[mappingData.licenses || 0]; // 0 is unlimited
+			content = options.labels[mappingData.licenses || data.licenses || 0]; // 0 is unlimited
 		}
 
 		content = options.prefix + content + options.suffix;

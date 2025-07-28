@@ -81,7 +81,6 @@ class Settings {
 	 * Render the settings page
 	 */
 	public function render_settings_page() {
-		echo '<div id="freemius-settings-root" class="wrap">';
 		echo '<div id="freemius-settings-app"></div>';
 		echo '</div>';
 	}
@@ -264,24 +263,12 @@ class Settings {
 	}
 
 	/**
-	 * Get API settings schema
-	 *
-	 * @return array The schema.
-	 */
-	public function get_api_schema() {
-
-		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/api.php';
-
-		return $schema;
-	}
-
-	/**
-	 * Get button settings schema
+	 * Get defaults settings schema
 	 *
 	 * @return array The schema.
 	 */
 	public function get_button_schema() {
-		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/button.php';
+		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/defaults.php';
 		return $schema;
 	}
 }
