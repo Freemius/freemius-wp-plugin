@@ -17,7 +17,7 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "url",
-				"url": "https://everpress.dev/freemius/freemius.zip?x=3"
+				"url": "https://github-proxy.com/proxy/?repo=Freemius/freemius-wp-plugin&release=latest&asset=freemius.zip"
 			},
 			"options": {
 				"activate": true
@@ -34,7 +34,7 @@
 			"step": "importWxr",
 			"file": {
 				"resource": "url",
-				"url": "https://everpress.dev/freemius/content.xml?x=3"
+				"url": "https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/content.xml"
 			}
 		},
 		{
