@@ -1,6 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "/wp-admin/options-general.php?page=freemius-settings#settings",
+	"landingPage": "/wp-admin/post.php?post=4&action=edit",
 	"preferredVersions": {
 		"php": "8.3",
 		"wp": "latest"
