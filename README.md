@@ -59,6 +59,19 @@ The plugin works with any WordPress theme that supports the block editor (Gutenb
 
 ## Changelog
 
+### 0.3.0
+
+- **Major Feature**: Added pricing table functionality with dynamic plan display
+- **Breaking Change**: Complete refactoring of Freemius settings and API structure
+- Enhanced modifier functionality with improved data handling
+- Added new Freemius API health management and error handling
+- Improved blueprint configuration with updated landing page and plugin URLs
+- Added new hooks and stores for better state management
+- Enhanced checkout flow with better customization options
+- Updated dependencies and improved performance
+- Refactored codebase structure with new component organization
+- Added support for advanced pricing modifiers and billing cycles
+
 ### 0.2.1
 
 - Added popout editor for code fields
