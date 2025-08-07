@@ -26,7 +26,7 @@
 		"@wordpress/data": "^10.27.0",
 		"@wordpress/dom-ready": "^4.27.0",
 		"@wordpress/element": "^6.27.0",
-		"@wordpress/i18n": "^6.0.0",
+		"@wordpress/i18n": "^6.1.0",
 		"@wordpress/interactivity": "^6.27.0",
 		"classnames": "^2.5.1"
 	},
