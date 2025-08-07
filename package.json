@@ -32,7 +32,7 @@
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.27.0",
-		"@wordpress/scripts": "^30.20.0",
+		"@wordpress/scripts": "^30.21.0",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
 	}
