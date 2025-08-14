@@ -82,7 +82,6 @@ class Settings {
 	 */
 	public function render_settings_page() {
 		echo '<div id="freemius-settings-app"></div>';
-		echo '</div>';
 	}
 
 	/**
