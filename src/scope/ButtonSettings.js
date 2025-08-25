@@ -104,10 +104,10 @@ const ButtonSettings = (props) => {
 		// build arguments starting from scope and current button
 		const merged = { ...data, ...freemius };
 
-		const { product_id, public_key } = merged;
-		if (!product_id || !public_key) {
+		const { product_id } = merged;
+		if (!product_id) {
 			setLoading(false);
-			alert(__('Please fill in product_id and public_key', 'freemius'));
+			alert(__('Please fill in product_id', 'freemius'));
 			return;
 		}
 
@@ -119,7 +119,7 @@ const ButtonSettings = (props) => {
 
 		const handler = new FS.Checkout({
 			product_id: product_id,
-			public_key: public_key,
+			//public_key: public_key,
 		});
 
 		// close the preview if cancel is clicked

@@ -201,6 +201,30 @@ class Settings {
 				),
 			)
 		);
+
+		// Register Products settings
+		\register_setting(
+			'freemius_settings',
+			'freemius_products',
+			array(
+				'single'       => true,
+				'label'        => 'Products',
+				'description'  => __( 'Define the products you want to use with Freemius.', 'freemius' ),
+				'type'         => 'array',
+				'default'      => array(),
+				'show_in_rest' => array(
+					'schema' => array(
+						'type'                 => 'array',
+						'items'                => array(
+							'type'       => 'object',
+							'properties' => $this->get_products_schema(),
+						),
+						'additionalProperties' => false,
+
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -268,6 +292,16 @@ class Settings {
 	 */
 	public function get_button_schema() {
 		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/defaults.php';
+		return $schema;
+	}
+
+	/**
+	 * Get products settings schema
+	 *
+	 * @return array The schema.
+	 */
+	public function get_products_schema() {
+		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/products.php';
 		return $schema;
 	}
 }

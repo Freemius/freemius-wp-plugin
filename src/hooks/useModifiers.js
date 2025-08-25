@@ -23,16 +23,13 @@ import {
 const useModifiers = (type = null) => {
 	const { data } = useData();
 
-	const product_id = data?.product_id;
-
 	const { options: currencyOptions, isLoading: isCurrencyLoading } =
-		useCurrency(product_id);
+		useCurrency();
 	const { options: billingCycleOptions, isLoading: isBillingCycleLoading } =
-		useBillingCycle(product_id);
+		useBillingCycle();
 	const { options: licensesOptions, isLoading: isLicensesLoading } =
-		useLicenses(product_id);
-	const { options: plansOptions, isLoading: isPlansLoading } =
-		usePlans(product_id);
+		useLicenses();
+	const { options: plansOptions, isLoading: isPlansLoading } = usePlans();
 
 	// Memoize default options to prevent recreation
 	const defaultOptions = useMemo(

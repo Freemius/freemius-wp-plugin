@@ -15,6 +15,7 @@ import useBillingCycle from './useBillingCycle';
 import useModifiers from './useModifiers';
 import useLicenses from './useLicenses';
 import usePlans from './usePlans';
+import useProducts from './useProducts';
 
 export {
 	useSettings,
@@ -26,6 +27,7 @@ export {
 	useModifiers,
 	useLicenses,
 	usePlans,
+	useProducts,
 };
 
 export {

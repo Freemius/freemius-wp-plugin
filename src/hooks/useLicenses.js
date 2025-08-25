@@ -11,9 +11,13 @@ import { useMemo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useApiGet, useSettings } from '.';
+import { useApiGet, useSettings, useData } from '.';
 
-const useLicenses = (product_id) => {
+const useLicenses = () => {
+	const { data } = useData();
+
+	const product_id = data?.product_id;
+
 	const {
 		data: plans,
 		isLoading,

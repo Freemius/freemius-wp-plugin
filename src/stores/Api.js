@@ -95,6 +95,7 @@ const actions = {
 	 * @param {boolean} forceRefresh Force refresh ignoring cache
 	 */
 	fetchFromApi(endpoint, params = {}, forceRefresh = false) {
+		console.log('fetchFromApi', endpoint, params, forceRefresh);
 		return async ({ dispatch, select }) => {
 			const cacheKey = generateCacheKey(endpoint, params);
 
@@ -134,6 +135,8 @@ const actions = {
 					const path = `/freemius/v1/proxy/${endpoint}${
 						queryString ? `?${queryString}` : ''
 					}`;
+
+					console.log('path', path);
 
 					const response = await apiFetch({
 						path,

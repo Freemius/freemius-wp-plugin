@@ -13,13 +13,14 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Modal,
+	CustomSelectControl,
 } from '@wordpress/components';
 import { useState, useRef, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { useData, usePlans } from '../hooks';
+import { useData, usePlans, useProducts } from '../hooks';
 
 const PropertyInputField = (properties) => {
 	const {
@@ -236,43 +237,107 @@ function getSpecial(properties) {
 
 	const { data } = useData();
 
-	if (!data?.product_id) return null;
-
 	if (props.id === 'plan_id') {
-		const { plans, isLoading, error } = usePlans(data.product_id);
+		const { plans, isLoading, error } = usePlans();
 
 		if (isLoading || error) return null;
 
 		const currentPlan = plans.find((plan) => plan?.id == value) || null;
 
-		let noOptionLabel = '';
-		if (value === undefined || !inherited) {
-			noOptionLabel = __('Use Default Plan', 'freemius');
-		} else {
-			noOptionLabel = sprintf(
-				__('[%s] %s', 'freemius'),
-				currentPlan?.id,
-				currentPlan?.title
-			);
-		}
+		// let noOptionLabel = '';
+		// if (value === undefined || !inherited) {
+		// 	noOptionLabel = __('Use Default Plan', 'freemius');
+		// } else {
+		// 	noOptionLabel = sprintf(
+		// 		__('[%s] %s', 'freemius'),
+		// 		currentPlan?.id,
+		// 		currentPlan?.title
+		// 	);
+		// }
 
 		if (plans) {
+			const options = Object.entries(plans).map(([i, plan]) => {
+				return {
+					hint: `[${plan.id}]`,
+					name: `${plan.title}`,
+					key: parseInt(plan.id),
+				};
+			});
+
+			options.unshift({
+				hint: '',
+				name: __('Select Plan', 'freemius'),
+				key: null,
+			});
 			return (
-				<TreeSelect
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					label={label}
-					help={help}
-					onChange={onChange}
-					selectedId={value}
-					noOptionLabel={noOptionLabel}
-					tree={Object.entries(plans).map(([i, plan]) => {
-						return {
-							name: `[${plan.id}] ${plan.title}`,
-							id: plan.id,
-						};
-					})}
-				/>
+				<BaseControl __nextHasNoMarginBottom help={help}>
+					<CustomSelectControl
+						key={props.id}
+						__next40pxDefaultSize
+						label={label}
+						onChange={(value) => {
+							const item = value.selectedItem;
+							onChange(item.key);
+						}}
+						options={options}
+						value={
+							value
+								? {
+										hint: `[${value}]`,
+										name: `${currentPlan?.title}`,
+										key: parseInt(value),
+								  }
+								: null
+						}
+					/>
+				</BaseControl>
+			);
+		}
+	} else if (props.id === 'product_id') {
+		const { products, isLoading, error } = useProducts();
+
+		if (isLoading || error) return null;
+
+		const currentProduct =
+			products.find((product) => product?.id == value) || null;
+
+		if (products) {
+			const options = Object.entries(products).map(([i, product]) => {
+				return {
+					hint: `[${product.id}]`,
+					name: `${product.title}`,
+					key: parseInt(product.id),
+				};
+			});
+
+			options.unshift({
+				hint: '',
+				name: __('Select Product', 'freemius'),
+				key: null,
+			});
+
+			return (
+				<BaseControl __nextHasNoMarginBottom help={help}>
+					<CustomSelectControl
+						key={props.id}
+						__next40pxDefaultSize
+						label={label}
+						onChange={(value) => {
+							const item = value.selectedItem;
+							onChange(item.key);
+						}}
+						options={options}
+						value={
+							value
+								? {
+										hint: `[${value}]`,
+										name: `${currentProduct?.title}`,
+										key: parseInt(value),
+								  }
+								: null
+						}
+					/>
+				</BaseControl>
 			);
 		}
 	}

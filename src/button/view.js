@@ -24,9 +24,9 @@ domReady(() => {
 			e.preventDefault();
 			const scopeData = getScopeData(button);
 
-			const { product_id, public_key } = scopeData;
-			if (!product_id || !public_key) {
-				console.error('Please fill in product_id and public_key');
+			const { product_id } = scopeData;
+			if (!product_id) {
+				console.error('Please fill in product_id');
 				return;
 			}
 
@@ -35,7 +35,7 @@ domReady(() => {
 
 			const handler = new FS.Checkout({
 				product_id: product_id,
-				public_key: public_key,
+				//public_key: public_key,
 			});
 
 			if (scopeData.cancel) {

@@ -22,14 +22,14 @@ return array(
 		'description'  => __( 'Required product ID (whether it\'s a plugin, theme, add-on, bundle, or SaaS).', 'freemius' ),
 		'isDeprecated' => true,
 	),
-	'public_key'                    => array(
-		'label'            => __( 'Public Key', 'freemius' ),
-		'type'             => 'string',
-		'default'          => '',
-		'description'      => __( 'Required product public key.', 'freemius' ),
-		'isRequired'       => true,
-		'isShownByDefault' => true,
-	),
+	// 'public_key'                    => array(
+	//  'label'            => __( 'Public Key', 'freemius' ),
+	//  'type'             => 'string',
+	//  'default'          => '',
+	//  'description'      => __( 'Required product public key.', 'freemius' ),
+	//  'isRequired'       => true,
+	//  'isShownByDefault' => true,
+	// ),
 	'plan_id'                       => array(
 		'label'       => __( 'Plan', 'freemius' ),
 		'type'        => 'integer',

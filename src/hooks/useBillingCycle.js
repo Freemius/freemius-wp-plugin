@@ -13,7 +13,7 @@ import { useMemo } from '@wordpress/element';
  */
 import { useSettings } from '.';
 
-const useBillingCycle = (product_id) => {
+const useBillingCycle = () => {
 	const isLoading = false;
 	const error = null;
 

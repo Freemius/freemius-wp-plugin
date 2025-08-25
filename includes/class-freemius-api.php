@@ -283,7 +283,11 @@ class Api {
 		try {
 			$endpoint = '/' . ltrim( $endpoint, '/' );
 
-			$token = $settings['token'];
+			$token = $this->get_token_by_endpoint( $endpoint );
+
+			if ( ! $token ) {
+				$token = $settings['token'];
+			}
 
 			$plugin_data = get_plugin_data( FREEMIUS_PLUGIN_DIR . '/freemius.php' );
 
@@ -424,6 +428,27 @@ class Api {
 		);
 	}
 
+	/**
+	 * Get token by endpoint
+	 *
+	 * @param string $endpoint API endpoint.
+	 * @return string
+	 */
+	private function get_token_by_endpoint( $endpoint ) {
+
+		//extract product id from endpoint
+		$product_id = (int) preg_replace( '/(.*?)products\/(\d+)(.*)$/', '$2', $endpoint );
+
+		$products = get_option( 'freemius_products', array() );
+
+		foreach ( $products as $product ) {
+			if ( $product['product_id'] === $product_id ) {
+				return $product['token'];
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * This is used to do not make an API request to the Freemius API but use dummy data instead.

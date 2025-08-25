@@ -78,9 +78,9 @@ const useMapping = (props) => {
 		);
 	}
 
-	if (!data.public_key) {
-		errorMessage.push(__('Public key is required', 'freemius'));
-	}
+	// if (!data.public_key) {
+	// errorMessage.push(__('Public key is required', 'freemius'));
+	// }
 
 	if (!data.product_id) {
 		errorMessage.push(__('Product ID is required', 'freemius'));
@@ -105,7 +105,7 @@ const useMapping = (props) => {
 
 const getMappingValue = (options) => {
 	const { data, isLoading: isDataLoading } = useData();
-	const { plans, isLoading: isPlansLoading } = usePlans(data?.product_id);
+	const { plans, isLoading: isPlansLoading } = usePlans();
 
 	const currentPlan = useMemo(() => {
 		return plans?.find((plan) => plan.id == data?.plan_id);

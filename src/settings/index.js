@@ -25,15 +25,15 @@ import {
 	TabPanel,
 	BaseControl,
 	ExternalLink,
+	Button,
 } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
-
 /**
  * Internal dependencies
  */
 import './style.scss';
 
-import FreemiusHeader from './header';
+import Header from './header';
 import SaveButton from './SaveButton';
 import { useSettings } from '../hooks';
 
@@ -51,9 +51,7 @@ const TabDescription = styled.p`
 	color: #666;
 `;
 
-const SETTINGS = ['freemius_settings', 'freemius_defaults'];
-
-const FreemiusSettings = () => {
+const Settings = () => {
 	const {
 		settings,
 		structure,
@@ -67,46 +65,11 @@ const FreemiusSettings = () => {
 		window.location.hash.replace('#', '') || 'settings'
 	);
 
-	const getValueFor = (setting, key) => {
-		const type = structure[setting].properties[key].type;
-		const defaultValue = structure[setting].properties[key].default;
-
-		return settings[setting][key] !== undefined
-			? settings[setting][key]
-			: defaultValue || '';
-	};
-
-	const getLabelFor = (prop) => {
-		let label = prop.label;
-
-		if (prop.isDeprecated) {
-			label += ' (Deprecated)';
-		}
-
-		return label;
-	};
-
-	const updateSetting = (setting, key, value) => {
-		let newSettings = { ...settings };
-		const type = structure[setting].properties[key].type;
-		const defaultValue = structure[setting].properties[key].default;
-		if (value === '' || value === defaultValue) {
-			delete newSettings[setting][key];
-		} else if (type === 'boolean') {
-			newSettings[setting][key] = value ? true : false;
-		} else if (type === 'number' || type === 'integer') {
-			newSettings[setting][key] = parseInt(value);
-		} else {
-			newSettings[setting][key] = value;
-		}
-		setSettings(newSettings);
-	};
-
 	if (isLoading) {
 		return (
 			<Card>
 				<CardBody>
-					<p>{__('Loading settings...', 'freemius')}</p>
+					<p>{__('Loading settings...', 'og_image')}</p>
 				</CardBody>
 			</Card>
 		);
@@ -123,78 +86,67 @@ const FreemiusSettings = () => {
 					</CardHeader>
 					<CardBody>
 						<TabDescription>{schema.description}</TabDescription>
-						{Object.entries(schema.properties).map(([key, prop]) => {
-							if (prop.isDeprecated) {
-								return null;
-							}
+						{schema.type && schema.type === 'array' ? (
+							<>
+								{(Object.entries(settings[setting]) || []).map((item, i) => (
+									<Card key={i} elevation={3} style={{ marginBottom: '10px' }}>
+										<CardBody>
+											<Flex justify="flex-end">
+												<Button
+													variant="tertiary"
+													isDestructive
+													onClick={() => {
+														const newSettings = {
+															...settings,
+															[setting]: settings[setting]
+																.slice(0, i)
+																.concat(settings[setting].slice(i + 1)),
+														};
 
-							return (
-								<BaseControl __nextHasNoMarginBottom key={key}>
-									{prop.link && <ExternalLink href={prop.link} />}
-									{prop.enum ? (
-										<SelectControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											value={getValueFor(setting, key)}
-											onChange={(value) => updateSetting(setting, key, value)}
-											label={getLabelFor(prop)}
-											help={prop.description}
-											options={prop.enum.map((item) => ({
-												label: item,
-												value: item,
-											}))}
-										/>
-									) : prop.code ? (
-										<TextareaControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											value={getValueFor(setting, key)}
-											onChange={(value) => updateSetting(setting, key, value)}
-											label={getLabelFor(prop)}
-											help={prop.description}
-										/>
-									) : prop.type === 'string' ? (
-										<TextControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											value={getValueFor(setting, key)}
-											type={prop.input_type ? prop.input_type : 'text'}
-											onChange={(value) => updateSetting(setting, key, value)}
-											label={getLabelFor(prop)}
-											help={prop.description}
-										/>
-									) : prop.type === 'boolean' ? (
-										<CheckboxControl
-											__nextHasNoMarginBottom
-											checked={getValueFor(setting, key)}
-											onChange={(value) => updateSetting(setting, key, value)}
-											label={getLabelFor(prop)}
-											help={prop.description}
-										/>
-									) : prop.type === 'number' ? (
-										<NumberControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											value={getValueFor(setting, key)}
-											onChange={(value) => updateSetting(setting, key, value)}
-											label={getLabelFor(prop)}
-											help={prop.description}
-										/>
-									) : prop.type === 'integer' ? (
-										<NumberControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											value={getValueFor(setting, key)}
-											onChange={(value) => updateSetting(setting, key, value)}
-											label={getLabelFor(prop)}
-											help={prop.description}
-										/>
-									) : null}
+														setSettings(newSettings);
+													}}
+												>
+													{__('Delete', 'freemius')}
+												</Button>
+											</Flex>
+											{Object.entries(schema.properties).map(([key, prop]) => {
+												return (
+													<Element
+														key={key}
+														index={i}
+														id={key}
+														prop={prop}
+														setting={setting}
+													/>
+												);
+											})}
+										</CardBody>
+									</Card>
+								))}
+								<Button
+									variant="secondary"
+									onClick={() => {
+										const newSettings = { ...settings };
+										const newEntry = {};
+										Object.entries(schema.properties).forEach(([key, prop]) => {
+											newEntry[key] = prop.default;
+										});
+										console.log(newSettings, newEntry);
+										newSettings[setting].push(newEntry);
 
-									<Spacer margin={6} />
-								</BaseControl>
-							);
-						})}
+										setSettings(newSettings);
+									}}
+								>
+									{__('Add a new product', 'freemius')}
+								</Button>
+							</>
+						) : (
+							Object.entries(schema.properties).map(([key, prop]) => {
+								return (
+									<Element key={key} id={key} prop={prop} setting={setting} />
+								);
+							})
+						)}
 					</CardBody>
 				</Card>
 			</TabContainer>
@@ -203,7 +155,7 @@ const FreemiusSettings = () => {
 
 	return (
 		<>
-			<FreemiusHeader />
+			<Header />
 			<ContentContainer>
 				{saveMessage && (
 					<Notice
@@ -237,13 +189,148 @@ const FreemiusSettings = () => {
 	);
 };
 
+const Element = ({ id, prop, setting, index }) => {
+	const {
+		settings,
+		structure,
+		isLoading,
+		setSettings,
+		saveMessage,
+		saveMessageType,
+	} = useSettings();
+
+	const isArray = structure[setting]?.type === 'array' && index !== undefined;
+
+	const getValueFor = (setting, id) => {
+		const type = structure[setting]?.properties[id]?.type;
+		const defaultValue = structure[setting]?.properties[id]?.default;
+
+		if (isArray) {
+			return settings[setting][index][id] !== undefined
+				? settings[setting][index][id]
+				: defaultValue || '';
+		}
+
+		return settings[setting][id] !== undefined
+			? settings[setting][id]
+			: defaultValue || '';
+	};
+
+	const getLabelFor = (prop) => {
+		let label = prop.label;
+
+		if (prop.isDeprecated) {
+			label += ' (Deprecated)';
+		}
+
+		return label;
+	};
+
+	const updateSetting = (setting, id, value) => {
+		let newSettings = { ...settings };
+		const type = structure[setting]?.properties[id]?.type;
+		const defaultValue = structure[setting]?.properties[id]?.default;
+		if (value === '' || value === defaultValue) {
+			if (isArray) {
+				delete newSettings[setting][index][id];
+			} else {
+				delete newSettings[setting][id];
+			}
+		} else if (type === 'boolean') {
+			if (isArray) {
+				newSettings[setting][index][id] = value ? true : false;
+			} else {
+				newSettings[setting][id] = value ? true : false;
+			}
+		} else if (type === 'number' || type === 'integer') {
+			if (isArray) {
+				newSettings[setting][index][id] = parseInt(value);
+			} else {
+				newSettings[setting][id] = parseInt(value);
+			}
+		} else {
+			if (isArray) {
+				newSettings[setting][index][id] = value;
+			} else {
+				newSettings[setting][id] = value;
+			}
+		}
+		console.log(newSettings);
+		setSettings(newSettings);
+	};
+
+	if (prop.isDeprecated) {
+		return null;
+	}
+
+	return (
+		<BaseControl __nextHasNoMarginBottom>
+			{prop.link && <ExternalLink href={prop.link} />}
+			{prop.enum ? (
+				<SelectControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					value={getValueFor(setting, id)}
+					onChange={(value) => updateSetting(setting, id, value)}
+					label={getLabelFor(prop)}
+					help={prop.description}
+					options={prop.enum.map((item) => ({
+						label: item,
+						value: item,
+					}))}
+				/>
+			) : prop.code ? (
+				<TextareaControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					value={getValueFor(setting, id)}
+					onChange={(value) => updateSetting(setting, id, value)}
+					label={getLabelFor(prop)}
+					help={prop.description}
+				/>
+			) : prop.type === 'string' ? (
+				<TextControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					value={getValueFor(setting, id)}
+					type={prop.input_type ? prop.input_type : 'text'}
+					onChange={(value) => updateSetting(setting, id, value)}
+					label={getLabelFor(prop)}
+					help={prop.description}
+				/>
+			) : prop.type === 'boolean' ? (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={getValueFor(setting, id)}
+					onChange={(value) => updateSetting(setting, id, value)}
+					label={getLabelFor(prop)}
+					help={prop.description}
+				/>
+			) : prop.type === 'number' || prop.type === 'integer' ? (
+				<NumberControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					value={getValueFor(setting, id)}
+					min={prop.min}
+					max={prop.max}
+					onChange={(value) => updateSetting(setting, id, value)}
+					label={getLabelFor(prop)}
+					help={prop.description}
+				/>
+			) : null}
+
+			<Spacer margin={6} />
+		</BaseControl>
+	);
+};
+
 domReady(() => {
 	const rootElement = document.getElementById('freemius-settings-app');
 
 	if (rootElement) {
 		const root = createRoot(rootElement);
-		root.render(<FreemiusSettings />);
+		root.render(<Settings />);
 	}
 });
 
-export default FreemiusSettings;
+export default Settings;

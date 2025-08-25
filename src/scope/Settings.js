@@ -22,9 +22,10 @@ import {
  * Internal dependencies
  */
 import EnableCheckbox from './EnableCheckbox';
-import { useSettings, useData } from '../hooks';
+import { useSettings, useData, usePlans } from '../hooks';
 import Property from './Property';
 import ButtonSettings from './ButtonSettings';
+import { useEffect } from '@wordpress/element';
 
 const PanelDescription = styled.div`
 	grid-column: span 2;
@@ -37,7 +38,7 @@ const Settings = (props) => {
 
 	const { structure, isLoading } = useSettings('freemius_defaults');
 
-	const { data, errorMessage } = useData();
+	const { data, DataView, errorMessage } = useData();
 
 	if (isLoading || !structure) {
 		return (
@@ -90,6 +91,7 @@ const Settings = (props) => {
 			}}
 		>
 			<PanelDescription>
+				<DataView />
 				<EnableCheckbox
 					label={
 						props.name == 'core/button'

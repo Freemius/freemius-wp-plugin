@@ -44,8 +44,7 @@ const MappingSettings = (props) => {
 
 	const inContext = useContext(FreemiusContext);
 
-	const { data, selectScope, DataView, isFree, isInvalid, isApiAvailable } =
-		useData();
+	const { data, selectScope, DataView, isFree, isInvalid } = useData();
 
 	useEffect(() => {
 		if (isLoading) {
@@ -105,17 +104,6 @@ const MappingSettings = (props) => {
 				)}
 			</Flex>
 			<Spacer />
-			{!isApiAvailable && (
-				<>
-					<Notice status="warning" isDismissible={false}>
-						{__(
-							'Freemius API is not configured. Please add your API token in the Freemius settings.',
-							'freemius'
-						)}
-					</Notice>
-					<Spacer />
-				</>
-			)}
 			{isError && (
 				<>
 					<Notice status="error" isDismissible={false}>

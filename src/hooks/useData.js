@@ -62,11 +62,11 @@ const useData = (scopeData) => {
 		[settings, contextData]
 	);
 
-	const {
-		plans,
-		isLoading: isPlansLoading,
-		isApiAvailable,
-	} = usePlans(dataWithoutWithDefaultPlan?.product_id);
+	const plans = [];
+	const isPlansLoading = false;
+	const isApiAvailable = false;
+
+	//const { plans, isLoading: isPlansLoading, isApiAvailable } = usePlans();
 
 	// get the first, non-free plan
 	const defaultPlan = useMemo(() => {
@@ -140,10 +140,7 @@ const useData = (scopeData) => {
 	const isInvalid =
 		isSettingsLoading || isPlansLoading
 			? undefined
-			: (!currentPricing && !isFree) ||
-			  !data?.plan_id ||
-			  !data?.product_id ||
-			  !data?.public_key;
+			: (!currentPricing && !isFree) || !data?.plan_id || !data?.product_id;
 
 	const errorMessage = useMemo(() => {
 		let message = [];
@@ -151,9 +148,9 @@ const useData = (scopeData) => {
 		if (!data?.product_id) {
 			message.push(__('Product ID is required', 'freemius'));
 		}
-		if (!data?.public_key) {
-			message.push(__('Public Key is required', 'freemius'));
-		}
+		// if (!data?.public_key) {
+		// 	message.push(__('Public Key is required', 'freemius'));
+		// }
 		if (!isPlansLoading && !data?.plan_id) {
 			message.push(__('Plan ID is required.', 'freemius'));
 		}
@@ -162,7 +159,7 @@ const useData = (scopeData) => {
 	}, [isInvalid, data, isPlansLoading]);
 
 	const DataView = useMemo(() => {
-		return () => <></>;
+		//return () => <></>;
 
 		// only for development
 		return () => (
