@@ -108,7 +108,7 @@ const Settings = (props) => {
 					}
 					{...props}
 				/>
-				{freemius_modifications && (
+				{freemius_enabled && freemius_modifications && (
 					<Button
 						onClick={() => setAttributes({ freemius_modifications: undefined })}
 						variant="secondary"
@@ -117,7 +117,7 @@ const Settings = (props) => {
 					</Button>
 				)}
 				<Spacer />
-				{errorMessage && (
+				{freemius_enabled && errorMessage && (
 					<Notice status="error" isDismissible={false}>
 						{errorMessage}
 					</Notice>

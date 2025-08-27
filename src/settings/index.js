@@ -131,7 +131,6 @@ const Settings = () => {
 										Object.entries(schema.properties).forEach(([key, prop]) => {
 											newEntry[key] = prop.default;
 										});
-										console.log(newSettings, newEntry);
 										newSettings[setting].push(newEntry);
 
 										setSettings(newSettings);
@@ -255,7 +254,6 @@ const Element = ({ id, prop, setting, index }) => {
 				newSettings[setting][id] = value;
 			}
 		}
-		console.log(newSettings);
 		setSettings(newSettings);
 	};
 

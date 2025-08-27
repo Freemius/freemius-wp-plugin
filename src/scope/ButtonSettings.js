@@ -13,6 +13,8 @@ import {
 	__experimentalSpacer as Spacer,
 	BaseControl,
 	ToggleControl,
+	Flex,
+	FlexBlock,
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
@@ -187,40 +189,43 @@ const ButtonSettings = (props) => {
 	return (
 		<>
 			<PanelDescription>
-				<BaseControl __nextHasNoMarginBottom>
-					<Button
-						__next40pxDefaultSize
-						onClick={() => {
-							//setPreview(!preview);
-							if (!preview) {
-								openCheckout();
-							} else {
-								closeCheckout();
-							}
-						}}
-						icon={'visibility'}
-						isBusy={isLoading || isLoadingData}
-						disabled={isLoading || isLoadingData}
-						isPressed={preview}
-						variant="secondary"
-					>
-						{preview && !isLoading
-							? __('Close Preview', 'freemius')
-							: __('Preview Checkout', 'freemius')}
-					</Button>
-				</BaseControl>
-				<BaseControl __nextHasNoMarginBottom>
-					<ToggleControl
-						__nextHasNoMarginBottom
-						label={__('Auto Refresh', 'freemius')}
-						help={__(
-							'Auto update the checkout when properties are changed.',
-							'freemius'
-						)}
-						checked={live}
-						onChange={(val) => setLive(!live)}
-					/>
-					<Spacer />
+				<BaseControl
+					__nextHasNoMarginBottom
+					help={__(
+						'Auto update the checkout when properties are changed.',
+						'freemius'
+					)}
+				>
+					<Flex>
+						<FlexBlock>
+							<Button
+								__next40pxDefaultSize
+								onClick={() => {
+									//setPreview(!preview);
+									if (!preview) {
+										openCheckout();
+									} else {
+										closeCheckout();
+									}
+								}}
+								icon={'visibility'}
+								isBusy={isLoading || isLoadingData}
+								disabled={isLoading || isLoadingData}
+								isPressed={preview}
+								variant="secondary"
+							>
+								{__('Preview', 'freemius')}
+							</Button>
+						</FlexBlock>
+						<FlexBlock>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__('Auto Refresh', 'freemius')}
+								checked={live}
+								onChange={(val) => setLive(!live)}
+							/>
+						</FlexBlock>
+					</Flex>
 				</BaseControl>
 				<MappingSettings {...props} />
 			</PanelDescription>

@@ -10,14 +10,10 @@ import { useMemo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useApiGet, useSettings, useData } from '.';
+import { useApiGet, useSettings } from '.';
 import { CURRENCIES } from '../constants';
 
-const useCurrency = () => {
-	const { data } = useData();
-
-	const product_id = data?.product_id;
-
+const useCurrency = (product_id) => {
 	const {
 		data: availableCurrencies,
 		isLoading,

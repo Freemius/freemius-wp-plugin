@@ -238,22 +238,22 @@ function getSpecial(properties) {
 	const { data } = useData();
 
 	if (props.id === 'plan_id') {
-		const { plans, isLoading, error } = usePlans();
+		const { plans, isLoading, error } = usePlans(data?.product_id);
 
 		if (isLoading || error) return null;
 
 		const currentPlan = plans.find((plan) => plan?.id == value) || null;
 
-		// let noOptionLabel = '';
-		// if (value === undefined || !inherited) {
-		// 	noOptionLabel = __('Use Default Plan', 'freemius');
-		// } else {
-		// 	noOptionLabel = sprintf(
-		// 		__('[%s] %s', 'freemius'),
-		// 		currentPlan?.id,
-		// 		currentPlan?.title
-		// 	);
-		// }
+		let noOptionLabel = '';
+		if (value === undefined || !inherited) {
+			noOptionLabel = __('Use Default Plan', 'freemius');
+		} else {
+			noOptionLabel = sprintf(
+				__('[%s] %s', 'freemius'),
+				currentPlan?.id,
+				currentPlan?.title
+			);
+		}
 
 		if (plans) {
 			const options = Object.entries(plans).map(([i, plan]) => {
@@ -266,7 +266,7 @@ function getSpecial(properties) {
 
 			options.unshift({
 				hint: '',
-				name: __('Select Plan', 'freemius'),
+				name: noOptionLabel,
 				key: null,
 			});
 			return (
@@ -302,7 +302,20 @@ function getSpecial(properties) {
 			products.find((product) => product?.id == value) || null;
 
 		if (products) {
+			let noOptionLabel = '';
+			if (value === undefined || !inherited) {
+				noOptionLabel = __('Select Product', 'freemius');
+			} else {
+				noOptionLabel = sprintf(
+					__('[%s] %s', 'freemius'),
+					currentProduct?.id,
+					currentProduct?.title
+				);
+			}
+
 			const options = Object.entries(products).map(([i, product]) => {
+				if (!product) return null;
+
 				return {
 					hint: `[${product.id}]`,
 					name: `${product.title}`,
@@ -312,7 +325,7 @@ function getSpecial(properties) {
 
 			options.unshift({
 				hint: '',
-				name: __('Select Product', 'freemius'),
+				name: noOptionLabel,
 				key: null,
 			});
 

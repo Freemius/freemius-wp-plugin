@@ -12,24 +12,17 @@ import { useMemo } from '@wordpress/element';
  * Internal dependencies
  */
 import { MODIFIERS } from '../constants';
-import {
-	useCurrency,
-	useBillingCycle,
-	useLicenses,
-	usePlans,
-	useData,
-} from '.';
+import { useCurrency, useBillingCycle, useLicenses, usePlans } from '.';
 
-const useModifiers = (type = null) => {
-	const { data } = useData();
-
+const useModifiers = (type = null, product_id) => {
 	const { options: currencyOptions, isLoading: isCurrencyLoading } =
-		useCurrency();
+		useCurrency(product_id);
 	const { options: billingCycleOptions, isLoading: isBillingCycleLoading } =
-		useBillingCycle();
+		useBillingCycle(product_id);
 	const { options: licensesOptions, isLoading: isLicensesLoading } =
-		useLicenses();
-	const { options: plansOptions, isLoading: isPlansLoading } = usePlans();
+		useLicenses(product_id);
+	const { options: plansOptions, isLoading: isPlansLoading } =
+		usePlans(product_id);
 
 	// Memoize default options to prevent recreation
 	const defaultOptions = useMemo(

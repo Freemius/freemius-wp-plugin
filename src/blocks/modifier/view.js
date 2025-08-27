@@ -42,9 +42,16 @@ function getScopeData(element) {
  * @returns {string} The mapping content
  */
 function getMappingContent(scopeData, mappingData) {
-	const matrix = JSON.parse(
-		document.querySelector('.freemius-matrix-data').textContent
-	);
+	const allMatrix = document.querySelectorAll('.freemius-matrix-data');
+
+	let matrix = JSON.parse(allMatrix[0].textContent);
+
+	for (const m of allMatrix) {
+		if (m.dataset.freemiusProductId == scopeData.product_id) {
+			matrix = JSON.parse(m.textContent);
+			break;
+		}
+	}
 
 	// get the default plan if not defined in the scope data
 	const plan_id =

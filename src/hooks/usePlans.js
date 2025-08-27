@@ -11,13 +11,9 @@ import { useMemo, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useApiGet, useSettings, useData } from '.';
+import { useApiGet, useSettings } from '.';
 
-const usePlans = () => {
-	const { data } = useData();
-
-	const product_id = data?.product_id;
-
+const usePlans = (product_id) => {
 	const {
 		data: plans,
 		isLoading,
@@ -52,10 +48,8 @@ const usePlans = () => {
 			};
 		});
 
-		//console.log('options', options, product_id, plans);
-
 		return options;
-	}, [plans, product_id]);
+	}, [plans]);
 
 	return {
 		plans: plans?.plans || [],

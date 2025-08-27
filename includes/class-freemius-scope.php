@@ -31,6 +31,13 @@ class Scope {
 	 */
 	private $scope_added = false;
 
+	/**
+	 * Whether the matrix has been added to the content
+	 *
+	 * @var boolean
+	 */
+	private $matrix_added = array();
+
 
 	/**
 	 * Constructor
@@ -108,8 +115,10 @@ class Scope {
 		}
 
 		if ( $this->scope_added ) {
-			return $block_content;
+			//return $block_content;
 		}
+
+		$block_args = $block['attrs']['freemius'] ?? array();
 
 		$defaults = \get_option( 'freemius_defaults', array() );
 
@@ -121,13 +130,21 @@ class Scope {
 		 */
 		$defaults = apply_filters( 'freemius_scope_defaults', $defaults );
 
+		$args = array_merge( $block_args, $defaults );
+
 		// Prevent json_encode from rounding floats.
 		// TODO: recosinder this, as it's maybe not working on all hosts
 		\ini_set( 'serialize_precision', '-1' );
 
 		// add defaults to the block content
-		$extra  = '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $defaults ) . '</script>';
-		$extra .= '<script type="application/json" class="freemius-matrix-data">' . \wp_json_encode( $this->get_matrix( $defaults ) ) . '</script>';
+		$extra = '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $args ) . '</script>';
+
+		if ( isset( $args['product_id'] ) && ! in_array( $args['product_id'], $this->matrix_added ) ) {
+			$extra               .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $args['product_id'] ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';
+			$this->matrix_added[] = $args['product_id'];
+		}
+
+		error_log( $block_content );
 
 		$block_content     = $extra . $block_content;
 		$this->scope_added = true;

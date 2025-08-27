@@ -62,11 +62,11 @@ const useData = (scopeData) => {
 		[settings, contextData]
 	);
 
-	const plans = [];
-	const isPlansLoading = false;
-	const isApiAvailable = false;
-
-	//const { plans, isLoading: isPlansLoading, isApiAvailable } = usePlans();
+	const {
+		plans,
+		isLoading: isPlansLoading,
+		isApiAvailable,
+	} = usePlans(dataWithoutWithDefaultPlan?.product_id);
 
 	// get the first, non-free plan
 	const defaultPlan = useMemo(() => {
@@ -159,7 +159,7 @@ const useData = (scopeData) => {
 	}, [isInvalid, data, isPlansLoading]);
 
 	const DataView = useMemo(() => {
-		//return () => <></>;
+		return () => <></>;
 
 		// only for development
 		return () => (
