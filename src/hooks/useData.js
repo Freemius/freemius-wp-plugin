@@ -159,7 +159,7 @@ const useData = (scopeData) => {
 	}, [isInvalid, data, isPlansLoading]);
 
 	const DataView = useMemo(() => {
-		return () => <></>;
+		//return () => <></>;
 
 		// only for development
 		return () => (

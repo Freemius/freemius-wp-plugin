@@ -285,8 +285,14 @@ class Api {
 
 			$token = $this->get_token_by_endpoint( $endpoint );
 
-			if ( ! $token ) {
+			if ( ! $token && isset( $settings['token'] ) ) {
 				$token = $settings['token'];
+			} else {
+				return new \WP_Error(
+					'freemius_api_not_configured',
+					__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius-button' ),
+					array( 'status' => 500 )
+				);
 			}
 
 			$plugin_data = get_plugin_data( FREEMIUS_PLUGIN_DIR . '/freemius.php' );

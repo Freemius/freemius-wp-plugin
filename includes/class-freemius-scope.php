@@ -144,8 +144,6 @@ class Scope {
 			$this->matrix_added[] = $args['product_id'];
 		}
 
-		error_log( $block_content );
-
 		$block_content     = $extra . $block_content;
 		$this->scope_added = true;
 

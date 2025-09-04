@@ -11,7 +11,7 @@ import { useMemo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useData, useApiGet, useSettings, useMultipleApi } from '.';
+import { useSettings, useMultipleApi } from '.';
 
 const useProducts = () => {
 	const {

@@ -10,6 +10,7 @@ return array(
 	'product_id' => array(
 		'label'            => __( 'Product ID', 'freemius' ),
 		'type'             => 'integer',
+		'required'         => true,
 		'default'          => '',
 		'description'      => __( 'Required product ID (whether it\'s a plugin, theme, add-on, bundle, or SaaS).', 'freemius' ),
 		'isRequired'       => true,
@@ -26,6 +27,7 @@ return array(
 	'token'      => array(
 		'type'        => 'string',
 		'input_type'  => 'password',
+		'required'    => true,
 		'label'       => __( 'Token', 'freemius' ),
 		'description' => __(
 			'Go to the Freemius Developer Dashboard. Open the Settings page of the relevant product. Click on the API Token tab. Copy the API Bearer Authorization Token from the UI.',

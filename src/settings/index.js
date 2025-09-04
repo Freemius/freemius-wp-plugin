@@ -75,6 +75,23 @@ const Settings = () => {
 		);
 	}
 
+	const SaveMessage = () => {
+		if (!saveMessage) return null;
+		return (
+			<>
+				<Spacer margin={6} />
+				<Notice
+					status={saveMessageType}
+					isDismissible
+					onRemove={() => setSaveMessage('')}
+				>
+					{saveMessage}
+				</Notice>
+				<Spacer margin={6} />
+			</>
+		);
+	};
+
 	const tabs = Object.entries(structure).map(([setting, schema], i) => ({
 		name: setting,
 		title: schema.title,
@@ -89,7 +106,7 @@ const Settings = () => {
 						{schema.type && schema.type === 'array' ? (
 							<>
 								{(Object.entries(settings[setting]) || []).map((item, i) => (
-									<Card key={i} elevation={3} style={{ marginBottom: '10px' }}>
+									<Card key={i} elevation={2} style={{ marginBottom: '10px' }}>
 										<CardBody>
 											<Flex justify="flex-end">
 												<Button
@@ -156,15 +173,7 @@ const Settings = () => {
 		<>
 			<Header />
 			<ContentContainer>
-				{saveMessage && (
-					<Notice
-						status={saveMessageType}
-						isDismissible
-						onRemove={() => setSaveMessage('')}
-					>
-						{saveMessage}
-					</Notice>
-				)}
+				<SaveMessage />
 				<TabPanel
 					tabs={tabs}
 					initialTabName={activeTab ? `freemius_${activeTab}` : null}
@@ -183,6 +192,7 @@ const Settings = () => {
 						<SaveButton />
 					</FlexItem>
 				</Flex>
+				<SaveMessage />
 			</ContentContainer>
 		</>
 	);
@@ -276,6 +286,7 @@ const Element = ({ id, prop, setting, index }) => {
 						label: item,
 						value: item,
 					}))}
+					required={prop.required}
 				/>
 			) : prop.code ? (
 				<TextareaControl
