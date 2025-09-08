@@ -24,8 +24,6 @@ domReady(() => {
 			e.preventDefault();
 			const scopeData = getScopeData(button);
 
-			console.log(scopeData);
-
 			const { product_id } = scopeData;
 			if (!product_id) {
 				console.error('Please fill in product_id');
@@ -79,17 +77,19 @@ function getScopeData(element) {
 	const scope = element.closest('[data-freemius-scope]');
 	const data = JSON.parse(scope.dataset.freemiusScope || '{}');
 
-	console.log(data);
-
 	const parent = scope.parentNode.closest('[data-freemius-scope]');
 
 	if (parent) {
 		const parentData = getScopeData(parent);
 		return { ...parentData, ...data };
 	} else {
-		const globalScope = JSON.parse(
-			document.querySelector('.freemius-scope-data').textContent
-		);
-		return { ...globalScope, ...data };
+		const globalScope = document.querySelector('.freemius-global-scope-data');
+
+		if (!globalScope) {
+			return data;
+		}
+		const globalScopeData = JSON.parse(globalScope.textContent);
+
+		return { ...globalScopeData, ...data };
 	}
 }

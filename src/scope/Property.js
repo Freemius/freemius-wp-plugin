@@ -5,10 +5,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
 	__experimentalToolsPanelItem as ToolsPanelItem,
-	Notice,
-	Button,
 } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies

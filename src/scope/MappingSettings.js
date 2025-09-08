@@ -15,7 +15,6 @@ import {
 	Button,
 	SelectControl,
 	__experimentalSpacer as Spacer,
-	Flex,
 } from '@wordpress/components';
 import { useContext, useEffect } from '@wordpress/element';
 
@@ -28,24 +27,16 @@ import { FreemiusContext } from '../context';
 import { useMapping } from '../hooks';
 
 const MappingSettings = (props) => {
-	const { attributes, clientId } = props;
+	const { attributes } = props;
 
 	const { freemius_mapping } = attributes;
 
-	const {
-		options,
-		isLoading,
-		setMapping,
-		setLabels,
-		isError,
-		errorMessage,
-		value,
-		clientId: mappingClientId,
-	} = useMapping(props);
+	const { options, isLoading, setMapping, isError, errorMessage } =
+		useMapping(props);
 
 	const inContext = useContext(FreemiusContext);
 
-	const { data, selectScope, DataView, isFree, isInvalid } = useData();
+	const { DataView } = useData();
 
 	useEffect(() => {
 		if (isLoading) {

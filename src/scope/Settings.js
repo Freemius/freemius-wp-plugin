@@ -22,10 +22,9 @@ import {
  * Internal dependencies
  */
 import EnableCheckbox from './EnableCheckbox';
-import { useSettings, useData, usePlans } from '../hooks';
+import { useSettings, useData } from '../hooks';
 import Property from './Property';
 import ButtonSettings from './ButtonSettings';
-import { useEffect } from '@wordpress/element';
 
 const PanelDescription = styled.div`
 	grid-column: span 2;
@@ -38,7 +37,7 @@ const Settings = (props) => {
 
 	const { structure, isLoading } = useSettings('freemius_defaults');
 
-	const { data, DataView, errorMessage } = useData();
+	const { data, DataView, errorMessage, defaults } = useData();
 
 	if (isLoading || !structure) {
 		return (
@@ -55,7 +54,8 @@ const Settings = (props) => {
 	const onChangeHandler = (key, val, defaultValue) => {
 		let newValue = { ...freemius };
 
-		if (defaultValue === val || val === undefined) {
+		// if the value is the same as the default value, delete the key
+		if ((defaultValue === val || val === undefined) && val !== defaults[key]) {
 			delete newValue[key];
 		} else {
 			newValue[key] = val;

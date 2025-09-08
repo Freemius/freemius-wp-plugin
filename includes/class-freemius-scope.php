@@ -136,8 +136,13 @@ class Scope {
 		// TODO: recosinder this, as it's maybe not working on all hosts
 		\ini_set( 'serialize_precision', '-1' );
 
+		$extra = '';
+
 		// add defaults to the block content
-		$extra = '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $args ) . '</script>';
+		if ( ! empty( $defaults ) ) {
+			$extra .= '<script type="application/json" class="freemius-global-scope-data">' . \wp_json_encode( $defaults ) . '</script>';
+		}
+		$extra .= '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $block_args ) . '</script>';
 
 		if ( isset( $args['product_id'] ) && ! in_array( $args['product_id'], $this->matrix_added ) ) {
 			$extra               .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $args['product_id'] ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';

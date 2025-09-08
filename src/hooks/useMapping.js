@@ -6,13 +6,12 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { useData, usePlans, useLicenses } from './';
-import { CURRENCIES } from '../constants/currencies';
 
 const useMapping = (props) => {
 	const { attributes, setAttributes } = props;
@@ -122,7 +121,8 @@ const getMappingValue = (options) => {
 	const mappingData = useMemo(() => {
 		return {
 			price: currentPricing?.[data?.billing_cycle + '_price'] || undefined, // Free plan has no pricing
-			currency: data?.currency,
+			currency:
+				data?.currency && data?.currency !== 'auto' ? data?.currency : 'usd',
 			title: currentPlan?.title || null,
 			licenses:
 				currentPricing?.licenses === null ? 0 : currentPricing?.licenses, // handle unlimited license

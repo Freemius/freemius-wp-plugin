@@ -159,7 +159,7 @@ const useData = (scopeData) => {
 	}, [isInvalid, data, isPlansLoading]);
 
 	const DataView = useMemo(() => {
-		//return () => <></>;
+		return () => <></>;
 
 		// only for development
 		return () => (
@@ -199,7 +199,7 @@ const useData = (scopeData) => {
 	return {
 		data,
 		settings,
-		isLoading: isSettingsLoading || isPlansLoading,
+		isLoading: isApiAvailable && (isSettingsLoading || isPlansLoading),
 		isApiAvailable,
 		//metaData,
 		contextData,
@@ -212,6 +212,7 @@ const useData = (scopeData) => {
 		selectScope,
 		errorMessage,
 		matrix,
+		defaults,
 	};
 };
 

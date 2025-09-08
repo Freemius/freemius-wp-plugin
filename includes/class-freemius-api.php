@@ -285,9 +285,12 @@ class Api {
 
 			$token = $this->get_token_by_endpoint( $endpoint );
 
+			// fallback to global token if product token is not set
 			if ( ! $token && isset( $settings['token'] ) ) {
 				$token = $settings['token'];
-			} else {
+			}
+
+			if ( ! $token ) {
 				return new \WP_Error(
 					'freemius_api_not_configured',
 					__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius-button' ),
@@ -469,12 +472,18 @@ class Api {
 
 		include_once __DIR__ . '/dummy-response.php';
 
+		$body = null;
+
 		if ( substr( $endpoint, -strlen( '/currencies.json' ) ) === '/currencies.json' ) {
 			$body = $currencies;
 		}
 
 		if ( substr( $endpoint, -strlen( '/pricing.json' ) ) === '/pricing.json' ) {
 			$body = $pricing;
+		}
+
+		if ( substr( $endpoint, -strlen( '/products/19794.json' ) ) === '/products/19794.json' ) {
+			$body = $product;
 		}
 
 		return array(

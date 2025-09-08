@@ -10,7 +10,6 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Button,
-	__experimentalSpacer as Spacer,
 	BaseControl,
 	ToggleControl,
 	Flex,
@@ -29,9 +28,9 @@ const PanelDescription = styled.div`
 `;
 
 const ButtonSettings = (props) => {
-	const { context, attributes, setAttributes, name } = props;
+	const { attributes } = props;
 
-	const { freemius_enabled, freemius, freemius_modifications } = attributes;
+	const { freemius } = attributes;
 
 	const [preview, setPreview] = useState(false);
 	const [live, setLive] = useState(false);

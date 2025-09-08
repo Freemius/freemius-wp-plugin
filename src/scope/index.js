@@ -24,6 +24,7 @@ import { useData } from '../hooks';
 
 import './style.scss';
 
+// Block, which support Freemius Scope
 const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
 	'core/columns',
@@ -31,6 +32,7 @@ const SUPPORTED_BROKER_BLOCKS = [
 	'core/button',
 ];
 
+// Block, which support Freemius Mapping
 const SUPPORTED_CONSUMER_BLOCKS = [
 	'core/paragraph',
 	'core/heading',
