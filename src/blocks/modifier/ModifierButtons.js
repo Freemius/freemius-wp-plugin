@@ -19,7 +19,6 @@ export const ModifierButtons = (props) => {
 		options = [],
 		current = '',
 		className = '',
-		type,
 	} = attributes;
 
 	if (className.includes('is-style-dropdown')) {

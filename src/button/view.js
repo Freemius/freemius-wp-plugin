@@ -33,10 +33,7 @@ domReady(() => {
 			// do not modify the original object
 			const freemius_copy = { ...scopeData };
 
-			const handler = new FS.Checkout({
-				product_id: product_id,
-				//public_key: public_key,
-			});
+			const handler = new FS.Checkout({ product_id: product_id });
 
 			if (scopeData.cancel) {
 				freemius_copy.cancel = function () {

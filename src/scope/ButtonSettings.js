@@ -118,10 +118,7 @@ const ButtonSettings = (props) => {
 		// add class to the body
 		document.body.classList.add('freemius-checkout-preview');
 
-		const handler = new FS.Checkout({
-			product_id: product_id,
-			//public_key: public_key,
-		});
+		const handler = new FS.Checkout({ product_id: product_id });
 
 		// close the preview if cancel is clicked
 		data_copy.cancel = function () {
