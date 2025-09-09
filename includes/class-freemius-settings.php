@@ -42,6 +42,7 @@ class Settings {
 		\add_filter( 'plugin_action_links_freemius/freemius.php', array( $this, 'add_plugin_action_links' ) );
 	}
 
+
 	/**
 	 * Get instance of this class
 	 *
@@ -102,6 +103,18 @@ class Settings {
 
 		return $links;
 	}
+
+	/**
+	 * Activation redirect
+	 *
+	 * @param string $plugin The plugin basename.
+	 */
+	public function activation_redirect() {
+
+		wp_redirect( admin_url( 'options-general.php?page=freemius-settings#products' ), 302, 'Freemius for WordPress' );
+		exit();
+	}
+
 
 	/**
 	 * Enqueue admin scripts and styles

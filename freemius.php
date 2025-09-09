@@ -66,6 +66,9 @@ function init() {
  * @return void
  */
 function activate() {
+
+	// Redirect on shutdown so plugin is actually loaded.
+	add_action( 'shutdown', array( Settings::get_instance(), 'activation_redirect' ) );
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\\activate' );
 

@@ -24,12 +24,7 @@ class Scope {
 	 */
 	private static $instance = null;
 
-	/**
-	 * Whether the scope has been added to the content
-	 *
-	 * @var boolean
-	 */
-	private $scope_added = false;
+
 
 	/**
 	 * Whether the matrix has been added to the content
@@ -114,10 +109,6 @@ class Scope {
 			return $block_content;
 		}
 
-		if ( $this->scope_added ) {
-			//return $block_content;
-		}
-
 		$block_args = $block['attrs']['freemius'] ?? array();
 
 		$defaults = \get_option( 'freemius_defaults', array() );
@@ -136,21 +127,25 @@ class Scope {
 		// TODO: recosinder this, as it's maybe not working on all hosts
 		\ini_set( 'serialize_precision', '-1' );
 
+		$script_tag = '<script type="application/json" class="%s">%s</script>';
+
 		$extra = '';
 
 		// add defaults to the block content
 		if ( ! empty( $defaults ) ) {
-			$extra .= '<script type="application/json" class="freemius-global-scope-data">' . \wp_json_encode( $defaults ) . '</script>';
+			$extra .= sprintf( $script_tag, 'freemius-global-scope-data', \wp_json_encode( $defaults ) );
 		}
-		$extra .= '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $block_args ) . '</script>';
+		$extra .= sprintf( $script_tag, 'freemius-scope-data', \wp_json_encode( $block_args ) );
 
-		if ( isset( $args['product_id'] ) && ! in_array( $args['product_id'], $this->matrix_added ) ) {
-			$extra               .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $args['product_id'] ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';
-			$this->matrix_added[] = $args['product_id'];
+		$product_id = $args['product_id'] ?? null;
+
+		if ( $product_id && ! in_array( $product_id, $this->matrix_added ) ) {
+			$extra .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $product_id ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';
+
+			$this->matrix_added[] = $product_id;
 		}
 
-		$block_content     = $extra . $block_content;
-		$this->scope_added = true;
+		$block_content = $extra . $block_content;
 
 		return $block_content;
 	}
