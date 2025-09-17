@@ -24,7 +24,7 @@
 		"@10up/block-components": "^1.19.3",
 		"@emotion/styled": "^11.14.0",
 		"@wordpress/data": "^10.27.0",
-		"@wordpress/dom-ready": "^4.27.0",
+		"@wordpress/dom-ready": "^4.31.0",
 		"@wordpress/element": "^6.27.0",
 		"@wordpress/i18n": "^6.0.0",
 		"@wordpress/interactivity": "^6.27.0",
