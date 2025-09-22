@@ -24,19 +24,16 @@ domReady(() => {
 			e.preventDefault();
 			const scopeData = getScopeData(button);
 
-			const { product_id, public_key } = scopeData;
-			if (!product_id || !public_key) {
-				console.error('Please fill in product_id and public_key');
+			const { product_id } = scopeData;
+			if (!product_id) {
+				console.error('Please fill in product_id');
 				return;
 			}
 
 			// do not modify the original object
 			const freemius_copy = { ...scopeData };
 
-			const handler = new FS.Checkout({
-				product_id: product_id,
-				public_key: public_key,
-			});
+			const handler = new FS.Checkout({ product_id: product_id });
 
 			if (scopeData.cancel) {
 				freemius_copy.cancel = function () {
@@ -83,9 +80,13 @@ function getScopeData(element) {
 		const parentData = getScopeData(parent);
 		return { ...parentData, ...data };
 	} else {
-		const globalScope = JSON.parse(
-			document.querySelector('.freemius-scope-data').textContent
-		);
-		return { ...globalScope, ...data };
+		const globalScope = document.querySelector('.freemius-global-scope-data');
+
+		if (!globalScope) {
+			return data;
+		}
+		const globalScopeData = JSON.parse(globalScope.textContent);
+
+		return { ...globalScopeData, ...data };
 	}
 }

@@ -283,7 +283,20 @@ class Api {
 		try {
 			$endpoint = '/' . ltrim( $endpoint, '/' );
 
-			$token = $settings['token'];
+			$token = $this->get_token_by_endpoint( $endpoint );
+
+			// fallback to global token if product token is not set
+			if ( ! $token && isset( $settings['token'] ) ) {
+				$token = $settings['token'];
+			}
+
+			if ( ! $token ) {
+				return new \WP_Error(
+					'freemius_api_not_configured',
+					__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius-button' ),
+					array( 'status' => 500 )
+				);
+			}
 
 			$plugin_data = get_plugin_data( FREEMIUS_PLUGIN_DIR . '/freemius.php' );
 
@@ -424,6 +437,27 @@ class Api {
 		);
 	}
 
+	/**
+	 * Get token by endpoint
+	 *
+	 * @param string $endpoint API endpoint.
+	 * @return string
+	 */
+	private function get_token_by_endpoint( $endpoint ) {
+
+		//extract product id from endpoint
+		$product_id = (int) preg_replace( '/(.*?)products\/(\d+)(.*)$/', '$2', $endpoint );
+
+		$products = get_option( 'freemius_products', array() );
+
+		foreach ( $products as $product ) {
+			if ( $product['product_id'] === $product_id ) {
+				return $product['token'];
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * This is used to do not make an API request to the Freemius API but use dummy data instead.
@@ -438,12 +472,18 @@ class Api {
 
 		include_once __DIR__ . '/dummy-response.php';
 
+		$body = null;
+
 		if ( substr( $endpoint, -strlen( '/currencies.json' ) ) === '/currencies.json' ) {
 			$body = $currencies;
 		}
 
 		if ( substr( $endpoint, -strlen( '/pricing.json' ) ) === '/pricing.json' ) {
 			$body = $pricing;
+		}
+
+		if ( substr( $endpoint, -strlen( '/products/19794.json' ) ) === '/products/19794.json' ) {
+			$body = $product;
 		}
 
 		return array(

@@ -159,7 +159,10 @@ export function useApi(endpoint, options = {}) {
 				setHasErrored(true);
 
 				// Don't retry if API is blocked
-				if (err.code === 'API_BLOCKED') {
+				if (
+					err.code === 'API_BLOCKED' ||
+					err.code === 'freemius_api_not_configured'
+				) {
 					setIsRetrying(false);
 					if (onError) {
 						onError(err);
@@ -189,7 +192,10 @@ export function useApi(endpoint, options = {}) {
 				}
 
 				// Don't throw for API_BLOCKED to prevent uncaught promise rejections
-				if (err.code !== 'API_BLOCKED') {
+				if (
+					err.code !== 'API_BLOCKED' &&
+					err.code !== 'freemius_api_not_configured'
+				) {
 					throw err;
 				}
 			}
@@ -366,7 +372,7 @@ export function useApi(endpoint, options = {}) {
 	return {
 		// Data and state
 		data,
-		isLoading: isLoading || !data,
+		isLoading: endpoint ? isLoading || !data : false,
 		error,
 		lastFetchTime,
 		isAnyLoading,

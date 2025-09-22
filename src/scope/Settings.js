@@ -37,7 +37,7 @@ const Settings = (props) => {
 
 	const { structure, isLoading } = useSettings('freemius_defaults');
 
-	const { data, errorMessage } = useData();
+	const { data, DataView, errorMessage, defaults } = useData();
 
 	if (isLoading || !structure) {
 		return (
@@ -54,7 +54,8 @@ const Settings = (props) => {
 	const onChangeHandler = (key, val, defaultValue) => {
 		let newValue = { ...freemius };
 
-		if (defaultValue === val || val === undefined) {
+		// if the value is the same as the default value, delete the key
+		if ((defaultValue === val || val === undefined) && val !== defaults[key]) {
 			delete newValue[key];
 		} else {
 			newValue[key] = val;
@@ -90,6 +91,7 @@ const Settings = (props) => {
 			}}
 		>
 			<PanelDescription>
+				<DataView />
 				<EnableCheckbox
 					label={
 						props.name == 'core/button'
@@ -106,7 +108,7 @@ const Settings = (props) => {
 					}
 					{...props}
 				/>
-				{freemius_modifications && (
+				{freemius_enabled && freemius_modifications && (
 					<Button
 						onClick={() => setAttributes({ freemius_modifications: undefined })}
 						variant="secondary"
@@ -115,7 +117,7 @@ const Settings = (props) => {
 					</Button>
 				)}
 				<Spacer />
-				{errorMessage && (
+				{freemius_enabled && errorMessage && (
 					<Notice status="error" isDismissible={false}>
 						{errorMessage}
 					</Notice>

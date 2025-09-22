@@ -60,7 +60,7 @@ const Property = (props) => {
 	}
 
 	const onChangeHandler = (val) => {
-		if (val === '' || val === undefined) {
+		if (val === '' || val === undefined || val === null) {
 			onChange(undefined);
 			return;
 		}

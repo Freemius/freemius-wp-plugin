@@ -7,7 +7,7 @@ namespace Freemius;
  * Description:       Freemius Toolkit
  * Requires at least: 6.6
  * Requires PHP:      7.4
- * Version:           0.3.0
+ * Version:           0.4.0
  * Author:            Freemius
  * Author URI:        https://freemius.com
  * License:           MIT
@@ -66,6 +66,9 @@ function init() {
  * @return void
  */
 function activate() {
+
+	// Redirect on shutdown so plugin is actually loaded.
+	add_action( 'shutdown', array( Settings::get_instance(), 'activation_redirect' ) );
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\\activate' );
 

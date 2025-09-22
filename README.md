@@ -3,7 +3,7 @@
 Contributors:      freemius, xaverb  
 Tags:              freemius, checkout, payment, button  
 Tested up to:      6.8  
-Stable tag:        0.2.2  
+Stable tag:        0.4.0  
 License:           MIT  
 
 Freemius for WordPress helps you to add Freemius Checkout to any button of your WordPress content using the block editor.
@@ -58,6 +58,16 @@ The plugin works with any WordPress theme that supports the block editor (Gutenb
 2. Example of a Freemius checkout button in action
 
 ## Changelog
+
+### 0.4.0
+
+- **New Feature**: Added "Get Started" tab in settings with helpful video tutorial
+- **Improved Setup**: Plugin now automatically redirects to settings page after activation
+- **Enhanced Security**: Improved API token handling and authentication
+- **Better User Experience**: Cleaner interface with improved error messages
+- **Breaking Change**: Simplified authentication - no longer requires `public_key` parameter
+- **Performance**: Faster loading and improved plugin performance
+- **Bug Fixes**: Various improvements and fixes for better stability
 
 ### 0.3.0
 

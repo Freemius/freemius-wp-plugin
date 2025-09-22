@@ -13,13 +13,14 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Modal,
+	CustomSelectControl,
 } from '@wordpress/components';
 import { useState, useRef, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { useData, usePlans } from '../hooks';
+import { useData, usePlans, useProducts } from '../hooks';
 
 const PropertyInputField = (properties) => {
 	const {
@@ -167,6 +168,7 @@ const PropertyInputField = (properties) => {
 			break;
 	}
 
+	// check for special components
 	const SpecialComponent = getSpecial(properties);
 
 	if (SpecialComponent) {
@@ -175,11 +177,7 @@ const PropertyInputField = (properties) => {
 
 	return (
 		<>
-			{link && (
-				<HStack justify="flex-end">
-					<ExternalLink href={link} />
-				</HStack>
-			)}
+			<HStack justify="flex-end">{link && <ExternalLink href={link} />}</HStack>
 			{InputComponent}
 		</>
 	);
@@ -236,43 +234,144 @@ function getSpecial(properties) {
 
 	const { data } = useData();
 
-	if (!data?.product_id) return null;
-
 	if (props.id === 'plan_id') {
-		const { plans, isLoading, error } = usePlans(data.product_id);
+		const { plans, isLoading, error } = usePlans(data?.product_id);
 
 		if (isLoading || error) return null;
 
-		const currentPlan = plans.find((plan) => plan?.id == value) || null;
+		const currentPlan =
+			plans.find((plan) => plan?.id == value || inherited) || null;
 
-		let noOptionLabel = '';
-		if (value === undefined || !inherited) {
-			noOptionLabel = __('Use Default Plan', 'freemius');
-		} else {
-			noOptionLabel = sprintf(
-				__('[%s] %s', 'freemius'),
-				currentPlan?.id,
+		let noOptionLabel = {
+			hint: '',
+			name: '',
+			key: null,
+		};
+		if (value === undefined && !inherited) {
+			noOptionLabel.name = __('Use Default Plan', 'freemius');
+		} else if (inherited) {
+			noOptionLabel.name = sprintf(
+				__('%s (inherited)', 'freemius'),
 				currentPlan?.title
 			);
+			noOptionLabel.hint = `[${currentPlan?.id}]`;
+		} else if (currentPlan) {
+			if (!inherited) {
+				noOptionLabel.name = sprintf(
+					__('%s (inherited)', 'freemius'),
+					currentPlan?.title
+				);
+			} else {
+				noOptionLabel = null;
+			}
+		} else {
+			noOptionLabel.name = __('Use Default Plan', 'freemius');
 		}
 
 		if (plans) {
+			const options = Object.entries(plans).map(([i, plan]) => {
+				return {
+					hint: `[${plan.id}]`,
+					name: `${plan.title}`,
+					key: parseInt(plan.id),
+				};
+			});
+
+			if (noOptionLabel) options.unshift(noOptionLabel);
+
 			return (
-				<TreeSelect
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					label={label}
-					help={help}
-					onChange={onChange}
-					selectedId={value}
-					noOptionLabel={noOptionLabel}
-					tree={Object.entries(plans).map(([i, plan]) => {
-						return {
-							name: `[${plan.id}] ${plan.title}`,
-							id: plan.id,
-						};
-					})}
-				/>
+				<BaseControl __nextHasNoMarginBottom help={help}>
+					<CustomSelectControl
+						key={props.id}
+						__next40pxDefaultSize
+						label={label}
+						onChange={(value) => {
+							const item = value.selectedItem;
+							onChange(item.key);
+						}}
+						options={options}
+						value={
+							value
+								? {
+										hint: `[${value}]`,
+										name: `${currentPlan?.title}`,
+										key: parseInt(value),
+								  }
+								: null
+						}
+					/>
+				</BaseControl>
+			);
+		}
+	} else if (props.id === 'product_id') {
+		const { products, isLoading, error } = useProducts();
+
+		if (isLoading || error) return null;
+
+		const currentProduct =
+			products.find((product) => product?.id == value || inherited) || null;
+
+		if (products) {
+			let noOptionLabel = {
+				hint: '',
+				name: '',
+				key: null,
+			};
+			if (value === undefined && !inherited) {
+				noOptionLabel.name = __('Select Product', 'freemius');
+			} else if (inherited) {
+				noOptionLabel.name = sprintf(
+					__('%s (inherited)', 'freemius'),
+					currentProduct?.title
+				);
+				noOptionLabel.hint = `[${currentProduct?.id}]`;
+			} else if (currentProduct) {
+				if (!inherited) {
+					noOptionLabel.name = sprintf(
+						__('%s (inherited)', 'freemius'),
+						currentProduct?.title
+					);
+				} else {
+					noOptionLabel = null;
+				}
+			} else {
+				noOptionLabel.name = __('Select Product', 'freemius');
+			}
+
+			const options = Object.entries(products).map(([i, product]) => {
+				if (!product) return null;
+
+				return {
+					hint: `[${product.id}]`,
+					name: `${product.title}`,
+					key: parseInt(product.id),
+				};
+			});
+
+			if (noOptionLabel) options.unshift(noOptionLabel);
+
+			return (
+				<BaseControl __nextHasNoMarginBottom help={help}>
+					<CustomSelectControl
+						key={props.id}
+						__next40pxDefaultSize
+						label={label}
+						onChange={(value) => {
+							const item = value.selectedItem;
+							onChange(item.key);
+						}}
+						options={options}
+						value={
+							value
+								? {
+										hint: `[${value}]`,
+										name: `${currentProduct?.title}`,
+										key: parseInt(value),
+								  }
+								: null
+						}
+					/>
+				</BaseControl>
 			);
 		}
 	}

@@ -15,7 +15,6 @@ import {
 	Button,
 	SelectControl,
 	__experimentalSpacer as Spacer,
-	Flex,
 } from '@wordpress/components';
 import { useContext, useEffect } from '@wordpress/element';
 
@@ -32,20 +31,12 @@ const MappingSettings = (props) => {
 
 	const { freemius_mapping } = attributes;
 
-	const {
-		options,
-		isLoading,
-		setMapping,
-		setLabels,
-		isError,
-		errorMessage,
-		value,
-	} = useMapping(props);
+	const { options, isLoading, setMapping, isError, errorMessage } =
+		useMapping(props);
 
 	const inContext = useContext(FreemiusContext);
 
-	const { data, selectScope, DataView, isFree, isInvalid, isApiAvailable } =
-		useData();
+	const { DataView } = useData();
 
 	useEffect(() => {
 		if (isLoading) {
@@ -80,42 +71,8 @@ const MappingSettings = (props) => {
 			) : (
 				<h2>{__('This Block can be used for mapping.', 'freemius')}</h2>
 			)}
-			<Flex>
-				<Button
-					onClick={selectScope}
-					variant="secondary"
-					label={__(
-						'Select the scope where these settings are defined.',
-						'freemius'
-					)}
-				>
-					{__('Select Scope', 'freemius')}
-				</Button>
-				{options.field && (
-					<Button
-						onClick={() => {
-							setMapping('field', undefined);
-						}}
-						variant="tertiary"
-						isDestructive
-						label={__('Clear Mapping', 'freemius')}
-					>
-						{__('Clear Mapping', 'freemius')}
-					</Button>
-				)}
-			</Flex>
+
 			<Spacer />
-			{!isApiAvailable && (
-				<>
-					<Notice status="warning" isDismissible={false}>
-						{__(
-							'Freemius API is not configured. Please add your API token in the Freemius settings.',
-							'freemius'
-						)}
-					</Notice>
-					<Spacer />
-				</>
-			)}
 			{isError && (
 				<>
 					<Notice status="error" isDismissible={false}>
@@ -175,23 +132,26 @@ const MappingSettings = (props) => {
 								<SelectControl
 									__nextHasNoMarginBottom
 									__next40pxDefaultSize
-									label={__('Currency', 'freemius')}
-									help={__('Select the currency', 'freemius')}
+									label={__('Currency Symbol', 'freemius')}
+									help={__(
+										'Select how you want to display the price',
+										'freemius'
+									)}
 									onChange={(value) => {
 										setMapping('currency_symbol', value);
 									}}
 									value={options.currency_symbol}
 									options={[
 										{
-											label: __('Show Currency', 'freemius'),
+											label: __('With Currency Symbol', 'freemius'),
 											value: 'show',
 										},
 										{
-											label: __('Hide Currency', 'freemius'),
+											label: __('Without Currency Symbol', 'freemius'),
 											value: 'hide',
 										},
 										{
-											label: __('Symbol only', 'freemius'),
+											label: __('Currency Symbol Only', 'freemius'),
 											value: 'symbol',
 										},
 									]}
@@ -262,6 +222,7 @@ const MappingSettings = (props) => {
 						</BaseControl>
 					</>
 				)}
+				<hr />
 			</>
 		</>
 	);

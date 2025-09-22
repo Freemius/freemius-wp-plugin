@@ -24,6 +24,7 @@ import { useData } from '../hooks';
 
 import './style.scss';
 
+// Block, which support Freemius Scope
 const SUPPORTED_BROKER_BLOCKS = [
 	'core/group',
 	'core/columns',
@@ -31,6 +32,7 @@ const SUPPORTED_BROKER_BLOCKS = [
 	'core/button',
 ];
 
+// Block, which support Freemius Mapping
 const SUPPORTED_CONSUMER_BLOCKS = [
 	'core/paragraph',
 	'core/heading',
@@ -120,22 +122,13 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 	return (props) => {
 		const { attributes, setAttributes, clientId } = props;
 
-		if (SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
-			const { freemius_mapping } = attributes;
-
-			// no mapping, so just return the block edit
-			if (!freemius_mapping || !freemius_mapping.field) {
-				return <BlockEdit key="edit" {...props} />;
-			}
-
-			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
-		}
 		if (SUPPORTED_BROKER_BLOCKS.includes(props.name)) {
 			const {
 				freemius_enabled,
 				freemius,
 				freemius_invalid,
 				freemius_modifications,
+				freemius_mapping,
 			} = attributes;
 
 			if (!freemius_enabled) {
@@ -180,9 +173,24 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 
 			return (
 				<FreemiusContext.Provider value={contextValue}>
-					<BlockEdit key="edit" {...props} />
+					{freemius_mapping && freemius_mapping.field ? (
+						<MappedBlockEdit BlockEdit={BlockEdit} {...props} />
+					) : (
+						<BlockEdit key="edit" {...props} />
+					)}
 				</FreemiusContext.Provider>
 			);
+		}
+
+		if (SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
+			const { freemius_mapping } = attributes;
+
+			// no mapping, so just return the block edit
+			if (!freemius_mapping || !freemius_mapping.field) {
+				return <BlockEdit key="edit" {...props} />;
+			}
+
+			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
 		}
 
 		if (props.name === 'freemius/modifier') {

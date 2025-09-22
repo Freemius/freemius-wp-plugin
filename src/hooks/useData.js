@@ -140,10 +140,7 @@ const useData = (scopeData) => {
 	const isInvalid =
 		isSettingsLoading || isPlansLoading
 			? undefined
-			: (!currentPricing && !isFree) ||
-			  !data?.plan_id ||
-			  !data?.product_id ||
-			  !data?.public_key;
+			: (!currentPricing && !isFree) || !data?.plan_id || !data?.product_id;
 
 	const errorMessage = useMemo(() => {
 		let message = [];
@@ -151,9 +148,9 @@ const useData = (scopeData) => {
 		if (!data?.product_id) {
 			message.push(__('Product ID is required', 'freemius'));
 		}
-		if (!data?.public_key) {
-			message.push(__('Public Key is required', 'freemius'));
-		}
+		// if (!data?.public_key) {
+		// 	message.push(__('Public Key is required', 'freemius'));
+		// }
 		if (!isPlansLoading && !data?.plan_id) {
 			message.push(__('Plan ID is required.', 'freemius'));
 		}
@@ -202,7 +199,7 @@ const useData = (scopeData) => {
 	return {
 		data,
 		settings,
-		isLoading: isSettingsLoading || isPlansLoading,
+		isLoading: isApiAvailable && (isSettingsLoading || isPlansLoading),
 		isApiAvailable,
 		//metaData,
 		contextData,
@@ -215,6 +212,7 @@ const useData = (scopeData) => {
 		selectScope,
 		errorMessage,
 		matrix,
+		defaults,
 	};
 };
 

@@ -45,7 +45,7 @@ export default function Edit(props) {
 		options: allOptions,
 		isLoading: isLoadingModifiers,
 		modifiers,
-	} = useModifiers(type);
+	} = useModifiers(type, data?.product_id);
 
 	useEffect(() => {
 		if (isLoading || isLoadingModifiers) return;

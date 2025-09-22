@@ -4,7 +4,11 @@ import { __ } from '@wordpress/i18n';
 
 const SETTINGS_STORE = 'freemius/settings';
 
-const SETTINGS = ['freemius_settings', 'freemius_defaults'];
+const SETTINGS = [
+	'freemius_settings',
+	'freemius_defaults',
+	'freemius_products',
+];
 
 const DEFAULT_STATE = {
 	settings: {},
@@ -92,13 +96,16 @@ const actions = {
 
 				const structure = SETTINGS.reduce((acc, setting) => {
 					acc[setting] = schema.schema.properties[setting];
+					if (acc[setting].items) {
+						acc[setting].properties = acc[setting].items.properties;
+					}
 					return acc;
 				}, {});
 
 				const settings = SETTINGS.reduce((acc, setting) => {
 					acc[setting] = allSettings[setting] || {};
 					if (Object.keys(acc[setting]).length === 0) {
-						acc[setting] = {};
+						acc[setting] = structure[setting].type === 'array' ? [] : {};
 					}
 					return acc;
 				}, {});

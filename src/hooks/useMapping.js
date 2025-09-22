@@ -6,13 +6,12 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { useData, usePlans, useLicenses } from './';
-import { CURRENCIES } from '../constants/currencies';
 
 const useMapping = (props) => {
 	const { attributes, setAttributes } = props;
@@ -78,17 +77,17 @@ const useMapping = (props) => {
 		);
 	}
 
-	if (!data.public_key) {
-		errorMessage.push(__('Public key is required', 'freemius'));
-	}
+	// if (!data.public_key) {
+	// errorMessage.push(__('Public key is required', 'freemius'));
+	// }
 
-	if (!data.product_id) {
-		errorMessage.push(__('Product ID is required', 'freemius'));
-	}
+	// if (!data.product_id) {
+	// 	errorMessage.push(__('Product ID is required', 'freemius'));
+	// }
 
-	if (!data.plan_id) {
-		errorMessage.push(__('Plan ID is required', 'freemius'));
-	}
+	// if (!data.plan_id) {
+	// 	errorMessage.push(__('Plan ID is required', 'freemius'));
+	// }
 
 	const isError = !isLoading && !isLicensesLoading && errorMessage.length > 0;
 
@@ -122,12 +121,13 @@ const getMappingValue = (options) => {
 	const mappingData = useMemo(() => {
 		return {
 			price: currentPricing?.[data?.billing_cycle + '_price'] || undefined, // Free plan has no pricing
-			currency: data?.currency,
-			title: currentPlan?.title,
+			currency:
+				data?.currency && data?.currency !== 'auto' ? data?.currency : 'usd',
+			title: currentPlan?.title || null,
 			licenses:
 				currentPricing?.licenses === null ? 0 : currentPricing?.licenses, // handle unlimited license
 			billing_cycle: data?.billing_cycle,
-			description: currentPlan?.description,
+			description: currentPlan?.description || null,
 		};
 	}, [currentPricing, currentPlan, data]);
 
@@ -160,6 +160,9 @@ const getMappingValue = (options) => {
 				options.labels[mappingData.billing_cycle] ?? mappingData.billing_cycle;
 		} else if (options.field === 'licenses') {
 			content = options.labels[mappingData.licenses || data.licenses || 0]; // 0 is unlimited
+		} else if (content === null) {
+			// description could be null
+			content = '';
 		}
 
 		content = options.prefix + content + options.suffix;

@@ -7,10 +7,10 @@
  */
 
 import { __ } from '@wordpress/i18n';
+
 /**
  * Internal dependencies
  */
-
 export const MODIFIERS = [
 	{
 		name: __('Currency', 'freemius'),

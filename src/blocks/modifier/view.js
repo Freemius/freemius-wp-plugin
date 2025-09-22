@@ -12,29 +12,6 @@ import { store, getContext, getElement } from '@wordpress/interactivity';
  */
 
 /**
- * Get the scope data from the element and all its ancestors
- *
- * @param {HTMLElement} element - The element to get the scope data from
- * @returns {Object} The scope data
- */
-function getScopeData(element) {
-	const scope = element.closest('[data-freemius-scope]');
-	const data = JSON.parse(scope.dataset.freemiusScope || '{}');
-
-	const parent = scope.parentNode.closest('[data-freemius-scope]');
-
-	if (parent) {
-		const parentData = getScopeData(parent);
-		return { ...parentData, ...data };
-	} else {
-		const globalScope = JSON.parse(
-			document.querySelector('.freemius-scope-data').textContent
-		);
-		return { ...globalScope, ...data };
-	}
-}
-
-/**
  * Get the mapping content based on the mapping type and data
  *
  * @param {Object} scopeData - The scope data
@@ -42,9 +19,16 @@ function getScopeData(element) {
  * @returns {string} The mapping content
  */
 function getMappingContent(scopeData, mappingData) {
-	const matrix = JSON.parse(
-		document.querySelector('.freemius-matrix-data').textContent
-	);
+	const allMatrix = document.querySelectorAll('.freemius-matrix-data');
+
+	let matrix = JSON.parse(allMatrix[0].textContent);
+
+	for (const m of allMatrix) {
+		if (m.dataset.freemiusProductId == scopeData.product_id) {
+			matrix = JSON.parse(m.textContent);
+			break;
+		}
+	}
 
 	// get the default plan if not defined in the scope data
 	const plan_id =
@@ -135,13 +119,8 @@ store('freemius/modifier', {
 			// get the scope data and update it with the changes
 			const scope = event.target.closest('[data-freemius-scope]');
 
-			const globalScope = JSON.parse(
-				document.querySelector('.freemius-scope-data').textContent
-			);
-
 			const scopeData = JSON.parse(scope?.dataset?.freemiusScope || '{}');
 			const newScopeData = {
-				...globalScope,
 				...scopeData,
 				[context.type]: optionId,
 			};
@@ -188,3 +167,30 @@ store('freemius/modifier', {
 		},
 	},
 });
+
+/**
+ * Get the scope data from the element and all its ancestors
+ *
+ * @param {HTMLElement} element - The element to get the scope data from
+ * @returns {Object} The scope data
+ */
+function getScopeData(element) {
+	const scope = element.closest('[data-freemius-scope]');
+	const data = JSON.parse(scope.dataset.freemiusScope || '{}');
+
+	const parent = scope.parentNode.closest('[data-freemius-scope]');
+
+	if (parent) {
+		const parentData = getScopeData(parent);
+		return { ...parentData, ...data };
+	} else {
+		const globalScope = document.querySelector('.freemius-global-scope-data');
+
+		if (!globalScope) {
+			return data;
+		}
+		const globalScopeData = JSON.parse(globalScope.textContent);
+
+		return { ...globalScopeData, ...data };
+	}
+}

@@ -24,12 +24,14 @@ class Scope {
 	 */
 	private static $instance = null;
 
+
+
 	/**
-	 * Whether the scope has been added to the content
+	 * Whether the matrix has been added to the content
 	 *
 	 * @var boolean
 	 */
-	private $scope_added = false;
+	private $matrix_added = array();
 
 
 	/**
@@ -107,9 +109,7 @@ class Scope {
 			return $block_content;
 		}
 
-		if ( $this->scope_added ) {
-			return $block_content;
-		}
+		$block_args = $block['attrs']['freemius'] ?? array();
 
 		$defaults = \get_option( 'freemius_defaults', array() );
 
@@ -121,16 +121,31 @@ class Scope {
 		 */
 		$defaults = apply_filters( 'freemius_scope_defaults', $defaults );
 
+		$args = array_merge( $block_args, $defaults );
+
 		// Prevent json_encode from rounding floats.
 		// TODO: recosinder this, as it's maybe not working on all hosts
 		\ini_set( 'serialize_precision', '-1' );
 
-		// add defaults to the block content
-		$extra  = '<script type="application/json" class="freemius-scope-data">' . \wp_json_encode( $defaults ) . '</script>';
-		$extra .= '<script type="application/json" class="freemius-matrix-data">' . \wp_json_encode( $this->get_matrix( $defaults ) ) . '</script>';
+		$script_tag = '<script type="application/json" class="%s">%s</script>';
 
-		$block_content     = $extra . $block_content;
-		$this->scope_added = true;
+		$extra = '';
+
+		// add defaults to the block content
+		if ( ! empty( $defaults ) ) {
+			$extra .= sprintf( $script_tag, 'freemius-global-scope-data', \wp_json_encode( $defaults ) );
+		}
+		$extra .= sprintf( $script_tag, 'freemius-scope-data', \wp_json_encode( $block_args ) );
+
+		$product_id = $args['product_id'] ?? null;
+
+		if ( $product_id && ! in_array( $product_id, $this->matrix_added ) ) {
+			$extra .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $product_id ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';
+
+			$this->matrix_added[] = $product_id;
+		}
+
+		$block_content = $extra . $block_content;
 
 		return $block_content;
 	}

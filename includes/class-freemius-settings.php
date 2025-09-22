@@ -42,6 +42,7 @@ class Settings {
 		\add_filter( 'plugin_action_links_freemius/freemius.php', array( $this, 'add_plugin_action_links' ) );
 	}
 
+
 	/**
 	 * Get instance of this class
 	 *
@@ -82,7 +83,6 @@ class Settings {
 	 */
 	public function render_settings_page() {
 		echo '<div id="freemius-settings-app"></div>';
-		echo '</div>';
 	}
 
 	/**
@@ -103,6 +103,18 @@ class Settings {
 
 		return $links;
 	}
+
+	/**
+	 * Activation redirect
+	 *
+	 * @param string $plugin The plugin basename.
+	 */
+	public function activation_redirect() {
+
+		wp_redirect( admin_url( 'options-general.php?page=freemius-settings#products' ), 302, 'Freemius for WordPress' );
+		exit();
+	}
+
 
 	/**
 	 * Enqueue admin scripts and styles
@@ -202,6 +214,30 @@ class Settings {
 				),
 			)
 		);
+
+		// Register Products settings
+		\register_setting(
+			'freemius_settings',
+			'freemius_products',
+			array(
+				'single'       => true,
+				'label'        => 'Products',
+				'description'  => __( 'Define the products you want to use with Freemius.', 'freemius' ),
+				'type'         => 'array',
+				'default'      => array(),
+				'show_in_rest' => array(
+					'schema' => array(
+						'type'                 => 'array',
+						'items'                => array(
+							'type'       => 'object',
+							'properties' => $this->get_products_schema(),
+						),
+						'additionalProperties' => false,
+
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -269,6 +305,16 @@ class Settings {
 	 */
 	public function get_button_schema() {
 		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/defaults.php';
+		return $schema;
+	}
+
+	/**
+	 * Get products settings schema
+	 *
+	 * @return array The schema.
+	 */
+	public function get_products_schema() {
+		$schema = include FREEMIUS_PLUGIN_DIR . '/schemas/products.php';
 		return $schema;
 	}
 }

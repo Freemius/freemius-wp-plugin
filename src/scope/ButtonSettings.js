@@ -10,9 +10,10 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Button,
-	__experimentalSpacer as Spacer,
 	BaseControl,
 	ToggleControl,
+	Flex,
+	FlexBlock,
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
@@ -27,9 +28,9 @@ const PanelDescription = styled.div`
 `;
 
 const ButtonSettings = (props) => {
-	const { context, attributes, setAttributes, name } = props;
+	const { attributes } = props;
 
-	const { freemius_enabled, freemius, freemius_modifications } = attributes;
+	const { freemius } = attributes;
 
 	const [preview, setPreview] = useState(false);
 	const [live, setLive] = useState(false);
@@ -104,10 +105,10 @@ const ButtonSettings = (props) => {
 		// build arguments starting from scope and current button
 		const merged = { ...data, ...freemius };
 
-		const { product_id, public_key } = merged;
-		if (!product_id || !public_key) {
+		const { product_id } = merged;
+		if (!product_id) {
 			setLoading(false);
-			alert(__('Please fill in product_id and public_key', 'freemius'));
+			alert(__('Please fill in product_id', 'freemius'));
 			return;
 		}
 
@@ -117,10 +118,7 @@ const ButtonSettings = (props) => {
 		// add class to the body
 		document.body.classList.add('freemius-checkout-preview');
 
-		const handler = new FS.Checkout({
-			product_id: product_id,
-			public_key: public_key,
-		});
+		const handler = new FS.Checkout({ product_id: product_id });
 
 		// close the preview if cancel is clicked
 		data_copy.cancel = function () {
@@ -187,40 +185,43 @@ const ButtonSettings = (props) => {
 	return (
 		<>
 			<PanelDescription>
-				<BaseControl __nextHasNoMarginBottom>
-					<Button
-						__next40pxDefaultSize
-						onClick={() => {
-							//setPreview(!preview);
-							if (!preview) {
-								openCheckout();
-							} else {
-								closeCheckout();
-							}
-						}}
-						icon={'visibility'}
-						isBusy={isLoading || isLoadingData}
-						disabled={isLoading || isLoadingData}
-						isPressed={preview}
-						variant="secondary"
-					>
-						{preview && !isLoading
-							? __('Close Preview', 'freemius')
-							: __('Preview Checkout', 'freemius')}
-					</Button>
-				</BaseControl>
-				<BaseControl __nextHasNoMarginBottom>
-					<ToggleControl
-						__nextHasNoMarginBottom
-						label={__('Auto Refresh', 'freemius')}
-						help={__(
-							'Auto update the checkout when properties are changed.',
-							'freemius'
-						)}
-						checked={live}
-						onChange={(val) => setLive(!live)}
-					/>
-					<Spacer />
+				<BaseControl
+					__nextHasNoMarginBottom
+					help={__(
+						'Auto update the checkout when properties are changed.',
+						'freemius'
+					)}
+				>
+					<Flex>
+						<FlexBlock>
+							<Button
+								__next40pxDefaultSize
+								onClick={() => {
+									//setPreview(!preview);
+									if (!preview) {
+										openCheckout();
+									} else {
+										closeCheckout();
+									}
+								}}
+								icon={'visibility'}
+								isBusy={isLoading || isLoadingData}
+								disabled={isLoading || isLoadingData}
+								isPressed={preview}
+								variant="secondary"
+							>
+								{__('Preview', 'freemius')}
+							</Button>
+						</FlexBlock>
+						<FlexBlock>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__('Auto Refresh', 'freemius')}
+								checked={live}
+								onChange={(val) => setLive(!live)}
+							/>
+						</FlexBlock>
+					</Flex>
 				</BaseControl>
 				<MappingSettings {...props} />
 			</PanelDescription>
