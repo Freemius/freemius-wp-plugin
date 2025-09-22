@@ -93,7 +93,7 @@ const Settings = () => {
 	};
 
 	const tabs = Object.entries(structure).map(([setting, schema], i) => ({
-		name: setting,
+		name: setting.replace('freemius_', ''),
 		title: schema.title,
 		content: (
 			<TabContainer>
@@ -169,6 +169,34 @@ const Settings = () => {
 		),
 	}));
 
+	tabs.push({
+		name: 'start',
+		title: __('Get Started', 'freemius'),
+		content: (
+			<TabContainer>
+				<Card isRounded={false}>
+					<CardHeader>
+						<h3>{__('Get Started', 'freemius')}</h3>
+					</CardHeader>
+					<CardBody>
+						<iframe
+							width="750"
+							height={Math.round((750 * 9) / 16)}
+							src="https://www.youtube-nocookie.com/embed/MTOuIBGan7E"
+							title="YouTube video player"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+							referrerPolicy="strict-origin-when-cross-origin"
+							allowFullScreen
+						></iframe>
+						<TabDescription>
+							{__('Get started with Freemius for WordPress.', 'freemius')}
+						</TabDescription>
+					</CardBody>
+				</Card>
+			</TabContainer>
+		),
+	});
+
 	return (
 		<>
 			<Header />
@@ -176,9 +204,9 @@ const Settings = () => {
 				<SaveMessage />
 				<TabPanel
 					tabs={tabs}
-					initialTabName={activeTab ? `freemius_${activeTab}` : null}
+					initialTabName={activeTab ? activeTab : null}
 					onSelect={(tab) => {
-						const hash = tab.replace('freemius_', '');
+						const hash = tab;
 						if (window.location.hash !== `#${hash}`) {
 							window.history.pushState(null, '', `#${hash}`);
 						}
