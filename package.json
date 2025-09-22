@@ -1,6 +1,6 @@
 {
 	"name": "freemius",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"author": "Xaver",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
@@ -23,16 +23,16 @@
 	"dependencies": {
 		"@10up/block-components": "^1.19.3",
 		"@emotion/styled": "^11.14.0",
-		"@wordpress/data": "^10.30.0",
-		"@wordpress/dom-ready": "^4.30.0",
-		"@wordpress/element": "^6.30.0",
-		"@wordpress/i18n": "^6.3.0",
-		"@wordpress/interactivity": "^6.30.0",
+		"@wordpress/data": "^10.31.0",
+		"@wordpress/dom-ready": "^4.31.0",
+		"@wordpress/element": "^6.31.0",
+		"@wordpress/i18n": "^6.4.0",
+		"@wordpress/interactivity": "^6.31.0",
 		"classnames": "^2.5.1"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.30.0",
-		"@wordpress/scripts": "^30.23.0",
+		"@wordpress/env": "^10.31.0",
+		"@wordpress/scripts": "^30.24.0",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
 	}
