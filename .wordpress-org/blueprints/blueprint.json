@@ -39,11 +39,7 @@
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php require '/wordpress/wp-load.php'; update_option( 'freemius_settings', array( 'token' => '1234567890' ) );"
-		},
-		{
-			"step": "runPHP",
-			"code": "<?php require '/wordpress/wp-load.php'; update_option( 'freemius_defaults', array( 'public_key' => 'pk_1efa30140fc34f21e5b89959bb877', 'product_id' => 19794 ) );"
+			"code": "<?php require '/wordpress/wp-load.php'; update_option( 'freemius_products', array( array( 'product_id' => 19794, 'token' => '1234567890' ) ) );"
 		}
 	]
 }
