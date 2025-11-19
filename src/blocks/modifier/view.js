@@ -137,7 +137,8 @@ store('freemius/modifier', {
 				const mappingContent = getMappingContent(scopeData, mappingData);
 
 				if (mapping.classList.contains('wp-block-button')) {
-					mapping.querySelector('a').innerHTML = mappingContent;
+					mapping.querySelector('.wp-element-button').innerHTML =
+						mappingContent;
 				} else {
 					mapping.innerHTML = mappingContent;
 				}
