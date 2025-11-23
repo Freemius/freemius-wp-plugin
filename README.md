@@ -2,7 +2,7 @@
 
 Contributors:      freemius, xaverb  
 Tags:              freemius, checkout, payment, button  
-Tested up to:      6.9  
+Tested up to:      6.8  
 Stable tag:        0.4.1  
 License:           MIT  
 
@@ -65,7 +65,7 @@ The plugin works with any WordPress theme that supports the block editor (Gutenb
 
 - fixed: missing import in useMapping hook
 - improved: support for button tag in the button block (WordPress 6.9)
-- updated: Tested up to: 6.9
+- updated: Tested up to: 6.8
 - updated: dependencies
 
 ### 0.4.0
