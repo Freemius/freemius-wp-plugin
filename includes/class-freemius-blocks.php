@@ -1,6 +1,6 @@
 <?php
 /**
- * Freemius API
+ * Freemius Blocks
  *
  * @package    Freemius
  * @category   WordPress_Plugin
