@@ -7,7 +7,7 @@ namespace Freemius;
  * Description:       Freemius Toolkit
  * Requires at least: 6.6
  * Requires PHP:      7.4
- * Version:           0.4.1
+ * Version:           0.4.2
  * Author:            Freemius
  * Author URI:        https://freemius.com
  * License:           MIT
