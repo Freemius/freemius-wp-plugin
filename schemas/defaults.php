@@ -23,12 +23,12 @@ return array(
 		'isDeprecated' => true,
 	),
 	// 'public_key'                    => array(
-	//  'label'            => __( 'Public Key', 'freemius' ),
-	//  'type'             => 'string',
-	//  'default'          => '',
-	//  'description'      => __( 'Required product public key.', 'freemius' ),
-	//  'isRequired'       => true,
-	//  'isShownByDefault' => true,
+	// 'label'            => __( 'Public Key', 'freemius' ),
+	// 'type'             => 'string',
+	// 'default'          => '',
+	// 'description'      => __( 'Required product public key.', 'freemius' ),
+	// 'isRequired'       => true,
+	// 'isShownByDefault' => true,
 	// ),
 	'plan_id'                       => array(
 		'label'       => __( 'Plan', 'freemius' ),
@@ -218,7 +218,7 @@ return array(
 		'code'        => true,
 		'default'     => null,
 		'description' => __(
-			'A callback handler that will execute once a user closes the checkout by clicking the close icon. This handler only executes when the checkout is running in a dialog mode. You can use `data` in your code.',
+			'A callback handler that will execute once a user closes the checkout by clicking the close icon. This handler only executes when the checkout is running in a dialog mode.',
 			'freemius'
 		),
 	),
@@ -248,7 +248,7 @@ return array(
 		'code'        => true,
 		'default'     => null,
 		'description' => __(
-			'An optional callback handler for advanced tracking, which will be called on multiple checkout events such as updates in the currency, billing cycle, licenses #, etc. You can use `data` and `event` in your code.',
+			'An optional callback handler for advanced tracking, which will be called on multiple checkout events such as updates in the currency, billing cycle, licenses #, etc. You can use `event` and `data` in your code.',
 			'freemius'
 		),
 	),
