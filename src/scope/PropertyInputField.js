@@ -17,6 +17,8 @@ import {
 } from '@wordpress/components';
 import { useState, useRef, useEffect } from '@wordpress/element';
 
+import { closeSmall } from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
@@ -36,7 +38,7 @@ const PropertyInputField = (properties) => {
 		props,
 	} = properties;
 
-	const { options } = props;
+	const { options, isRequired } = props;
 
 	let InputComponent = null;
 
@@ -47,6 +49,7 @@ const PropertyInputField = (properties) => {
 			InputComponent = (
 				<CheckboxControl
 					__nextHasNoMarginBottom
+					key={`component-${value}`} // force re-render when value changes
 					checked={value != undefined ? value : defaultValue}
 					label={label}
 					help={help}
@@ -82,6 +85,7 @@ const PropertyInputField = (properties) => {
 				<TreeSelect
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
+					key={`component-${value}`} // force re-render when value changes
 					label={label}
 					help={help}
 					onChange={onChange}
@@ -177,7 +181,20 @@ const PropertyInputField = (properties) => {
 
 	return (
 		<>
-			<HStack justify="flex-end">{link && <ExternalLink href={link} />}</HStack>
+			<HStack justify="flex-end">
+				{!isRequired && value && (
+					<Button
+						icon={closeSmall}
+						iconSize={20}
+						variant="tertiary"
+						isDestructive
+						size="small"
+						title={__('Reset Field', 'freemius')}
+						onClick={() => onChange(undefined)}
+					/>
+				)}
+				{link && <ExternalLink href={link} target="_blank" />}
+			</HStack>
 			{InputComponent}
 		</>
 	);
