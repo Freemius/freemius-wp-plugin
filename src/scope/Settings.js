@@ -117,13 +117,12 @@ const Settings = ( props ) => {
 										freemius_modifications: undefined,
 									} )
 								}
-								size="small"
 								variant="secondary"
 							>
 								{ __( 'Reset Modifications', 'freemius' ) }
 							</Button>
 						) }
-						<ClearCacheButton size="small" />
+						<ClearCacheButton />
 					</Flex>
 				) }
 				<Spacer />

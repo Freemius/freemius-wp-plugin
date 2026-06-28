@@ -52,7 +52,7 @@ const ClearCacheButton = ( { size } ) => {
 				size={ size }
 				onClick={ handleClearCache }
 				isBusy={ isClearing }
-				disabled={ isClearing || ! data?.product_id }
+				disabled={ isClearing }
 			>
 				{ __( 'Clear Cache', 'freemius' ) }
 			</Button>

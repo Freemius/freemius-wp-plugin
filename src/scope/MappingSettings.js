@@ -70,7 +70,7 @@ const MappingSettings = ( props ) => {
 			) }
 
 			<Flex justify="flex-end">
-				<ClearCacheButton size="small" />
+				<ClearCacheButton />
 			</Flex>
 			<Spacer />
 			{ isError && (
