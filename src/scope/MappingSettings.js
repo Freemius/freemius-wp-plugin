@@ -105,6 +105,10 @@ const MappingSettings = ( props ) => {
 								id: 'price',
 							},
 							{
+								name: __( 'Discounted price', 'freemius' ),
+								id: 'discounted_price',
+							},
+							{
 								name: __( 'Title', 'freemius' ),
 								id: 'title',
 							},
@@ -125,7 +129,8 @@ const MappingSettings = ( props ) => {
 				</BaseControl>
 				{ options.field && (
 					<>
-						{ options.field === 'price' && (
+						{ ( options.field === 'price' ||
+							options.field === 'discounted_price' ) && (
 							<BaseControl __nextHasNoMarginBottom>
 								<SelectControl
 									__nextHasNoMarginBottom

@@ -64,11 +64,12 @@ The following blocks can "receive" data from the scope:
 - HeadingBlock
 - Button Block
 
-Currently, 5 fields are supported:
+Currently, 6 fields are supported:
 
 - Title
 - Description
 - Price
+- Discounted price (requires a coupon code in scope settings)
 - Licenses (1, 2, 3, Unlimited)
 - Billing Cycle (Monthly, Yearly, Lifetime)
 

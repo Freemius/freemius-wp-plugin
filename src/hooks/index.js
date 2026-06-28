@@ -15,6 +15,7 @@ import useModifiers from './useModifiers';
 import useLicenses from './useLicenses';
 import usePlans from './usePlans';
 import useProducts from './useProducts';
+import useCoupon from './useCoupon';
 
 export {
 	useSettings,
@@ -26,6 +27,7 @@ export {
 	useLicenses,
 	usePlans,
 	useProducts,
+	useCoupon,
 };
 
 export {

@@ -11,7 +11,12 @@ import { useMemo } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { useData, usePlans, useLicenses } from './';
+import { useData, usePlans, useLicenses, useCoupon } from './';
+import {
+	applyCouponDiscount,
+	couponAppliesToPlan,
+	formatMappingPrice,
+} from '../util/discountedPrice';
 
 const useMapping = ( props ) => {
 	const { attributes, setAttributes } = props;
@@ -22,6 +27,18 @@ const useMapping = ( props ) => {
 
 	const { licenses, isLoading: isLicensesLoading } = useLicenses(
 		data?.product_id
+	);
+
+	const needsCoupon = freemius_mapping?.field === 'discounted_price';
+
+	const {
+		coupon,
+		isLoading: isCouponLoading,
+		isError: isCouponError,
+		notFound: isCouponNotFound,
+	} = useCoupon(
+		needsCoupon ? data?.product_id : null,
+		needsCoupon ? data?.coupon : null
 	);
 
 	const defaultLabels = useMemo( () => {
@@ -68,11 +85,33 @@ const useMapping = ( props ) => {
 		setAttributes( newMapping );
 	};
 
-	const value = getMappingValue( options );
+	const couponContext = useMemo(
+		() => ( {
+			coupon,
+			isCouponLoading,
+			isCouponError,
+			isCouponNotFound,
+		} ),
+		[ coupon, isCouponLoading, isCouponError, isCouponNotFound ]
+	);
+
+	const value = getMappingValue( options, couponContext );
 
 	const errorMessage = [];
 
-	if ( value === undefined )
+	if ( options.field === 'discounted_price' )
+		if ( ! data?.coupon )
+			errorMessage.push(
+				__( 'Coupon is required in scope settings', 'freemius' )
+			);
+		else if ( isCouponError || isCouponNotFound )
+			errorMessage.push( __( 'Coupon not found', 'freemius' ) );
+		else if ( coupon && ! couponAppliesToPlan( coupon, data?.plan_id ) )
+			errorMessage.push(
+				__( 'Coupon does not apply to this plan', 'freemius' )
+			);
+
+	if ( value === undefined && errorMessage.length === 0 )
 		errorMessage.push(
 			sprintf(
 				__( 'No value found for field %s', 'freemius' ),
@@ -80,35 +119,28 @@ const useMapping = ( props ) => {
 			)
 		);
 
-	// if (!data.public_key) {
-	// errorMessage.push(__('Public key is required', 'freemius'));
-	// }
-
-	// if (!data.product_id) {
-	// 	errorMessage.push(__('Product ID is required', 'freemius'));
-	// }
-
-	// if (!data.plan_id) {
-	// 	errorMessage.push(__('Plan ID is required', 'freemius'));
-	// }
-
 	const isError =
-		! isLoading && ! isLicensesLoading && errorMessage.length > 0;
+		! isLoading &&
+		! isLicensesLoading &&
+		! isCouponLoading &&
+		errorMessage.length > 0;
 
 	return {
 		value,
 		options,
 		setMapping,
 		defaultLabels,
-		isLoading: isLicensesLoading || isLoading,
+		isLoading: isLicensesLoading || isLoading || isCouponLoading,
 		isError,
 		errorMessage: errorMessage.join( ', ' ),
 	};
 };
 
-const getMappingValue = ( options ) => {
+const getMappingValue = ( options, couponContext = {} ) => {
 	const { data, isLoading: isDataLoading } = useData();
 	const { plans, isLoading: isPlansLoading } = usePlans( data?.product_id );
+	const { coupon, isCouponLoading, isCouponError, isCouponNotFound } =
+		couponContext;
 
 	const currentPlan = useMemo( () => {
 		return plans?.find( ( plan ) => plan.id == data?.plan_id );
@@ -123,47 +155,73 @@ const getMappingValue = ( options ) => {
 		} );
 	}, [ currentPlan, data ] );
 
+	const currency =
+		data?.currency && data?.currency !== 'auto' ? data?.currency : 'usd';
+
 	const mappingData = useMemo( () => {
+		const basePrice =
+			currentPricing?.[ data?.billing_cycle + '_price' ] || undefined;
+
+		let discountedPrice;
+
+		if (
+			options.field === 'discounted_price' &&
+			basePrice !== undefined &&
+			coupon &&
+			couponAppliesToPlan( coupon, data?.plan_id )
+		)
+			discountedPrice = applyCouponDiscount( basePrice, coupon, {
+				currency,
+			} );
+
 		return {
-			price:
-				currentPricing?.[ data?.billing_cycle + '_price' ] || undefined, // Free plan has no pricing
-			currency:
-				data?.currency && data?.currency !== 'auto'
-					? data?.currency
-					: 'usd',
+			price: basePrice,
+			discounted_price: discountedPrice,
+			currency,
 			title: currentPlan?.title || null,
 			licenses:
 				currentPricing?.licenses === null
 					? 0
-					: currentPricing?.licenses, // handle unlimited license
+					: currentPricing?.licenses,
 			billing_cycle: data?.billing_cycle,
 			description: currentPlan?.description || null,
 		};
-	}, [ currentPricing, currentPlan, data ] );
+	}, [ currentPricing, currentPlan, data, options.field, coupon, currency ] );
 
 	const newContent = useMemo( () => {
+		if ( options.field === 'discounted_price' ) {
+			if ( ! data?.coupon ) return undefined;
+
+			if (
+				isCouponLoading ||
+				isCouponError ||
+				isCouponNotFound ||
+				( coupon && ! couponAppliesToPlan( coupon, data?.plan_id ) )
+			)
+				return undefined;
+		}
+
 		let content = mappingData[ options.field ];
 
 		if ( typeof content === 'undefined' ) {
 			// plans are loaded, but no pricing found => free plan
 			if ( isPlansLoading ) return undefined;
 
+			if ( options.field === 'discounted_price' ) return undefined;
+
 			content = '0';
 		}
 
-		if ( options.field === 'price' && ! isNaN( content ) ) {
-			const symbol = options.currency_symbol;
-
-			content = new Intl.NumberFormat( 'en-US', {
-				style: symbol !== 'hide' ? 'currency' : 'decimal',
-				currency: symbol !== 'hide' ? mappingData.currency : undefined,
-				minimumFractionDigits: 0,
-			} ).format( content );
-
-			// extract the currency symbol
-			if ( symbol === 'symbol' )
-				content = content.replace( /[\d\s.,]/g, '' ).trim();
-		} else if ( options.field === 'billing_cycle' )
+		if (
+			( options.field === 'price' ||
+				options.field === 'discounted_price' ) &&
+			! isNaN( content )
+		)
+			content = formatMappingPrice( content, {
+				currency: mappingData.currency,
+				currency_symbol: options.currency_symbol,
+			} );
+		else if ( options.field === 'billing_cycle' )
 			content =
 				options.labels[ mappingData.billing_cycle ] ??
 				mappingData.billing_cycle;
@@ -178,9 +236,18 @@ const getMappingValue = ( options ) => {
 		content = options.prefix + content + options.suffix;
 
 		return content;
-	}, [ mappingData, options, isPlansLoading ] );
+	}, [
+		mappingData,
+		options,
+		isPlansLoading,
+		data,
+		coupon,
+		isCouponLoading,
+		isCouponError,
+		isCouponNotFound,
+	] );
 
-	if ( isPlansLoading || isDataLoading ) return undefined;
+	if ( isPlansLoading || isDataLoading || isCouponLoading ) return undefined;
 
 	return newContent;
 };

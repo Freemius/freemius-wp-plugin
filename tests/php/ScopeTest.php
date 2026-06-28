@@ -109,4 +109,52 @@ class ScopeTest extends Freemius_TestCase {
 		$this->assertSame( 1, substr_count( $first, 'freemius-matrix-data' ) );
 		$this->assertSame( 0, substr_count( $second, 'freemius-matrix-data' ) );
 	}
+
+	public function test_render_scope_injects_coupon_data_when_coupon_is_set(): void {
+		$this->options['freemius_settings'] = array(
+			'token' => '1234567890',
+		);
+
+		$scope   = Scope::get_instance();
+		$content = '<div class="wp-block-group">Original</div>';
+		$block   = array(
+			'attrs' => array(
+				'freemius_enabled' => true,
+				'freemius'         => array(
+					'product_id' => 19794,
+					'coupon'     => 'SAVE20',
+				),
+			),
+		);
+
+		$result = $scope->render_scope( $content, $block, array() );
+
+		$this->assertStringContainsString( 'freemius-coupon-data', $result );
+		$this->assertStringContainsString( 'data-freemius-coupon-code="SAVE20"', $result );
+		$this->assertStringContainsString( '"discount_type":"percentage"', $result );
+	}
+
+	public function test_render_scope_deduplicates_coupon_per_product_and_code(): void {
+		$this->options['freemius_settings'] = array(
+			'token' => '1234567890',
+		);
+
+		$scope   = Scope::get_instance();
+		$content = '<div>Block</div>';
+		$block   = array(
+			'attrs' => array(
+				'freemius_enabled' => true,
+				'freemius'         => array(
+					'product_id' => 19794,
+					'coupon'     => 'SAVE20',
+				),
+			),
+		);
+
+		$first  = $scope->render_scope( $content, $block, array() );
+		$second = $scope->render_scope( $content, $block, array() );
+
+		$this->assertSame( 1, substr_count( $first, 'freemius-coupon-data' ) );
+		$this->assertSame( 0, substr_count( $second, 'freemius-coupon-data' ) );
+	}
 }
