@@ -6,8 +6,8 @@
  * WordPress dependencies
  */
 
-const Dump = ({ props, title = '', visible = true }) => {
-	if (!visible) return null;
+const Dump = ( { props, title = '', visible = true } ) => {
+	if ( ! visible ) return null;
 
 	const style = {
 		background: '#fff',
@@ -20,8 +20,9 @@ const Dump = ({ props, title = '', visible = true }) => {
 	};
 
 	return (
-		<pre style={style}>
-			{title && <strong>{title}: </strong>} {JSON.stringify(props, null, 2)}
+		<pre style={ style }>
+			{ title && <strong>{ title }: </strong> }{ ' ' }
+			{ JSON.stringify( props, null, 2 ) }
 		</pre>
 	);
 };

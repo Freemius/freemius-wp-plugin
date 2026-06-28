@@ -27,7 +27,7 @@ import {
 	ExternalLink,
 	Button,
 } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
@@ -59,129 +59,165 @@ const Settings = () => {
 		setSettings,
 		saveMessage,
 		saveMessageType,
+		clearSaveMessage,
 	} = useSettings();
 
-	const [activeTab, setActiveTab] = useState(
-		window.location.hash.replace('#', '') || 'settings'
+	const [ activeTab ] = useState(
+		window.location.hash.replace( '#', '' ) || 'settings'
 	);
 
-	if (isLoading) {
+	if ( isLoading )
 		return (
 			<Card>
 				<CardBody>
-					<p>{__('Loading settings...', 'og_image')}</p>
+					<p>{ __( 'Loading settings…', 'freemius' ) }</p>
 				</CardBody>
 			</Card>
 		);
-	}
 
 	const SaveMessage = () => {
-		if (!saveMessage) return null;
+		if ( ! saveMessage ) return null;
+
 		return (
 			<>
-				<Spacer margin={6} />
+				<Spacer margin={ 6 } />
 				<Notice
-					status={saveMessageType}
+					status={ saveMessageType }
 					isDismissible
-					onRemove={() => setSaveMessage('')}
+					onRemove={ () => clearSaveMessage() }
 				>
-					{saveMessage}
+					{ saveMessage }
 				</Notice>
-				<Spacer margin={6} />
+				<Spacer margin={ 6 } />
 			</>
 		);
 	};
 
-	const tabs = Object.entries(structure).map(([setting, schema], i) => ({
-		name: setting.replace('freemius_', ''),
+	const tabs = Object.entries( structure ).map( ( [ setting, schema ] ) => ( {
+		name: setting.replace( 'freemius_', '' ),
 		title: schema.title,
 		content: (
 			<TabContainer>
-				<Card isRounded={false}>
+				<Card isRounded={ false }>
 					<CardHeader>
-						<h3>{schema.title}</h3>
+						<h3>{ schema.title }</h3>
 					</CardHeader>
 					<CardBody>
-						<TabDescription>{schema.description}</TabDescription>
-						{schema.type && schema.type === 'array' ? (
+						<TabDescription>{ schema.description }</TabDescription>
+						{ schema.type && schema.type === 'array' ? (
 							<>
-								{(Object.entries(settings[setting]) || []).map((item, i) => (
-									<Card key={i} elevation={2} style={{ marginBottom: '10px' }}>
+								{ (
+									Object.entries( settings[ setting ] ) || []
+								).map( ( item, i ) => (
+									<Card
+										key={ i }
+										elevation={ 2 }
+										style={ { marginBottom: '10px' } }
+									>
 										<CardBody>
 											<Flex justify="flex-end">
 												<Button
 													variant="tertiary"
 													isDestructive
-													onClick={() => {
+													onClick={ () => {
 														const newSettings = {
 															...settings,
-															[setting]: settings[setting]
-																.slice(0, i)
-																.concat(settings[setting].slice(i + 1)),
+															[ setting ]:
+																settings[
+																	setting
+																]
+																	.slice(
+																		0,
+																		i
+																	)
+																	.concat(
+																		settings[
+																			setting
+																		].slice(
+																			i +
+																				1
+																		)
+																	),
 														};
 
-														setSettings(newSettings);
-													}}
+														setSettings(
+															newSettings
+														);
+													} }
 												>
-													{__('Delete', 'freemius')}
+													{ __(
+														'Delete',
+														'freemius'
+													) }
 												</Button>
 											</Flex>
-											{Object.entries(schema.properties).map(([key, prop]) => {
+											{ Object.entries(
+												schema.properties
+											).map( ( [ key, prop ] ) => {
 												return (
 													<Element
-														key={key}
-														index={i}
-														id={key}
-														prop={prop}
-														setting={setting}
+														key={ key }
+														index={ i }
+														id={ key }
+														prop={ prop }
+														setting={ setting }
 													/>
 												);
-											})}
+											} ) }
 										</CardBody>
 									</Card>
-								))}
+								) ) }
 								<Button
 									variant="secondary"
-									onClick={() => {
+									onClick={ () => {
 										const newSettings = { ...settings };
 										const newEntry = {};
-										Object.entries(schema.properties).forEach(([key, prop]) => {
-											newEntry[key] = prop.default;
-										});
-										newSettings[setting].push(newEntry);
+										Object.entries(
+											schema.properties
+										).forEach( ( [ key, prop ] ) => {
+											newEntry[ key ] = prop.default;
+										} );
+										newSettings[ setting ].push( newEntry );
 
-										setSettings(newSettings);
-									}}
+										setSettings( newSettings );
+									} }
 								>
-									{__('Add a new product', 'freemius')}
+									{ __( 'Add a new product', 'freemius' ) }
 								</Button>
 							</>
 						) : (
-							Object.entries(schema.properties).map(([key, prop]) => {
-								return (
-									<Element key={key} id={key} prop={prop} setting={setting} />
-								);
-							})
-						)}
+							Object.entries( schema.properties ).map(
+								( [ key, prop ] ) => {
+									return (
+										<Element
+											key={ key }
+											id={ key }
+											prop={ prop }
+											setting={ setting }
+										/>
+									);
+								}
+							)
+						) }
 					</CardBody>
 				</Card>
 			</TabContainer>
 		),
-	}));
+	} ) );
 
-	tabs.push({
+	tabs.push( {
 		name: 'start',
-		title: __('Get Started', 'freemius'),
+		title: __( 'Get Started', 'freemius' ),
 		content: (
 			<TabContainer>
-				<Card isRounded={false}>
+				<Card isRounded={ false }>
 					<CardHeader>
-						<h3>{__('Get Started', 'freemius')}</h3>
+						<h3>{ __( 'Get Started', 'freemius' ) }</h3>
 					</CardHeader>
 					<CardBody>
 						<iframe
 							width="750"
-							height={Math.round((750 * 9) / 16)}
+							height={ Math.round( ( 750 * 9 ) / 16 ) }
 							src="https://www.youtube-nocookie.com/embed/MTOuIBGan7E"
 							title="YouTube video player"
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -189,13 +225,16 @@ const Settings = () => {
 							allowFullScreen
 						></iframe>
 						<TabDescription>
-							{__('Get started with Freemius for WordPress.', 'freemius')}
+							{ __(
+								'Get started with Freemius for WordPress.',
+								'freemius'
+							) }
 						</TabDescription>
 					</CardBody>
 				</Card>
 			</TabContainer>
 		),
-	});
+	} );
 
 	return (
 		<>
@@ -203,18 +242,17 @@ const Settings = () => {
 			<ContentContainer>
 				<SaveMessage />
 				<TabPanel
-					tabs={tabs}
-					initialTabName={activeTab ? activeTab : null}
-					onSelect={(tab) => {
+					tabs={ tabs }
+					initialTabName={ activeTab ? activeTab : null }
+					onSelect={ ( tab ) => {
 						const hash = tab;
-						if (window.location.hash !== `#${hash}`) {
-							window.history.pushState(null, '', `#${hash}`);
-						}
-					}}
+						if ( window.location.hash !== `#${ hash }` )
+							window.history.pushState( null, '', `#${ hash }` );
+					} }
 				>
-					{(tab) => <>{tab.content}</>}
+					{ ( tab ) => <>{ tab.content }</> }
 				</TabPanel>
-				<Flex justify="flex-start" wrap={true}>
+				<Flex justify="flex-start" wrap={ true }>
 					<FlexItem>
 						<Spacer />
 						<SaveButton />
@@ -226,148 +264,135 @@ const Settings = () => {
 	);
 };
 
-const Element = ({ id, prop, setting, index }) => {
-	const {
-		settings,
-		structure,
-		isLoading,
-		setSettings,
-		saveMessage,
-		saveMessageType,
-	} = useSettings();
+const Element = ( { id, prop, setting, index } ) => {
+	const { settings, structure, setSettings } = useSettings();
 
-	const isArray = structure[setting]?.type === 'array' && index !== undefined;
+	const isArray =
+		structure[ setting ]?.type === 'array' && index !== undefined;
 
-	const getValueFor = (setting, id) => {
-		const type = structure[setting]?.properties[id]?.type;
-		const defaultValue = structure[setting]?.properties[id]?.default;
+	const getValueFor = ( setting, id ) => {
+		const defaultValue = structure[ setting ]?.properties[ id ]?.default;
 
-		if (isArray) {
-			return settings[setting][index][id] !== undefined
-				? settings[setting][index][id]
+		if ( isArray )
+			return settings[ setting ][ index ][ id ] !== undefined
+				? settings[ setting ][ index ][ id ]
 				: defaultValue || '';
-		}
 
-		return settings[setting][id] !== undefined
-			? settings[setting][id]
+		return settings[ setting ][ id ] !== undefined
+			? settings[ setting ][ id ]
 			: defaultValue || '';
 	};
 
-	const getLabelFor = (prop) => {
+	const getLabelFor = ( prop ) => {
 		let label = prop.label;
 
-		if (prop.isDeprecated) {
-			label += ' (Deprecated)';
-		}
+		if ( prop.isDeprecated ) label += ' (Deprecated)';
 
 		return label;
 	};
 
-	const updateSetting = (setting, id, value) => {
-		let newSettings = { ...settings };
-		const type = structure[setting]?.properties[id]?.type;
-		const defaultValue = structure[setting]?.properties[id]?.default;
-		if (value === '' || value === defaultValue) {
-			if (isArray) {
-				delete newSettings[setting][index][id];
-			} else {
-				delete newSettings[setting][id];
-			}
-		} else if (type === 'boolean') {
-			if (isArray) {
-				newSettings[setting][index][id] = value ? true : false;
-			} else {
-				newSettings[setting][id] = value ? true : false;
-			}
-		} else if (type === 'number' || type === 'integer') {
-			if (isArray) {
-				newSettings[setting][index][id] = parseInt(value);
-			} else {
-				newSettings[setting][id] = parseInt(value);
-			}
-		} else {
-			if (isArray) {
-				newSettings[setting][index][id] = value;
-			} else {
-				newSettings[setting][id] = value;
-			}
-		}
-		setSettings(newSettings);
+	const updateSetting = ( setting, id, value ) => {
+		const newSettings = { ...settings };
+		const type = structure[ setting ]?.properties[ id ]?.type;
+		const defaultValue = structure[ setting ]?.properties[ id ]?.default;
+		if ( value === '' || value === defaultValue )
+			if ( isArray ) delete newSettings[ setting ][ index ][ id ];
+			else delete newSettings[ setting ][ id ];
+		else if ( type === 'boolean' )
+			if ( isArray )
+				newSettings[ setting ][ index ][ id ] = value ? true : false;
+			else newSettings[ setting ][ id ] = value ? true : false;
+		else if ( type === 'number' || type === 'integer' )
+			if ( isArray )
+				newSettings[ setting ][ index ][ id ] = parseInt( value );
+			else newSettings[ setting ][ id ] = parseInt( value );
+		else if ( isArray ) newSettings[ setting ][ index ][ id ] = value;
+		else newSettings[ setting ][ id ] = value;
+
+		setSettings( newSettings );
 	};
 
-	if (prop.isDeprecated) {
-		return null;
-	}
+	if ( prop.isDeprecated ) return null;
 
 	return (
 		<BaseControl __nextHasNoMarginBottom>
-			{prop.link && <ExternalLink href={prop.link} />}
-			{prop.enum ? (
+			{ prop.link && <ExternalLink href={ prop.link } /> }
+			{ prop.enum ? (
 				<SelectControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					value={getValueFor(setting, id)}
-					onChange={(value) => updateSetting(setting, id, value)}
-					label={getLabelFor(prop)}
-					help={prop.description}
-					options={prop.enum.map((item) => ({
+					value={ getValueFor( setting, id ) }
+					onChange={ ( value ) =>
+						updateSetting( setting, id, value )
+					}
+					label={ getLabelFor( prop ) }
+					help={ prop.description }
+					options={ prop.enum.map( ( item ) => ( {
 						label: item,
 						value: item,
-					}))}
-					required={prop.required}
+					} ) ) }
+					required={ prop.required }
 				/>
 			) : prop.code ? (
 				<TextareaControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					value={getValueFor(setting, id)}
-					onChange={(value) => updateSetting(setting, id, value)}
-					label={getLabelFor(prop)}
-					help={prop.description}
+					value={ getValueFor( setting, id ) }
+					onChange={ ( value ) =>
+						updateSetting( setting, id, value )
+					}
+					label={ getLabelFor( prop ) }
+					help={ prop.description }
 				/>
 			) : prop.type === 'string' ? (
 				<TextControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					value={getValueFor(setting, id)}
-					type={prop.input_type ? prop.input_type : 'text'}
-					onChange={(value) => updateSetting(setting, id, value)}
-					label={getLabelFor(prop)}
-					help={prop.description}
+					value={ getValueFor( setting, id ) }
+					type={ prop.input_type ? prop.input_type : 'text' }
+					onChange={ ( value ) =>
+						updateSetting( setting, id, value )
+					}
+					label={ getLabelFor( prop ) }
+					help={ prop.description }
 				/>
 			) : prop.type === 'boolean' ? (
 				<CheckboxControl
 					__nextHasNoMarginBottom
-					checked={getValueFor(setting, id)}
-					onChange={(value) => updateSetting(setting, id, value)}
-					label={getLabelFor(prop)}
-					help={prop.description}
+					checked={ getValueFor( setting, id ) }
+					onChange={ ( value ) =>
+						updateSetting( setting, id, value )
+					}
+					label={ getLabelFor( prop ) }
+					help={ prop.description }
 				/>
 			) : prop.type === 'number' || prop.type === 'integer' ? (
 				<NumberControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					value={getValueFor(setting, id)}
-					min={prop.min}
-					max={prop.max}
-					onChange={(value) => updateSetting(setting, id, value)}
-					label={getLabelFor(prop)}
-					help={prop.description}
+					value={ getValueFor( setting, id ) }
+					min={ prop.min }
+					max={ prop.max }
+					onChange={ ( value ) =>
+						updateSetting( setting, id, value )
+					}
+					label={ getLabelFor( prop ) }
+					help={ prop.description }
 				/>
-			) : null}
+			) : null }
 
-			<Spacer margin={6} />
+			<Spacer margin={ 6 } />
 		</BaseControl>
 	);
 };
 
-domReady(() => {
-	const rootElement = document.getElementById('freemius-settings-app');
+domReady( () => {
+	const rootElement = document.getElementById( 'freemius-settings-app' );
 
-	if (rootElement) {
-		const root = createRoot(rootElement);
-		root.render(<Settings />);
+	if ( rootElement ) {
+		const root = createRoot( rootElement );
+		root.render( <Settings /> );
 	}
-});
+} );
 
 export default Settings;

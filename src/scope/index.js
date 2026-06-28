@@ -43,7 +43,7 @@ const SUPPORTED_CONSUMER_BLOCKS = [
 /**
  * Broker
  */
-registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
+registerBlockExtension( SUPPORTED_BROKER_BLOCKS, {
 	extensionName: 'freemius-broker',
 	attributes: {
 		freemius_enabled: {
@@ -64,17 +64,13 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
 			type: 'object',
 		},
 	},
-	classNameGenerator: (attributes) => {
-		const {
-			freemius_enabled,
-			freemius_invalid,
-			freemius_modifications = {},
-		} = attributes;
+	classNameGenerator: ( attributes ) => {
+		const { freemius_enabled, freemius_invalid } = attributes;
 
-		if (!freemius_enabled) return '';
+		if ( ! freemius_enabled ) return '';
 
 		let className = 'has-freemius-scope';
-		if (freemius_invalid) className += ' is-freemius-invalid';
+		if ( freemius_invalid ) className += ' is-freemius-invalid';
 
 		// TODO: need to be implemented on the frontend as well
 		// Object.keys(freemius_modifications).forEach((key) => {
@@ -85,44 +81,44 @@ registerBlockExtension(SUPPORTED_BROKER_BLOCKS, {
 	},
 	inlineStyleGenerator: () => null,
 	Edit: Broker,
-});
+} );
 
 /**
  * Consumer
  */
-registerBlockExtension(SUPPORTED_CONSUMER_BLOCKS, {
+registerBlockExtension( SUPPORTED_CONSUMER_BLOCKS, {
 	extensionName: 'freemius-consumer',
 	attributes: {
 		freemius_mapping: {
 			type: 'object',
 		},
 	},
-	classNameGenerator: (attributes) => {
-		const { freemius_mapping, freemius_mapping_error, invalid } = attributes;
+	classNameGenerator: ( attributes ) => {
+		const { freemius_mapping, freemius_mapping_error, invalid } =
+			attributes;
 
-		if (!freemius_mapping || !freemius_mapping.field) return '';
+		if ( ! freemius_mapping || ! freemius_mapping.field ) return '';
 
 		let className = 'has-freemius-mapping';
-		if (freemius_mapping_error) className += ' has-freemius-mapping-error';
+		if ( freemius_mapping_error )
+			className += ' has-freemius-mapping-error';
 
-		if (invalid) {
-			className += ' has-freemius-no-pricing';
-		}
+		if ( invalid ) className += ' has-freemius-no-pricing';
 
 		return className;
 	},
 	inlineStyleGenerator: () => null,
 	Edit: Consumer,
-});
+} );
 
 /**
  * Content provider for broker and consumer blocks
  */
-const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
-	return (props) => {
+const freemiusContentProvider = createHigherOrderComponent( ( BlockEdit ) => {
+	return ( props ) => {
 		const { attributes, setAttributes, clientId } = props;
 
-		if (SUPPORTED_BROKER_BLOCKS.includes(props.name)) {
+		if ( SUPPORTED_BROKER_BLOCKS.includes( props.name ) ) {
 			const {
 				freemius_enabled,
 				freemius,
@@ -131,77 +127,80 @@ const freemiusContentProvider = createHigherOrderComponent((BlockEdit) => {
 				freemius_mapping,
 			} = attributes;
 
-			if (!freemius_enabled) {
-				return <BlockEdit key="edit" {...props} />;
-			}
+			if ( ! freemius_enabled )
+				return <BlockEdit key="edit" { ...props } />;
 
-			const parent = useContext(FreemiusContext);
+			const parent = useContext( FreemiusContext );
 
 			// pass the clientID of the pricing table
-			const clientID = freemius_enabled ? clientId : parent ? parent : false;
+			const clientID = freemius_enabled
+				? clientId
+				: parent
+				? parent
+				: false;
 
 			const data = useMemo(
-				() => ({
+				() => ( {
 					...parent?.freemius, // parent scope
 					...freemius, // block scope
 					...freemius_modifications, // block scope modifications
-				}),
-				[parent?.freemius, freemius, freemius_modifications]
+				} ),
+				[ parent?.freemius, freemius, freemius_modifications ]
 			);
 
 			const contextValue = useMemo(
-				() => ({
+				() => ( {
 					clientID,
 					freemius: data,
 					attributes,
 					setAttributes,
-				}),
-				[clientID, data, attributes, setAttributes]
+				} ),
+				[ clientID, data, attributes, setAttributes ]
 			);
 
 			// pass the context value to the useData hook as we are out of context
-			const { isInvalid } = useData(contextValue);
+			const { isInvalid } = useData( contextValue );
 
 			// set the invalid state to the attributes
-			useEffect(() => {
-				if (isInvalid != undefined && isInvalid != freemius_invalid) {
-					setAttributes({
+			useEffect( () => {
+				if ( isInvalid != undefined && isInvalid != freemius_invalid )
+					setAttributes( {
 						freemius_invalid: isInvalid,
-					});
-				}
-			}, [isInvalid]);
+					} );
+			}, [ isInvalid ] );
 
 			return (
-				<FreemiusContext.Provider value={contextValue}>
-					{freemius_mapping && freemius_mapping.field ? (
-						<MappedBlockEdit BlockEdit={BlockEdit} {...props} />
+				<FreemiusContext.Provider value={ contextValue }>
+					{ freemius_mapping && freemius_mapping.field ? (
+						<MappedBlockEdit BlockEdit={ BlockEdit } { ...props } />
 					) : (
-						<BlockEdit key="edit" {...props} />
-					)}
+						<BlockEdit key="edit" { ...props } />
+					) }
 				</FreemiusContext.Provider>
 			);
 		}
 
-		if (SUPPORTED_CONSUMER_BLOCKS.includes(props.name)) {
+		if ( SUPPORTED_CONSUMER_BLOCKS.includes( props.name ) ) {
 			const { freemius_mapping } = attributes;
 
 			// no mapping, so just return the block edit
-			if (!freemius_mapping || !freemius_mapping.field) {
-				return <BlockEdit key="edit" {...props} />;
-			}
+			if ( ! freemius_mapping || ! freemius_mapping.field )
+				return <BlockEdit key="edit" { ...props } />;
 
-			return <MappedBlockEdit BlockEdit={BlockEdit} {...props} />;
+			return <MappedBlockEdit BlockEdit={ BlockEdit } { ...props } />;
 		}
 
-		if (props.name === 'freemius/modifier') {
-			const scopeData = useContext(FreemiusContext);
+		if ( props.name === 'freemius/modifier' ) {
+			const scopeData = useContext( FreemiusContext );
 
-			return <BlockEdit key="edit" {...props} scopeData={scopeData} />;
+			return (
+				<BlockEdit key="edit" { ...props } scopeData={ scopeData } />
+			);
 		}
 
-		return <BlockEdit key="edit" {...props} />;
+		return <BlockEdit key="edit" { ...props } />;
 	};
-}, 'freemiusContentProvider');
+}, 'freemiusContentProvider' );
 
 addFilter(
 	'editor.BlockEdit',
@@ -212,28 +211,26 @@ addFilter(
 /**
  * Add scope and mapping to broker and consumer blocks
  *
- * @param {Object} props - The block props.
- * @param {string} blockType - The block type.
+ * @param {Object} props      - The block props.
+ * @param {string} blockType  - The block type.
  * @param {Object} attributes - The block attributes.
- * @returns {Object} The updated block props.
+ * @return {Object} The updated block props.
  */
-function addDataAttributes(props, blockType, attributes) {
-	let extraProps = {};
+function addDataAttributes( props, blockType, attributes ) {
+	const extraProps = {};
 
 	// mapping
-	if (attributes.freemius_mapping && attributes.freemius_mapping.field) {
-		extraProps['data-freemius-mapping'] = JSON.stringify(
+	if ( attributes.freemius_mapping && attributes.freemius_mapping.field )
+		extraProps[ 'data-freemius-mapping' ] = JSON.stringify(
 			attributes.freemius_mapping
 		);
-	}
 
 	// scope
-	if (attributes.freemius_enabled) {
-		extraProps['data-freemius-scope'] = JSON.stringify({
-			...(attributes.freemius || {}),
-			...(attributes.freemius_modifications || {}),
-		});
-	}
+	if ( attributes.freemius_enabled )
+		extraProps[ 'data-freemius-scope' ] = JSON.stringify( {
+			...( attributes.freemius || {} ),
+			...( attributes.freemius_modifications || {} ),
+		} );
 
 	return {
 		...props,

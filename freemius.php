@@ -1,7 +1,4 @@
 <?php
-
-namespace Freemius;
-
 /**
  * Plugin Name:       Freemius for WordPress
  * Description:       Freemius Toolkit
@@ -11,7 +8,11 @@ namespace Freemius;
  * Author:            Freemius
  * Author URI:        https://freemius.com
  * License:           MIT
+ *
+ * @package Freemius
  */
+
+namespace Freemius;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,6 +51,11 @@ spl_autoload_register(
 	}
 );
 
+/**
+ * Bootstrap plugin components.
+ *
+ * @return void
+ */
 function init() {
 	Button::get_instance();
 	Scope::get_instance();

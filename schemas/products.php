@@ -17,12 +17,12 @@ return array(
 		'isShownByDefault' => true,
 	),
 	// 'public_key' => array(
-	//  'label'            => __( 'Public Key', 'freemius' ),
-	//  'type'             => 'string',
-	//  'default'          => '',
-	//  'description'      => __( 'Required product public key.', 'freemius' ),
-	//  'isRequired'       => true,
-	//  'isShownByDefault' => true,
+	// 'label'            => __( 'Public Key', 'freemius' ),
+	// 'type'             => 'string',
+	// 'default'          => '',
+	// 'description'      => __( 'Required product public key.', 'freemius' ),
+	// 'isRequired'       => true,
+	// 'isShownByDefault' => true,
 	// ),
 	'token'      => array(
 		'type'        => 'string',

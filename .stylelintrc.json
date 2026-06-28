@@ -1,0 +1,13 @@
+{
+	"extends": [ "@wordpress/stylelint-config/scss-stylistic" ],
+	"overrides": [
+		{
+			"files": [ "**/*.scss", "**/*.sass" ],
+			"customSyntax": "postcss-scss",
+			"rules": {
+				"selector-class-pattern": null,
+				"no-descending-specificity": null
+			}
+		}
+	]
+}

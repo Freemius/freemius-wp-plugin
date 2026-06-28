@@ -2,113 +2,113 @@
 name: 'Create Release'
 
 on:
-  workflow_dispatch:
-  push:
-    tags:
-      - '*'
+    workflow_dispatch:
+    push:
+        tags:
+            - '*'
 
 permissions: write-all
 jobs:
-  create-release:
-    name: 'Create Release'
-    runs-on: 'ubuntu-latest'
+    create-release:
+        name: 'Create Release'
+        runs-on: 'ubuntu-latest'
 
-    outputs:
-      version: ${{ steps.read_version.outputs.version }}
-      zip_name: ${{ steps.zip_project.outputs.zip_name }}
+        outputs:
+            version: ${{ steps.read_version.outputs.version }}
+            zip_name: ${{ steps.zip_project.outputs.zip_name }}
 
-    steps:
-      - name: ⬇️ Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        steps:
+            - name: ⬇️ Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - name: 🤔 Read version and project name from package.json
-        id: read_version
-        run: |
+            - name: 🤔 Read version and project name from package.json
+              id: read_version
+              run: |
 
-          VERSION=$(jq -r '.version' < package.json)
-          PROJECT_NAME=$(jq -r '.name' < package.json)
-          echo "Version is $VERSION"
-          echo "Project name is $PROJECT_NAME"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "project_name=$PROJECT_NAME" >> $GITHUB_OUTPUT
+                  VERSION=$(jq -r '.version' < package.json)
+                  PROJECT_NAME=$(jq -r '.name' < package.json)
+                  echo "Version is $VERSION"
+                  echo "Project name is $PROJECT_NAME"
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "project_name=$PROJECT_NAME" >> $GITHUB_OUTPUT
 
-      - name: 🤞 Install NPM dependencies
-        if: ${{ hashFiles('package.json') != '' }}
-        run: |
-          npm install --no-fund --silent
+            - name: 🤞 Install NPM dependencies
+              if: ${{ hashFiles('package.json') != '' }}
+              run: |
+                  npm install --no-fund --silent
 
-      - name: 🤞 Install Composer dependencies
-        if: ${{ hashFiles('composer.json') != '' }}
-        run: |
-          composer install --no-dev --quiet
+            - name: 🤞 Install Composer dependencies
+              if: ${{ hashFiles('composer.json') != '' }}
+              run: |
+                  composer install --no-dev --quiet
 
-      - name: 🖼️ Install imagemagick
-        if: ${{ true }}
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y imagemagick
+            - name: 🖼️ Install imagemagick
+              if: ${{ true }}
+              run: |
+                  sudo apt-get update -y
+                  sudo apt-get install -y imagemagick
 
-      - name: 📚 Convert Readme.md to WordPress Readme
-        uses: everpress-co/action-md2wp@main
+            - name: 📚 Convert Readme.md to WordPress Readme
+              uses: everpress-co/action-md2wp@main
 
-      - name: 🏗️ Build Node Nodules
-        if: ${{ hashFiles('package.json') != '' }}
-        run: |
-          npm run build --no-dev
+            - name: 🏗️ Build Node Nodules
+              if: ${{ hashFiles('package.json') != '' }}
+              run: |
+                  npm run build --no-dev
 
-      - name: 🏗️ Build Composer
-        if: ${{ hashFiles('composer.json') != '' }}
-        run: |
-          composer install --no-dev --quiet
+            - name: 🏗️ Build Composer
+              if: ${{ hashFiles('composer.json') != '' }}
+              run: |
+                  composer install --no-dev --quiet
 
-      - name: 🏗️ Build assets
-        if: ${{ hashFiles('.wordpress-org/**') != '' }}
-        run: |
-          mkdir -p dist/assets
-          cp -r .wordpress-org/* dist/assets  
-          if [ -f .wordpress-org/banner.png ]; then
-            convert -resize 1544x500 .wordpress-org/banner.png dist/assets/banner-1544x500.png
-            convert -resize 772x250 .wordpress-org/banner.png dist/assets/banner-772x250.png
-          fi
-          if [ -f .wordpress-org/icon.png ]; then
-            convert -resize 256x256 .wordpress-org/icon.png dist/assets/icon-256x256.png
-            convert -resize 128x128 .wordpress-org/icon.png dist/assets/icon-128x128.png
-          fi
+            - name: 🏗️ Build assets
+              if: ${{ hashFiles('.wordpress-org/**') != '' }}
+              run: |
+                  mkdir -p dist/assets
+                  cp -r .wordpress-org/* dist/assets  
+                  if [ -f .wordpress-org/banner.png ]; then
+                    convert -resize 1544x500 .wordpress-org/banner.png dist/assets/banner-1544x500.png
+                    convert -resize 772x250 .wordpress-org/banner.png dist/assets/banner-772x250.png
+                  fi
+                  if [ -f .wordpress-org/icon.png ]; then
+                    convert -resize 256x256 .wordpress-org/icon.png dist/assets/icon-256x256.png
+                    convert -resize 128x128 .wordpress-org/icon.png dist/assets/icon-128x128.png
+                  fi
 
-      - name: 🧹 Cleanup
-        run: |
-          echo "Cleanup"
-          rm -f README.md
+            - name: 🧹 Cleanup
+              run: |
+                  echo "Cleanup"
+                  rm -f README.md
 
-      - name: 🗜️ Zip the contents of the dist directory with project name and version
-        id: zip_project
-        run: |
-          ZIP_NAME="${{ steps.read_version.outputs.project_name }}.zip"
-          npm run plugin-zip
-          echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
-          #unzip into dist for WordPress Plugin Deploy
-          unzip $ZIP_NAME -d dist
+            - name: 🗜️ Zip the contents of the dist directory with project name and version
+              id: zip_project
+              run: |
+                  ZIP_NAME="${{ steps.read_version.outputs.project_name }}.zip"
+                  npm run plugin-zip
+                  echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
+                  #unzip into dist for WordPress Plugin Deploy
+                  unzip $ZIP_NAME -d dist
 
-      - name: 📦 Create Release
-        if: ${{ !env.ACT }}
-        uses: 'marvinpinto/action-automatic-releases@v1.2.1'
-        with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
-          prerelease: false
-          files: |
-            ${{ steps.read_version.outputs.project_name }}.zip
+            - name: 📦 Create Release
+              if: ${{ !env.ACT }}
+              uses: 'marvinpinto/action-automatic-releases@v1.2.1'
+              with:
+                  repo_token: '${{ secrets.GITHUB_TOKEN }}'
+                  prerelease: false
+                  files: |
+                      ${{ steps.read_version.outputs.project_name }}.zip
 
-      - name: WordPress Plugin Deploy
-        if: ${{ !env.ACT && hashFiles('.wordpress-org/**') != '' }}
-        uses: 10up/action-wordpress-plugin-deploy@stable
-        with:
-          generate-zip: false
-          dry-run: false
-        env:
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SLUG: freemius
-          ASSETS_DIR: dist/assets
-          BUILD_DIR: dist/${{ steps.read_version.outputs.project_name }}
+            - name: WordPress Plugin Deploy
+              if: ${{ !env.ACT && hashFiles('.wordpress-org/**') != '' }}
+              uses: 10up/action-wordpress-plugin-deploy@stable
+              with:
+                  generate-zip: false
+                  dry-run: false
+              env:
+                  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+                  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+                  SLUG: freemius
+                  ASSETS_DIR: dist/assets
+                  BUILD_DIR: dist/${{ steps.read_version.outputs.project_name }}

@@ -14,25 +14,19 @@ import { Button } from '@wordpress/components';
 import { useSettings } from '../hooks';
 
 const SaveButton = () => {
-	const {
-		settings,
-		structure,
-		isLoading,
-		saveSettings,
-		setSettings,
-		isSaving,
-		hasChanges,
-	} = useSettings();
+	const { saveSettings, isSaving, hasChanges } = useSettings();
 
 	return (
 		<Button
 			variant="primary"
-			onClick={() => saveSettings()}
-			isBusy={isSaving}
-			disabled={isSaving || !hasChanges}
+			onClick={ () => saveSettings() }
+			isBusy={ isSaving }
+			disabled={ isSaving || ! hasChanges }
 			className="freemius-save-button"
 		>
-			{isSaving ? __('Saving...', 'freemius') : __('Save Settings', 'freemius')}
+			{ isSaving
+				? __( 'Saving…', 'freemius' )
+				: __( 'Save Settings', 'freemius' ) }
 		</Button>
 	);
 };

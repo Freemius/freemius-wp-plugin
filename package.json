@@ -3,11 +3,19 @@
 	"version": "0.4.2",
 	"author": "Xaver",
 	"license": "GPL-2.0-or-later",
+	"engines": {
+		"node": "^22.0.0"
+	},
 	"scripts": {
 		"build": "wp-scripts build  --experimental-modules",
 		"format": "wp-scripts format",
+		"lint": "npm run lint:js && npm run lint:css",
+		"lint:all": "npm run lint && composer run lint:php",
 		"lint:css": "wp-scripts lint-style",
-		"lint:js": "wp-scripts lint-js",
+		"lint:css:fix": "wp-scripts lint-style --fix",
+		"lint:js": "wp-scripts lint-js src webpack.config.js",
+		"lint:php": "composer run lint:php",
+		"lint:php:fix": "composer run lint:php:fix",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start  --experimental-modules"
@@ -32,8 +40,15 @@
 	},
 	"devDependencies": {
 		"@wordpress/env": "^11.9.0",
+		"@wordpress/prettier-config": "^4.49.0",
 		"@wordpress/scripts": "^32.5.0",
+		"eslint": "^10.6.0",
+		"globals": "^15.14.0",
+		"prettier": "npm:wp-prettier@^3.0.3",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
+	},
+	"overrides": {
+		"eslint": "^10.6.0"
 	}
 }

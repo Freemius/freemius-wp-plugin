@@ -13,33 +13,33 @@ import { useMemo } from '@wordpress/element';
  */
 import { useSettings } from '.';
 
-const useBillingCycle = (product_id) => {
+const useBillingCycle = ( _product_id ) => {
 	const isLoading = false;
 	const error = null;
 
-	const { settings, structure } = useSettings('freemius_defaults');
+	const { settings, structure } = useSettings( 'freemius_defaults' );
 
 	const defaultOptions =
 		settings?.billing_cycle ||
 		structure?.properties?.billing_cycle?.default ||
 		null;
 
-	const options = useMemo(() => {
+	const options = useMemo( () => {
 		return [
 			{
-				name: __('Monthly', 'freemius'),
+				name: __( 'Monthly', 'freemius' ),
 				id: 'monthly',
 			},
 			{
-				name: __('Annual', 'freemius'),
+				name: __( 'Annual', 'freemius' ),
 				id: 'annual',
 			},
 			{
-				name: __('Lifetime', 'freemius'),
+				name: __( 'Lifetime', 'freemius' ),
 				id: 'lifetime',
 			},
 		];
-	}, []);
+	}, [] );
 
 	return {
 		options,

@@ -30,73 +30,71 @@ const PanelDescription = styled.div`
 	grid-column: span 2;
 `;
 
-const Settings = (props) => {
+const Settings = ( props ) => {
 	const { attributes, setAttributes, name } = props;
 
 	const { freemius_enabled, freemius, freemius_modifications } = attributes;
 
-	const { structure, isLoading } = useSettings('freemius_defaults');
+	const { structure, isLoading } = useSettings( 'freemius_defaults' );
 
 	const { data, DataView, errorMessage, defaults } = useData();
 
-	if (isLoading || !structure) {
+	if ( isLoading || ! structure )
 		return (
-			<PanelBody title={__('Freemius', 'freemius')}>
+			<PanelBody title={ __( 'Freemius', 'freemius' ) }>
 				<Spinner />
 			</PanelBody>
 		);
-	}
 
 	const resetAll = () => {
-		setAttributes({ freemius: undefined });
+		setAttributes( { freemius: undefined } );
 	};
 
-	const onChangeHandler = (key, val, defaultValue) => {
+	const onChangeHandler = ( key, val, defaultValue ) => {
 		let newValue = { ...freemius };
 
 		// if the value is the same as the default value, delete the key
-		if ((defaultValue === val || val === undefined) && val !== defaults[key]) {
-			delete newValue[key];
-		} else {
-			newValue[key] = val;
-		}
+		if (
+			( defaultValue === val || val === undefined ) &&
+			val !== defaults[ key ]
+		)
+			delete newValue[ key ];
+		else newValue[ key ] = val;
 
 		//if empty, set to undefined
-		if (Object.keys(newValue).length === 0) {
-			newValue = undefined;
-		}
+		if ( Object.keys( newValue ).length === 0 ) newValue = undefined;
 
-		setAttributes({ freemius: newValue });
+		setAttributes( { freemius: newValue } );
 	};
 
-	const getValueFor = (key) => {
-		return freemius?.[key];
+	const getValueFor = ( key ) => {
+		return freemius?.[ key ];
 	};
 
-	const getPlaceholderFor = (key) => {
-		return data?.[key] || getValueFor(key);
+	const getPlaceholderFor = ( key ) => {
+		return data?.[ key ] || getValueFor( key );
 	};
 
 	return (
 		<ToolsPanel
-			className={'freemius-button-scope-settings'}
-			resetAll={() => resetAll()}
-			label={__('Freemius', 'freemius')}
-			shouldRenderPlaceholderItems={true}
-			dropdownMenuProps={{
+			className={ 'freemius-button-scope-settings' }
+			resetAll={ () => resetAll() }
+			label={ __( 'Freemius', 'freemius' ) }
+			shouldRenderPlaceholderItems={ true }
+			dropdownMenuProps={ {
 				popoverProps: {
 					placement: 'left-start',
 					offset: 259, // the width of the panel with paddings and border
 				},
-			}}
+			} }
 		>
 			<PanelDescription>
 				<DataView />
 				<EnableCheckbox
 					label={
 						props.name == 'core/button'
-							? __('Enable Freemius Checkout', 'freemius')
-							: __('Enable Freemius', 'freemius')
+							? __( 'Enable Freemius Checkout', 'freemius' )
+							: __( 'Enable Freemius', 'freemius' )
 					}
 					help={
 						props.name == 'core/button'
@@ -104,66 +102,77 @@ const Settings = (props) => {
 									'Open a Freemius Checkout when the button is clicked.',
 									'freemius'
 							  )
-							: __('Enable Freemius for this area.', 'freemius')
+							: __( 'Enable Freemius for this area.', 'freemius' )
 					}
-					{...props}
+					{ ...props }
 				/>
-				{freemius_enabled && freemius_modifications && (
+				{ freemius_enabled && freemius_modifications && (
 					<Button
-						onClick={() => setAttributes({ freemius_modifications: undefined })}
+						onClick={ () =>
+							setAttributes( {
+								freemius_modifications: undefined,
+							} )
+						}
 						variant="secondary"
 					>
-						{__('Reset Modifications', 'freemius')}
+						{ __( 'Reset Modifications', 'freemius' ) }
 					</Button>
-				)}
+				) }
 				<Spacer />
-				{freemius_enabled && errorMessage && (
-					<Notice status="error" isDismissible={false}>
-						{errorMessage}
+				{ freemius_enabled && errorMessage && (
+					<Notice status="error" isDismissible={ false }>
+						{ errorMessage }
 					</Notice>
-				)}
+				) }
 			</PanelDescription>
 
-			{freemius_enabled && (
+			{ freemius_enabled && (
 				<>
-					{name == 'core/button' && <ButtonSettings {...props} />}
-					{Object.entries(structure.properties).map(([key, item]) => {
-						const value = getValueFor(key);
-						const placeholder = getPlaceholderFor(key);
+					{ name == 'core/button' && <ButtonSettings { ...props } /> }
+					{ Object.entries( structure.properties ).map(
+						( [ key, item ] ) => {
+							const value = getValueFor( key );
+							const placeholder = getPlaceholderFor( key );
 
-						// do not show deprecated fields if they are not set
-						if (item.isDeprecated && !value) {
-							return null;
+							// do not show deprecated fields if they are not set
+							if ( item.isDeprecated && ! value ) return null;
+
+							return (
+								<Property
+									key={ key }
+									label={ item.label || key }
+									options={ item.options }
+									id={ key }
+									help={ item.description }
+									code={ item?.code }
+									defaultValue={ item.default }
+									isDeprecated={ item.isDeprecated }
+									isRequired={ item.isRequired }
+									value={ value }
+									placeholder={ placeholder }
+									type={ item.type || 'string' }
+									onChange={ ( val ) =>
+										onChangeHandler(
+											key,
+											val,
+											item.default
+										)
+									}
+								/>
+							);
 						}
-						return (
-							<Property
-								key={key}
-								label={item.label || key}
-								options={item.options}
-								id={key}
-								help={item.description}
-								code={item?.code}
-								defaultValue={item.default}
-								isDeprecated={item.isDeprecated}
-								isRequired={item.isRequired}
-								value={value}
-								placeholder={placeholder}
-								type={item.type || 'string'}
-								onChange={(val) => onChangeHandler(key, val, item.default)}
-							/>
-						);
-					})}
+					) }
 					<ToolsPanelItem
 						className="freemius-button-scope"
-						hasValue={() => {
+						hasValue={ () => {
 							return true;
-						}}
-						label={''}
+						} }
+						label={ '' }
 						//onDeselect={() => onChangeHandler(undefined)}
-						ShownByDefault={true}
+						ShownByDefault={ true }
 					></ToolsPanelItem>
 				</>
-			)}
+			) }
 		</ToolsPanel>
 	);
 };

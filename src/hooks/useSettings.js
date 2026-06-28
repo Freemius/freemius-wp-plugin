@@ -10,7 +10,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { SETTINGS_STORE } from '../stores';
 
-const useSettings = (setting) => {
+const useSettings = ( setting ) => {
 	const {
 		settings,
 		structure,
@@ -20,11 +20,11 @@ const useSettings = (setting) => {
 		saveMessageType,
 		error,
 	} = useSelect(
-		(select) => {
-			const store = select(SETTINGS_STORE);
+		( select ) => {
+			const store = select( SETTINGS_STORE );
 			return {
-				settings: store.getSettings(setting),
-				structure: store.getStructure(setting),
+				settings: store.getSettings( setting ),
+				structure: store.getStructure( setting ),
 				isLoading: store.isLoading(),
 				isSaving: store.isSaving(),
 				saveMessage: store.getSaveMessage(),
@@ -32,37 +32,39 @@ const useSettings = (setting) => {
 				error: store.getError(),
 			};
 		},
-		[setting]
+		[ setting ]
 	);
 
-	const [initialSettings, setInitialSettings] = useState();
+	const [ initialSettings, setInitialSettings ] = useState();
 
 	// store initial settings
-	useEffect(() => {
-		if (!settings) return;
-		setInitialSettings(JSON.stringify(settings));
-	}, [structure]);
+	useEffect( () => {
+		if ( ! settings ) return;
+
+		setInitialSettings( JSON.stringify( settings ) );
+	}, [ structure ] );
 
 	const {
 		saveSettings: saveSettingsAction,
 		updateSetting,
 		setSettings,
 		reloadSettings: reloadSettingsAction,
-	} = useDispatch(SETTINGS_STORE);
+		clearSaveMessage,
+	} = useDispatch( SETTINGS_STORE );
 
 	// Load settings on mount
-	useEffect(() => {
+	useEffect( () => {
 		// This will trigger the resolver to load settings
-		if (!settings || Object.keys(settings).length === 0) {
+		if ( ! settings || Object.keys( settings ).length === 0 ) {
 			// The resolver will automatically run when we access getSettings
 		}
-	}, []);
+	}, [] );
 
 	// Backward compatibility: provide the same API as the original hook
 	const saveSettings = () => {
 		saveSettingsAction();
 		// Set initial settings to the current settings
-		setInitialSettings(JSON.stringify(settings));
+		setInitialSettings( JSON.stringify( settings ) );
 	};
 
 	// Load settings function for backward compatibility
@@ -70,14 +72,15 @@ const useSettings = (setting) => {
 		reloadSettingsAction();
 	};
 
-	const hasChanges = JSON.stringify(settings) !== initialSettings;
+	const hasChanges = JSON.stringify( settings ) !== initialSettings;
 
 	return {
 		settings,
 		structure,
 		loadSettings,
 		saveSettings,
-		isLoading: settings === undefined || structure === undefined || isLoading,
+		isLoading:
+			settings === undefined || structure === undefined || isLoading,
 		isSaving,
 		hasChanges,
 		saveMessage,
@@ -85,6 +88,7 @@ const useSettings = (setting) => {
 		error,
 		updateSetting,
 		setSettings,
+		clearSaveMessage,
 	};
 };
 

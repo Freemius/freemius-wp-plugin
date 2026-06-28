@@ -15,16 +15,16 @@ export const CURRENCIES = {
 	usd: {
 		symbol: '$',
 		code: 'USD',
-		name: __('US Dollar', 'freemius'),
+		name: __( 'US Dollar', 'freemius' ),
 	},
 	eur: {
 		symbol: '€',
 		code: 'EUR',
-		name: __('Euro', 'freemius'),
+		name: __( 'Euro', 'freemius' ),
 	},
 	gbp: {
 		symbol: '£',
 		code: 'GBP',
-		name: __('British Pound', 'freemius'),
+		name: __( 'British Pound', 'freemius' ),
 	},
 };

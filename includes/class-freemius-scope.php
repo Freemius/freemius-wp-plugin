@@ -182,7 +182,7 @@ class Scope {
 		$matrix = array();
 
 		foreach ( $plans['plans'] as $plan ) {
-			$planId = $plan['id'];
+			$plan_id = $plan['id'];
 
 			$pricing_by_currency = array();
 
@@ -198,8 +198,8 @@ class Scope {
 				}
 			}
 
-			$matrix[ $planId ] = array(
-				'id'          => $planId,
+			$matrix[ $plan_id ] = array(
+				'id'          => $plan_id,
 				'name'        => $plan['name'] ?? null,
 				'title'       => $plan['title'] ?? null,
 				'description' => $plan['description'] ?? null,

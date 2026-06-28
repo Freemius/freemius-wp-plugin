@@ -21,35 +21,35 @@ const DEFAULT_STATE = {
 };
 
 const actions = {
-	setSettings(settings) {
+	setSettings( settings ) {
 		return {
 			type: 'SET_SETTINGS',
 			settings,
 		};
 	},
 
-	setStructure(structure) {
+	setStructure( structure ) {
 		return {
 			type: 'SET_STRUCTURE',
 			structure,
 		};
 	},
 
-	setLoading(isLoading) {
+	setLoading( isLoading ) {
 		return {
 			type: 'SET_LOADING',
 			isLoading,
 		};
 	},
 
-	setSaving(isSaving) {
+	setSaving( isSaving ) {
 		return {
 			type: 'SET_SAVING',
 			isSaving,
 		};
 	},
 
-	setSaveMessage(message, messageType = 'success') {
+	setSaveMessage( message, messageType = 'success' ) {
 		return {
 			type: 'SET_SAVE_MESSAGE',
 			message,
@@ -57,14 +57,14 @@ const actions = {
 		};
 	},
 
-	setError(error) {
+	setError( error ) {
 		return {
 			type: 'SET_ERROR',
 			error,
 		};
 	},
 
-	updateSetting(settingKey, value) {
+	updateSetting( settingKey, value ) {
 		return {
 			type: 'UPDATE_SETTING',
 			settingKey,
@@ -79,96 +79,98 @@ const actions = {
 	},
 
 	reloadSettings() {
-		return async ({ dispatch }) => {
-			dispatch.setLoading(true);
-			dispatch.setError(null);
+		return async ( { dispatch } ) => {
+			dispatch.setLoading( true );
+			dispatch.setError( null );
 
 			try {
-				const [schema, allSettings] = await Promise.all([
-					apiFetch({
+				const [ schema, allSettings ] = await Promise.all( [
+					apiFetch( {
 						path: '/wp/v2/settings',
 						method: 'OPTIONS',
-					}),
-					apiFetch({
+					} ),
+					apiFetch( {
 						path: '/wp/v2/settings',
-					}),
-				]);
+					} ),
+				] );
 
-				const structure = SETTINGS.reduce((acc, setting) => {
-					acc[setting] = schema.schema.properties[setting];
-					if (acc[setting].items) {
-						acc[setting].properties = acc[setting].items.properties;
-					}
+				const structure = SETTINGS.reduce( ( acc, setting ) => {
+					acc[ setting ] = schema.schema.properties[ setting ];
+					if ( acc[ setting ].items )
+						acc[ setting ].properties =
+							acc[ setting ].items.properties;
+
 					return acc;
-				}, {});
+				}, {} );
 
-				const settings = SETTINGS.reduce((acc, setting) => {
-					acc[setting] = allSettings[setting] || {};
-					if (Object.keys(acc[setting]).length === 0) {
-						acc[setting] = structure[setting].type === 'array' ? [] : {};
-					}
+				const settings = SETTINGS.reduce( ( acc, setting ) => {
+					acc[ setting ] = allSettings[ setting ] || {};
+					if ( Object.keys( acc[ setting ] ).length === 0 )
+						acc[ setting ] =
+							structure[ setting ].type === 'array' ? [] : {};
+
 					return acc;
-				}, {});
+				}, {} );
 
-				dispatch.setStructure(structure);
-				dispatch.setSettings(settings);
-			} catch (error) {
-				console.error('Failed to reload settings:', error);
-				dispatch.setError(error);
+				dispatch.setStructure( structure );
+				dispatch.setSettings( settings );
+			} catch ( error ) {
+				console.error( 'Failed to reload settings:', error );
+				dispatch.setError( error );
 				dispatch.setSaveMessage(
-					__('Failed to reload settings', 'freemius'),
+					__( 'Failed to reload settings', 'freemius' ),
 					'error'
 				);
 			} finally {
-				dispatch.setLoading(false);
+				dispatch.setLoading( false );
 			}
 		};
 	},
 
 	saveSettings() {
-		return async ({ dispatch, select }) => {
-			dispatch.setSaving(true);
-			dispatch.setSaveMessage('');
+		return async ( { dispatch, select } ) => {
+			dispatch.setSaving( true );
+			dispatch.setSaveMessage( '' );
 
 			try {
 				const settings = select.getSettings();
 
 				await Promise.all(
-					SETTINGS.map((setting) => {
-						return apiFetch({
+					SETTINGS.map( ( setting ) => {
+						return apiFetch( {
 							path: '/wp/v2/settings',
 							method: 'POST',
 							data: {
-								[setting]: settings[setting],
+								[ setting ]: settings[ setting ],
 							},
-						});
-					})
+						} );
+					} )
 				);
 
 				dispatch.setSaveMessage(
-					__('Settings saved successfully!', 'freemius'),
+					__( 'Settings saved successfully!', 'freemius' ),
 					'success'
 				);
 
 				// Clear message after 5 seconds
-				setTimeout(() => dispatch.clearSaveMessage(), 5000);
-			} catch (error) {
-				console.error('Failed to save settings:', error);
-				dispatch.setError(error);
+				setTimeout( () => dispatch.clearSaveMessage(), 5000 );
+			} catch ( error ) {
+				console.error( 'Failed to save settings:', error );
+				dispatch.setError( error );
 				dispatch.setSaveMessage(
-					__('Failed to save settings', 'freemius'),
+					__( 'Failed to save settings', 'freemius' ),
 					'error'
 				);
 			} finally {
-				dispatch.setSaving(false);
+				dispatch.setSaving( false );
 			}
 		};
 	},
 };
 
-const store = createReduxStore(SETTINGS_STORE, {
-	reducer(state = DEFAULT_STATE, action) {
-		switch (action.type) {
+const store = createReduxStore( SETTINGS_STORE, {
+	reducer( state = DEFAULT_STATE, action ) {
+		switch ( action.type ) {
 			case 'SET_SETTINGS':
 				return {
 					...state,
@@ -211,7 +213,7 @@ const store = createReduxStore(SETTINGS_STORE, {
 			case 'UPDATE_SETTING':
 				const newSettings = {
 					...state.settings,
-					[action.settingKey]: action.value,
+					[ action.settingKey ]: action.value,
 				};
 
 				return {
@@ -233,31 +235,31 @@ const store = createReduxStore(SETTINGS_STORE, {
 	actions,
 
 	selectors: {
-		getSettings(state, settingKey = null) {
-			return settingKey ? state.settings[settingKey] : state.settings;
+		getSettings( state, settingKey = null ) {
+			return settingKey ? state.settings[ settingKey ] : state.settings;
 		},
 
-		getStructure(state, settingKey = null) {
-			return settingKey ? state.structure[settingKey] : state.structure;
+		getStructure( state, settingKey = null ) {
+			return settingKey ? state.structure[ settingKey ] : state.structure;
 		},
 
-		isLoading(state) {
+		isLoading( state ) {
 			return state.isLoading;
 		},
 
-		isSaving(state) {
+		isSaving( state ) {
 			return state.isSaving;
 		},
 
-		getSaveMessage(state) {
+		getSaveMessage( state ) {
 			return state.saveMessage;
 		},
 
-		getSaveMessageType(state) {
+		getSaveMessageType( state ) {
 			return state.saveMessageType;
 		},
 
-		getError(state) {
+		getError( state ) {
 			return state.error;
 		},
 	},
@@ -265,14 +267,12 @@ const store = createReduxStore(SETTINGS_STORE, {
 	resolvers: {
 		getSettings:
 			() =>
-			async ({ dispatch }) => {
+			async ( { dispatch } ) => {
 				await dispatch.reloadSettings();
 			},
 	},
-});
+} );
 
-if (!select(SETTINGS_STORE)) {
-	register(store);
-}
+if ( ! select( SETTINGS_STORE ) ) register( store );
 
 export { SETTINGS_STORE };

@@ -16,29 +16,27 @@ import { useBlockProps } from '@wordpress/block-editor';
 import './style.scss';
 import { ModifierButtons } from './ModifierButtons';
 
-export default function Save(props) {
+export default function Save( props ) {
 	const { attributes } = props;
 
 	const { type, current } = attributes;
 
-	const blockProps = useBlockProps.save({
-		className: classnames({}, ''),
+	const blockProps = useBlockProps.save( {
+		className: classnames( {}, '' ),
 		'data-wp-interactive': 'freemius/modifier',
 		'data-wp-init': 'callbacks.init',
 		'data-freemius-modifier-type': type,
-		'data-wp-context': JSON.stringify({
+		'data-wp-context': JSON.stringify( {
 			current: current === null ? 'null' : current,
-			type: type,
-		}),
-	});
+			type,
+		} ),
+	} );
 
-	if (!type) {
-		return null;
-	}
+	if ( ! type ) return null;
 
 	return (
-		<div {...blockProps}>
-			<ModifierButtons {...props} isSave={true} />
+		<div { ...blockProps }>
+			<ModifierButtons { ...props } isSave={ true } />
 		</div>
 	);
 }
