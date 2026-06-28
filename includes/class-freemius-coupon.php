@@ -61,13 +61,44 @@ class Coupon {
 	 * @return bool
 	 */
 	public static function applies_to_plan( array $coupon, $plan_id ): bool {
-		if ( empty( $coupon['plans'] ) ) {
+		$plan_ids = self::normalize_plan_ids( $coupon['plans'] ?? null );
+
+		if ( empty( $plan_ids ) ) {
 			return true;
 		}
 
-		$plan_ids = \array_map( 'trim', \explode( ',', (string) $coupon['plans'] ) );
-
 		return \in_array( (string) $plan_id, $plan_ids, true );
+	}
+
+	/**
+	 * Normalize coupon plan restrictions from API payloads.
+	 *
+	 * @since 0.5.0
+	 *
+	 * @param mixed $plans Plan restriction from API.
+	 * @return array<int, string>
+	 */
+	private static function normalize_plan_ids( $plans ): array {
+		if ( null === $plans || '' === $plans ) {
+			return array();
+		}
+
+		if ( \is_array( $plans ) ) {
+			return \array_values(
+				\array_filter(
+					\array_map(
+						static function ( $plan_id ) {
+							return \trim( (string) $plan_id );
+						},
+						$plans
+					)
+				)
+			);
+		}
+
+		return \array_values(
+			\array_filter( \array_map( 'trim', \explode( ',', (string) $plans ) ) )
+		);
 	}
 
 	/**

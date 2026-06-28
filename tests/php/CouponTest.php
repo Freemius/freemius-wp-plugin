@@ -30,6 +30,15 @@ class CouponTest extends Freemius_TestCase {
 		$this->assertFalse( Coupon::applies_to_plan( $coupon, 32843 ) );
 	}
 
+	public function test_applies_to_plan_when_plans_is_array(): void {
+		$coupon = array(
+			'plans' => array( 32841, 32842 ),
+		);
+
+		$this->assertTrue( Coupon::applies_to_plan( $coupon, 32842 ) );
+		$this->assertFalse( Coupon::applies_to_plan( $coupon, 32843 ) );
+	}
+
 	public function test_apply_discount_percentage(): void {
 		$coupon = array(
 			'discount'      => 10,

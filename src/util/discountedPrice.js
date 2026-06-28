@@ -1,4 +1,27 @@
 /**
+ * Normalize coupon plan restrictions from API payloads.
+ *
+ * @param {string|number|Array<string|number>|null|undefined} plans Plan restriction from API.
+ * @return {string[]|null} Plan IDs, or null when the coupon applies to all plans.
+ */
+function normalizePlanIds( plans ) {
+	if ( plans == null || plans === '' ) return null;
+
+	if ( Array.isArray( plans ) )
+		return plans.map( ( id ) => String( id ).trim() ).filter( Boolean );
+
+	if ( typeof plans === 'number' ) return [ String( plans ) ];
+
+	if ( typeof plans === 'string' )
+		return plans
+			.split( ',' )
+			.map( ( id ) => id.trim() )
+			.filter( Boolean );
+
+	return null;
+}
+
+/**
  * Whether a coupon applies to the given plan.
  *
  * @param {Object}      coupon Coupon metadata from the Freemius API.
@@ -6,12 +29,9 @@
  * @return {boolean} True when the coupon applies to the plan.
  */
 export function couponAppliesToPlan( coupon, planId ) {
-	if ( ! coupon?.plans ) return true;
+	const planIds = normalizePlanIds( coupon?.plans );
 
-	const planIds = coupon.plans
-		.split( ',' )
-		.map( ( id ) => id.trim() )
-		.filter( Boolean );
+	if ( ! planIds?.length ) return true;
 
 	return planIds.includes( String( planId ) );
 }
