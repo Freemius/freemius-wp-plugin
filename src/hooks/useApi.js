@@ -304,9 +304,10 @@ export function useApi( endpoint, options = {} ) {
 		[ refetch ]
 	);
 
-	// Set data from cache if available
+	// Keep local data in sync with the shared store (e.g. after cache clear + refetch).
 	useEffect( () => {
-		if ( cachedData && ! data ) setData( cachedData );
+		if ( cachedData ) setData( cachedData );
+		else if ( data ) setData( null );
 	}, [ cachedData, data ] );
 
 	// Immediate fetch on mount
