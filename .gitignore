@@ -13,7 +13,7 @@ coverage
 # Dependency directories
 node_modules/
 vendor/
-build/
+/build/
 
 # Optional npm cache directory
 .npm
