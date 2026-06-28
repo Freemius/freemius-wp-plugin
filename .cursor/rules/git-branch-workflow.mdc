@@ -1,0 +1,157 @@
+---
+name: "Git branch workflow"
+description: "Always use a feature branch unless already on develop or main; branch creation is the first plan todo. Every plan ends with a copyable PR summary block (updated as the plan changes). Before finishing, reconcile CHANGELOG.md ## [Unreleased] with all user-facing branch changes—never bump versions during feature work."
+alwaysApply: true
+---
+
+# Git branch workflow
+
+## When to use a feature branch
+
+**Default:** Always create and switch to a **feature branch** (`feature/<short-slug>`) before any implementation work.
+
+**Stay on the current branch** only when you are **already** on `develop` or `main` (or `master` if that is the repo’s default). Do not create a nested topic branch from those bases unless the user asks for one.
+
+**Exceptions** (follow the user’s instruction; do not insist on branching):
+
+- The user is explicit, for example: **"no branch"**, **"skip branch"**, **"commit on this branch"**, **"stay on develop"**, or similar.
+- Checkout would fail due to uncommitted conflicts—alert the user instead of forcing branch creation.
+
+If the current branch is anything else (`feature/*`, `fix/*`, `release/*`, etc.), create a **new** feature branch from it only when starting **new** unrelated work; otherwise continue on the existing topic branch.
+
+## Plans and todos
+
+Whenever you **create a plan** (Plan mode, accepted plan, or a written implementation plan with todos):
+
+1. **First todo item (always):** Create or confirm the feature branch — e.g. `Create feature branch feature/<slug>` — unless already on `develop` or `main`, or the user said to skip branching.
+2. Mark that todo **in progress** before any code or doc edits; mark it **completed** only after `git checkout -b feature/<slug>` (or confirming the correct branch is checked out).
+3. Remaining plan steps follow after the branch step.
+4. **Last todo item (always):** Reconcile [`CHANGELOG.md`](CHANGELOG.md) with the branch (see **Changelog (branch final step)** below).
+5. **End every plan** with a **PR summary** block (see **PR summary (in plan)** below). Do **not** add a separate todo for it — keep the block at the bottom of the plan and update it whenever scope or approach changes.
+
+## Feature branch workflow
+
+**Cursor:** **`/feature <topic>`** ([`.cursor/commands/feature.md`](../commands/feature.md)) applies this section — propose `feature/<slug>`, create the branch, then outline a short plan.
+
+When starting work (including from a plan):
+
+1. **Suggest** a branch name like `feature/<short-slug>` (kebab-case from the plan’s main topic, e.g. `feature/checkout-button-settings`).
+2. **Confirm** with the user unless they already gave a branch name or said to use no branch.
+3. **Create** the branch only after the name is agreed:
+
+   ```bash
+   git checkout -b feature/<chosen-slug>
+   ```
+
+4. If there are working tree changes or possible conflicts, alert the user—never force branch creation.
+
+## Changelog (branch final step)
+
+Before finalizing the plan’s PR summary, ensure **`## [Unreleased]`** in [`CHANGELOG.md`](CHANGELOG.md) reflects **all user-facing changes on the current branch**, not only the latest commit or the work done in the current session.
+
+1. **Scope the branch** — Compare against `develop` (or `main` if that is the merge base): `git log develop..HEAD` and review the full diff (`git diff develop..HEAD`).
+2. **Write for site owners and editors** — One bullet per user-visible outcome; skip internal-only work (tests, CI, developer docs, refactors with no user impact). Follow **Changelog (user-facing changes)** below for wording, grouping, and order.
+3. **Cover the whole branch** — Replace or rephrase existing `[Unreleased]` bullets that belong to this branch so they summarize the feature/fix end-to-end. Do not leave bullets that describe only part of the branch or unrelated work.
+4. **Incremental updates during work** — Add `[Unreleased]` bullets only when site owners or editors would care: **fixes**, **breaking changes**, **behavior changes**, or **improvements** they can notice. If a commit is internal, incremental, or not meaningfully user-facing on its own, **do not** add a line — fold it into the end-of-branch summary instead. Still run this reconciliation step before finalizing the PR summary.
+
+Do **not** create version headings or bump [`freemius.php`](../../freemius.php) during feature work (see **Version bumps**).
+
+## PR summary (in plan)
+
+Every plan ends with a **copyable PR summary** — a fenced markdown block the user can paste into GitHub when opening the PR. **No separate todo** for this; it lives at the bottom of the plan from the start.
+
+### When to write and update
+
+- **On plan creation** — add the block with your best draft from the plan (scope, approach, expected outcome).
+- **When the plan changes** — revise the block in the same edit (added/removed steps, different files, scope cuts, new constraints).
+- **Before opening the PR** — finalize against the full branch diff and reconciled `[Unreleased]` bullets so the summary matches what actually shipped.
+
+### Format
+
+Use this structure exactly inside a single fenced `markdown` code block under a heading such as `## PR summary`. **No checkboxes** (no test-plan checklists).
+
+```markdown
+<type>: <subject>
+
+<summary>
+
+<explanation>
+
+<why>
+```
+
+- **`<type>`** — conventional prefix, e.g. `feat`, `fix`, `refactor`, `docs`, `chore` (lowercase).
+- **`<subject>`** — short imperative title (what the PR does).
+- **`<summary>`** — one or two sentences: outcome for reviewers.
+- **`<explanation>`** — comprehensive but concise: what changed, how it works, main files/areas, and any migration or follow-up notes reviewers need.
+- **`<why>`** — motivation, user impact, or problem solved.
+
+The block must be **self-contained and paste-ready** — no references to “see above” or plan-only shorthand.
+
+## Version bumps
+
+**Never bump versions during feature work.**
+
+- Do **not** change the `Version:` header in [`freemius.php`](../../freemius.php).
+- Do **not** add or rename `## [x.y.z]` sections in [`CHANGELOG.md`](CHANGELOG.md).
+- Do **not** guess the next semantic version while a branch is in progress.
+
+On `develop`, version files already track the **in-progress release** (bumped in **Phase 3** of `/do-release` after the previous release merges). The release branch tags that version without bumping again.
+
+- **Release branch:** rename `## [Unreleased]` → `## [x.y.z]` with date; no version file bumps.
+- **Phase 3 on `develop`:** bump to the next version and insert a fresh `## [Unreleased]` (see [`.cursor/commands/do-release.md`](../commands/do-release.md)).
+
+## Changelog (user-facing changes)
+
+After each **meaningful change that affects end users** and belongs in the release notes, you may update **[`CHANGELOG.md`](CHANGELOG.md) only** as you go — but **only when a new line is warranted** (see **When to add an entry**). Before finishing the branch, always run **Changelog (branch final step)** so `[Unreleased]` matches the full branch. Do **not** update [`README.md`](README.md) Changelog as part of routine edits; README can be refreshed at release time or when the user asks.
+
+Do **not** log internal-only work (refactors, tests, CI, dev tooling, docs for developers) unless it clearly changes what site owners or editors experience. Prefer **fewer, clearer bullets** over logging every commit.
+
+### When to add an entry
+
+Add a line only when users would notice or care — meaningful **fixes**, **breaking changes**, **behavior changes**, or **improvements**, for example:
+
+- Bug fixes that affected real behavior
+- Breaking changes, requirement changes, or migration notes
+- New or changed features, blocks, or admin UI
+- Performance or reliability improvements users can perceive
+
+**Do not** add a line when the change is not meaningfully user-facing on its own: typo fixes in code comments, dependency bumps with no user impact, purely structural refactors, partial implementation steps, or small internal tweaks. Wait and describe the **finished outcome** in one bullet at branch wrap-up when appropriate.
+
+### How to write entries
+
+- One short sentence per change, written for **site owners and editors**, not developers.
+- Start with a lowercase verb prefix, e.g. `fixed`, `improved`, `added`, `changed`, `removed`, followed by a ":".
+- Be specific about *what* changed and *where* it matters (e.g. checkout button block, settings page).
+
+### Order within a version section
+
+Group bullets by type in this order (most important for readers first):
+
+1. **`fixed`** — bugs and regressions users hit
+2. **`improved`** — UX, performance, reliability users notice
+3. **`added`** — new capabilities
+4. **`changed`** / **`removed`** — behavior or requirement shifts (after the three groups above, or at the end of the section if few)
+
+Within each group, put the **highest-impact** items first (what site owners and editors care about most), not chronological order.
+
+When you add a line to the existing **`## [Unreleased]`** section, insert it in the right group and position; re-sort the section if needed so the order stays correct.
+
+Example bullets (correct order):
+
+```markdown
+- fixed: checkout button not opening when product ID was missing from block attributes
+- fixed: Save Settings button stays disabled after editing fields until you save or reload
+- improved: checkout modal loading so repeat clicks feel faster
+- added: support for multiple Freemius products in block settings
+```
+
+### Where to put new lines (version heading)
+
+**Always use `## [Unreleased]`** at the top of [`CHANGELOG.md`](CHANGELOG.md) (below the title/intro if any, above all dated or numbered release sections). This is the merge target for in-flight work on feature branches.
+
+1. If **`## [Unreleased]`** exists, add bullets there only.
+2. If it does not exist, create **`## [Unreleased]`** at the top before adding bullets.
+3. Do **not** create `## [next-version]` or guess a version number during feature work.
+
+At **release time** (release branch), rename `## [Unreleased]` to `## [x.y.z]` with the chosen version and date. A fresh empty **`## [Unreleased]`** section is added on `develop` in **Phase 3** of `/do-release` after merge.

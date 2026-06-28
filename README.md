@@ -61,75 +61,9 @@ The plugin works with any WordPress theme that supports the block editor (Gutenb
 
 ## Changelog
 
+See [CHANGELOG.md](CHANGELOG.md) for the full release history.
+
 ### 0.4.2
 
 - fixed: missing import for MappingSettings
 - updated: dependencies
-
-### 0.4.1
-
-- fixed: missing import in useMapping hook
-- improved: support for button tag in the button block (WordPress 6.9)
-- updated: Tested up to: 6.9
-- updated: dependencies
-
-### 0.4.0
-
-- **Feature**: Added support for multiple products - you can now manage and configure multiple Freemius products
-- **Feature**: Added "Get Started" tab in settings with helpful video tutorial
-- **Improved Setup**: Plugin now automatically redirects to settings page after activation
-- **Enhanced Product Management**: Better product-specific configuration and data handling
-- **Enhanced Security**: Improved API token handling and authentication
-- **Better User Experience**: Cleaner interface with improved error messages
-- **Breaking Change**: Simplified authentication - no longer requires `public_key` parameter
-- **Performance**: Faster loading and improved plugin performance
-- **Bug Fixes**: Various improvements and fixes for better stability
-
-### 0.3.0
-
-- **Major Feature**: Added pricing table functionality with dynamic plan display
-- **Breaking Change**: Complete refactoring of Freemius settings and API structure
-- Enhanced modifier functionality with improved data handling
-- Added new Freemius API health management and error handling
-- Improved blueprint configuration with updated landing page and plugin URLs
-- Added new hooks and stores for better state management
-- Enhanced checkout flow with better customization options
-- Updated dependencies and improved performance
-- Refactored codebase structure with new component organization
-- Added support for advanced pricing modifiers and billing cycles
-
-### 0.2.1
-
-- Added popout editor for code fields
-
-### 0.2.0
-
-- changed deprecated argument "plugin_id" to "product_id" (breaking change)
-
-### 0.1.9
-
-- Added support for WordPress 6.8
-- Improved button customization options
-- Bug fixes and performance improvements
-
-### 0.1.8
-
-- Enhanced checkout flow
-- Added new customization options
-- Fixed compatibility issues
-
-### 0.1.7
-
-- Improved error handling
-- Added support for custom checkout fields
-- Performance optimizations
-
-### 0.1.6
-
-- Initial public release
-- Basic Freemius checkout integration
-- Core functionality implementation
-
-### 0.1.0
-
-- Initial development release
