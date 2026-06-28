@@ -1,0 +1,39 @@
+---
+name: Unit tests
+
+on:
+    pull_request:
+    push:
+        branches:
+            - develop
+            - main
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    php-unit:
+        name: PHP unit tests
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v5
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+                  extensions: mbstring
+                  coverage: none
+
+            - name: Install Composer dependencies
+              uses: ramsey/composer-install@v4
+              with:
+                  composer-options: '--prefer-dist --no-interaction'
+
+            - name: Run PHPUnit
+              run: composer run test:php

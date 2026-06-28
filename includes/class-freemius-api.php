@@ -468,21 +468,19 @@ class Api {
 	 * @return array|null Dummy response body or null.
 	 */
 	private function get_dummy_response( string $endpoint ) {
-
-		include_once __DIR__ . '/dummy-response.php';
-
-		$body = null;
+		$dummy = $this->load_dummy_response_data();
+		$body  = null;
 
 		if ( substr( $endpoint, -strlen( '/currencies.json' ) ) === '/currencies.json' ) {
-			$body = $currencies;
+			$body = $dummy['currencies'];
 		}
 
 		if ( substr( $endpoint, -strlen( '/pricing.json' ) ) === '/pricing.json' ) {
-			$body = $pricing;
+			$body = $dummy['pricing'];
 		}
 
 		if ( substr( $endpoint, -strlen( '/products/19794.json' ) ) === '/products/19794.json' ) {
-			$body = $product;
+			$body = $dummy['product'];
 		}
 
 		return array(
@@ -495,5 +493,30 @@ class Api {
 			'cookies'            => array(),
 			'http_response_code' => 200,
 		);
+	}
+
+	/**
+	 * Load dummy response payloads once per request.
+	 *
+	 * @since 0.4.2
+	 *
+	 * @return array<string, string|null>
+	 */
+	private function load_dummy_response_data(): array {
+		static $data = null;
+
+		if ( null !== $data ) {
+			return $data;
+		}
+
+		include __DIR__ . '/dummy-response.php';
+
+		$data = array(
+			'pricing'    => $pricing,
+			'currencies' => $currencies,
+			'product'    => $product,
+		);
+
+		return $data;
 	}
 }

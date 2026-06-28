@@ -18,7 +18,8 @@
 		"lint:php:fix": "composer run lint:php:fix",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start  --experimental-modules"
+		"start": "wp-scripts start  --experimental-modules",
+		"test:php": "composer run test:php"
 	},
 	"files": [
 		"build",
