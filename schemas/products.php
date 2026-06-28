@@ -16,14 +16,6 @@ return array(
 		'isRequired'       => true,
 		'isShownByDefault' => true,
 	),
-	// 'public_key' => array(
-	// 'label'            => __( 'Public Key', 'freemius' ),
-	// 'type'             => 'string',
-	// 'default'          => '',
-	// 'description'      => __( 'Required product public key.', 'freemius' ),
-	// 'isRequired'       => true,
-	// 'isShownByDefault' => true,
-	// ),
 	'token'      => array(
 		'type'        => 'string',
 		'input_type'  => 'password',

@@ -369,7 +369,10 @@ class Api {
 			);
 
 		} catch ( \Exception $e ) {
-			\error_log( 'Freemius API request error: ' . $e->getMessage() );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				\error_log( 'Freemius API request error: ' . $e->getMessage() );
+			}
 			return new \WP_Error(
 				'freemius_api_exception',
 				$e->getMessage(),
@@ -401,12 +404,13 @@ class Api {
 	/**
 	 * Clear related cache entries
 	 *
-	 * @param string $endpoint The endpoint that was modified.
+	 * @param string $endpoint The endpoint that was modified (unused; clears all API transients).
 	 */
-	private function clear_related_cache( $endpoint ) {
+	private function clear_related_cache( $endpoint ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		global $wpdb;
 
 		// Clear all transients that start with freemius_api_.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$transient_keys = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
@@ -423,10 +427,10 @@ class Api {
 	/**
 	 * Clear all API cache
 	 *
-	 * @param \WP_REST_Request $request The request object.
+	 * @param \WP_REST_Request $request The request object (unused; required by REST callback signature).
 	 * @return \WP_REST_Response
 	 */
-	public function clear_cache( $request ) {
+	public function clear_cache( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		$this->clear_related_cache( '' );
 
 		return new \WP_REST_Response(

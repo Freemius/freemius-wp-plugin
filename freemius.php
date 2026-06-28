@@ -25,7 +25,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // Autoload classes
 spl_autoload_register(
-	function ( $class ) {
+	function ( $class_name ) {
 		// Project-specific namespace prefix
 		$prefix = 'Freemius\\';
 
@@ -34,12 +34,12 @@ spl_autoload_register(
 
 		// Check if the class uses the namespace prefix
 		$len = strlen( $prefix );
-		if ( strncmp( $prefix, $class, $len ) !== 0 ) {
+		if ( strncmp( $prefix, $class_name, $len ) !== 0 ) {
 			return;
 		}
 
 		// Get the relative class name
-		$relative_class = substr( $class, $len );
+		$relative_class = substr( $class_name, $len );
 
 		// Replace namespace separators with directory separators
 		$file = $base_dir . 'class-freemius-' . strtolower( str_replace( '_', '-', $relative_class ) ) . '.php';
