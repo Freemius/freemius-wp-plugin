@@ -4,6 +4,7 @@ All notable changes to Freemius for WordPress are documented in this file.
 
 ## [Unreleased]
 
+- improved: added a Clear Cache button in the Freemius block sidebar (mapping panel and parent scope settings) so you can refresh pricing data from the API without leaving the editor
 ## [0.4.2]
 
 - fixed: missing import for MappingSettings
