@@ -105,13 +105,13 @@ class Settings {
 	}
 
 	/**
-	 * Activation redirect
+	 * Activation redirect.
 	 *
-	 * @param string $plugin The plugin basename.
+	 * @return void
 	 */
 	public function activation_redirect() {
 
-		wp_redirect( admin_url( 'options-general.php?page=freemius-settings#products' ), 302, 'Freemius for WordPress' );
+		wp_safe_redirect( admin_url( 'options-general.php?page=freemius-settings#products' ) );
 		exit();
 	}
 

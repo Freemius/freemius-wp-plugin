@@ -97,10 +97,10 @@ class Scope {
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block.
-	 * @param array  $instance      The instance.
+	 * @param array  $instance      The block instance (unused; required by filter signature).
 	 * @return string The block content.
 	 */
-	public function render_scope( $block_content, $block, $instance ) {
+	public function render_scope( $block_content, $block, $instance ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		if ( ! isset( $block['attrs'] ) ) {
 			return $block_content;
@@ -123,8 +123,8 @@ class Scope {
 
 		$args = array_merge( $block_args, $defaults );
 
-		// Prevent json_encode from rounding floats.
-		// TODO: recosinder this, as it's maybe not working on all hosts
+		// Prevent json_encode from rounding floats on hosts with low serialize_precision.
+		// phpcs:ignore WordPress.PHP.IniSet.Risky
 		\ini_set( 'serialize_precision', '-1' );
 
 		$script_tag = '<script type="application/json" class="%s">%s</script>';
@@ -139,7 +139,7 @@ class Scope {
 
 		$product_id = $args['product_id'] ?? null;
 
-		if ( $product_id && ! in_array( $product_id, $this->matrix_added ) ) {
+		if ( $product_id && ! in_array( $product_id, $this->matrix_added, true ) ) {
 			$extra .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $product_id ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';
 
 			$this->matrix_added[] = $product_id;
@@ -182,7 +182,7 @@ class Scope {
 		$matrix = array();
 
 		foreach ( $plans['plans'] as $plan ) {
-			$planId = $plan['id'];
+			$plan_id = $plan['id'];
 
 			$pricing_by_currency = array();
 
@@ -198,8 +198,8 @@ class Scope {
 				}
 			}
 
-			$matrix[ $planId ] = array(
-				'id'          => $planId,
+			$matrix[ $plan_id ] = array(
+				'id'          => $plan_id,
 				'name'        => $plan['name'] ?? null,
 				'title'       => $plan['title'] ?? null,
 				'description' => $plan['description'] ?? null,

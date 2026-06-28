@@ -7,10 +7,10 @@ import icon from './icon';
 
 const { name, ...settings } = json;
 
-registerBlockType(name, {
+registerBlockType( name, {
 	...settings,
 	icon,
 	edit,
 	__experimentalLabel: label,
 	save,
-});
+} );

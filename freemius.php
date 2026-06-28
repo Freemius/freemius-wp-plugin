@@ -1,7 +1,4 @@
 <?php
-
-namespace Freemius;
-
 /**
  * Plugin Name:       Freemius for WordPress
  * Description:       Freemius Toolkit
@@ -11,7 +8,11 @@ namespace Freemius;
  * Author:            Freemius
  * Author URI:        https://freemius.com
  * License:           MIT
+ *
+ * @package Freemius
  */
+
+namespace Freemius;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,7 +25,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // Autoload classes
 spl_autoload_register(
-	function ( $class ) {
+	function ( $class_name ) {
 		// Project-specific namespace prefix
 		$prefix = 'Freemius\\';
 
@@ -33,12 +34,12 @@ spl_autoload_register(
 
 		// Check if the class uses the namespace prefix
 		$len = strlen( $prefix );
-		if ( strncmp( $prefix, $class, $len ) !== 0 ) {
+		if ( strncmp( $prefix, $class_name, $len ) !== 0 ) {
 			return;
 		}
 
 		// Get the relative class name
-		$relative_class = substr( $class, $len );
+		$relative_class = substr( $class_name, $len );
 
 		// Replace namespace separators with directory separators
 		$file = $base_dir . 'class-freemius-' . strtolower( str_replace( '_', '-', $relative_class ) ) . '.php';
@@ -50,6 +51,11 @@ spl_autoload_register(
 	}
 );
 
+/**
+ * Bootstrap plugin components.
+ *
+ * @return void
+ */
 function init() {
 	Button::get_instance();
 	Scope::get_instance();

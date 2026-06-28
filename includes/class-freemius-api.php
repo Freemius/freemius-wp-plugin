@@ -275,7 +275,7 @@ class Api {
 		if ( null === $settings ) {
 			return new \WP_Error(
 				'freemius_api_not_configured',
-				__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius-button' ),
+				__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -293,7 +293,7 @@ class Api {
 			if ( ! $token ) {
 				return new \WP_Error(
 					'freemius_api_not_configured',
-					__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius-button' ),
+					__( 'Freemius API is not configured. Please add your API token in the Freemius settings.', 'freemius' ),
 					array( 'status' => 500 )
 				);
 			}
@@ -317,11 +317,9 @@ class Api {
 			if ( 'GET' === strtoupper( $method ) ) {
 				// For GET requests, add all parameters to URL.
 				$url = add_query_arg( $data, $url );
-			} else {
+			} elseif ( ! empty( $data ) ) {
 				// For other methods, add data to body.
-				if ( ! empty( $data ) ) {
-					$request_args['body'] = wp_json_encode( $data );
-				}
+				$request_args['body'] = wp_json_encode( $data );
 			}
 
 			// check for dummy token for playground
@@ -348,7 +346,7 @@ class Api {
 			if ( null === $decoded_response ) {
 				return new \WP_Error(
 					'freemius_api_invalid_response',
-					__( 'Invalid JSON response from Freemius API.', 'freemius-button' ),
+					__( 'Invalid JSON response from Freemius API.', 'freemius' ),
 					array( 'status' => 500 )
 				);
 			}
@@ -357,7 +355,7 @@ class Api {
 			if ( $response_code >= 400 ) {
 				$error_message = isset( $decoded_response['error']['message'] )
 					? $decoded_response['error']['message']
-					: __( 'Unknown Freemius API error.', 'freemius-button' );
+					: __( 'Unknown Freemius API error.', 'freemius' );
 				return new \WP_Error(
 					'freemius_api_error',
 					$error_message,
@@ -371,7 +369,10 @@ class Api {
 			);
 
 		} catch ( \Exception $e ) {
-			\error_log( 'Freemius API request error: ' . $e->getMessage() );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				\error_log( 'Freemius API request error: ' . $e->getMessage() );
+			}
 			return new \WP_Error(
 				'freemius_api_exception',
 				$e->getMessage(),
@@ -403,12 +404,13 @@ class Api {
 	/**
 	 * Clear related cache entries
 	 *
-	 * @param string $endpoint The endpoint that was modified.
+	 * @param string $endpoint The endpoint that was modified (unused; clears all API transients).
 	 */
-	private function clear_related_cache( $endpoint ) {
+	private function clear_related_cache( $endpoint ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		global $wpdb;
 
 		// Clear all transients that start with freemius_api_.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$transient_keys = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
@@ -425,14 +427,14 @@ class Api {
 	/**
 	 * Clear all API cache
 	 *
-	 * @param \WP_REST_Request $request The request object.
+	 * @param \WP_REST_Request $request The request object (unused; required by REST callback signature).
 	 * @return \WP_REST_Response
 	 */
-	public function clear_cache( $request ) {
+	public function clear_cache( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		$this->clear_related_cache( '' );
 
 		return new \WP_REST_Response(
-			array( 'message' => __( 'Cache cleared successfully.', 'freemius-button' ) ),
+			array( 'message' => __( 'Cache cleared successfully.', 'freemius' ) ),
 			200
 		);
 	}
@@ -445,7 +447,7 @@ class Api {
 	 */
 	private function get_token_by_endpoint( $endpoint ) {
 
-		//extract product id from endpoint
+		// extract product id from endpoint
 		$product_id = (int) preg_replace( '/(.*?)products\/(\d+)(.*)$/', '$2', $endpoint );
 
 		$products = get_option( 'freemius_products', array() );
@@ -460,13 +462,10 @@ class Api {
 	}
 
 	/**
-	 * This is used to do not make an API request to the Freemius API but use dummy data instead.
-	 * Intended to be used on the playground not not expose any token.
+	 * Return dummy API data for playground environments.
 	 *
-	 * @param bool|array $value Filtered value, or false to proceed.
-	 * @param array      $args HTTP request arguments.
-	 * @param string     $url The request URL.
-	 * @return bool|array Replaced value, or false to proceed.
+	 * @param string $endpoint API endpoint path.
+	 * @return array|null Dummy response body or null.
 	 */
 	private function get_dummy_response( string $endpoint ) {
 

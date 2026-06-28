@@ -19,51 +19,53 @@ const useProducts = () => {
 		isLoading: productsIsLoading,
 		error: productsError,
 		isApiAvailable: productsIsApiAvailable,
-	} = useSettings('freemius_products');
+	} = useSettings( 'freemius_products' );
 
-	const productIds = settings?.map((product) => product.product_id);
+	const productIds = settings?.map( ( product ) => product.product_id );
 
 	const response = useMultipleApi(
-		productIds.map((id) => {
+		productIds.map( ( id ) => {
 			return {
-				endpoint: `products/${id}.json`,
+				endpoint: `products/${ id }.json`,
 				options: {},
 			};
-		})
+		} )
 	);
 
 	let isProductsLoading = true;
 	let isProductsError = true;
 
-	const options = useMemo(() => {
-		if (!response) return [];
+	const options = useMemo( () => {
+		if ( ! response ) return [];
 
-		return Object.values(response).map((product) => {
+		return Object.values( response ).map( ( product ) => {
 			const { data, isLoading, error } = product;
 			isProductsLoading = isLoading;
 			isProductsError = error;
-			if (!data) return null;
+			if ( ! data ) return null;
+
 			return {
 				name: data.title,
-				id: parseInt(data.id),
+				id: parseInt( data.id ),
 			};
-		});
-	}, [response]);
+		} );
+	}, [ response ] );
 
-	const products = useMemo(() => {
-		if (!response) return [];
+	const products = useMemo( () => {
+		if ( ! response ) return [];
 
-		return Object.values(response).map((product) => {
+		return Object.values( response ).map( ( product ) => {
 			const { data, isLoading, error } = product;
 			isProductsLoading = isLoading;
 			isProductsError = error;
-			if (!data) return null;
+			if ( ! data ) return null;
+
 			return data;
-		});
-	}, [response]);
+		} );
+	}, [ response ] );
 
 	return {
-		products: products,
+		products,
 		options,
 		isLoading: productsIsLoading || isProductsLoading,
 		error: productsError || isProductsError,

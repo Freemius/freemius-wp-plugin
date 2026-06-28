@@ -16,7 +16,7 @@ import PropertyInputField from './PropertyInputField';
 const FREEMIUS_LINK_BASE =
 	'https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/';
 
-const Property = (props) => {
+const Property = ( props ) => {
 	const {
 		label,
 		id,
@@ -30,7 +30,6 @@ const Property = (props) => {
 		value,
 		code,
 		onChange,
-		defaultValue,
 	} = props;
 
 	const overwrite = '';
@@ -39,63 +38,58 @@ const Property = (props) => {
 
 	const { data } = useData();
 
-	const inherited = value == undefined && data?.[id];
+	const inherited = value == undefined && data?.[ id ];
 
 	let the_type = type;
-	if (options) {
-		the_type = 'array';
-	} else if (code) {
-		the_type = 'code';
-	}
+	if ( options ) the_type = 'array';
+	else if ( code ) the_type = 'code';
 
 	const formatedPlaceholder = placeholder ? '[' + placeholder + ']' : '';
 
-	if (inherited) {
-		the_label += ' (' + __('inherited', 'freemius') + ')';
-	} else if (isRequired) {
-		the_label += ' (' + __('required', 'freemius') + ')';
-	}
-	if (isDeprecated) {
-		the_label += ' (' + __('deprecated', 'freemius') + ')';
-	}
+	if ( inherited ) the_label += ' (' + __( 'inherited', 'freemius' ) + ')';
+	else if ( isRequired )
+		the_label += ' (' + __( 'required', 'freemius' ) + ')';
 
-	const onChangeHandler = (val) => {
-		if (val === '' || val === undefined || val === null) {
-			onChange(undefined);
+	if ( isDeprecated )
+		the_label += ' (' + __( 'deprecated', 'freemius' ) + ')';
+
+	const onChangeHandler = ( val ) => {
+		if ( val === '' || val === undefined || val === null ) {
+			onChange( undefined );
 			return;
 		}
 
-		switch (type) {
+		switch ( type ) {
 			case 'integer':
 			case 'number':
-				onChange(parseInt(val));
+				onChange( parseInt( val ) );
 				break;
 			default:
-				onChange(val);
+				onChange( val );
 		}
 	};
 
 	return (
 		<ToolsPanelItem
 			className="freemius-button-scope"
-			hasValue={() => {
+			hasValue={ () => {
 				return value !== undefined;
-			}}
-			label={label}
-			onDeselect={() => onChangeHandler(undefined)}
-			isShownByDefault={isRequired}
+			} }
+			label={ label }
+			onDeselect={ () => onChangeHandler( undefined ) }
+			isShownByDefault={ isRequired }
 		>
-			<BaseControl __nextHasNoMarginBottom help={overwrite}>
+			<BaseControl __nextHasNoMarginBottom help={ overwrite }>
 				<PropertyInputField
-					label={the_label}
-					help={help}
-					type={the_type}
-					value={value}
-					onChange={onChangeHandler}
-					formatedPlaceholder={formatedPlaceholder}
-					props={props}
-					link={the_link}
-					inherited={inherited}
+					label={ the_label }
+					help={ help }
+					type={ the_type }
+					value={ value }
+					onChange={ onChangeHandler }
+					formatedPlaceholder={ formatedPlaceholder }
+					props={ props }
+					link={ the_link }
+					inherited={ inherited }
 				/>
 			</BaseControl>
 		</ToolsPanelItem>

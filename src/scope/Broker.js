@@ -14,10 +14,10 @@ import { InspectorControls } from '@wordpress/block-editor';
 
 import Settings from './Settings';
 
-const Broker = (props) => {
+const Broker = ( props ) => {
 	return (
 		<InspectorControls>
-			<Settings {...props} />
+			<Settings { ...props } />
 		</InspectorControls>
 	);
 };

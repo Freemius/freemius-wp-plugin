@@ -13,43 +13,42 @@ import { useMemo, useEffect } from '@wordpress/element';
  */
 import { useApiGet, useSettings } from '.';
 
-const usePlans = (product_id) => {
+const usePlans = ( product_id ) => {
 	const {
 		data: plans,
 		isLoading,
 		error,
 		isApiAvailable,
 		refetch,
-	} = useApiGet(product_id ? `products/${product_id}/pricing.json` : null);
+	} = useApiGet(
+		product_id ? `products/${ product_id }/pricing.json` : null
+	);
 
 	// force refetch when product_id changes
-	useEffect(() => {
-		if (product_id) {
-			refetch();
-		}
-	}, [product_id]);
+	useEffect( () => {
+		if ( product_id ) refetch();
+	}, [ product_id ] );
 
-	const { settings, structure } = useSettings('freemius_defaults');
+	const { settings, structure } = useSettings( 'freemius_defaults' );
 
 	let defaultOptions =
 		settings?.plan_id || structure?.properties?.plan_id?.default || null;
 
-	const options = useMemo(() => {
-		if (!plans) return [];
+	const options = useMemo( () => {
+		if ( ! plans ) return [];
 
-		const options = plans.plans.map((plan) => {
-			if (!defaultOptions && !plan.is_hidden) {
+		const options = plans.plans.map( ( plan ) => {
+			if ( ! defaultOptions && ! plan.is_hidden )
 				defaultOptions = plan.id;
-			}
 
 			return {
 				name: plan.title,
-				id: parseInt(plan.id),
+				id: parseInt( plan.id ),
 			};
-		});
+		} );
 
 		return options;
-	}, [plans]);
+	}, [ plans ] );
 
 	return {
 		plans: plans?.plans || [],

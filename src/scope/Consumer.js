@@ -17,25 +17,21 @@ import { useContext } from '@wordpress/element';
 import { FreemiusContext } from '../context';
 import MappingSettings from './MappingSettings';
 
-const Consumer = (props) => {
+const Consumer = ( props ) => {
 	const { name } = props;
 
-	const inContext = useContext(FreemiusContext);
+	const inContext = useContext( FreemiusContext );
 
 	// not in context, so we don't need to do anything
-	if (!inContext) {
-		return null;
-	}
+	if ( ! inContext ) return null;
 
 	// buttons use their own settings in the Broker component
-	if (name === 'core/button') {
-		return null;
-	}
+	if ( name === 'core/button' ) return null;
 
 	return (
 		<InspectorControls>
-			<PanelBody title={__('Freemius', 'freemius')}>
-				<MappingSettings {...props} />
+			<PanelBody title={ __( 'Freemius', 'freemius' ) }>
+				<MappingSettings { ...props } />
 			</PanelBody>
 		</InspectorControls>
 	);
