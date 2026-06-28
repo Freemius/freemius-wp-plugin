@@ -14,6 +14,7 @@ import {
 	TextControl,
 	Button,
 	SelectControl,
+	Flex,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useContext, useEffect } from '@wordpress/element';
@@ -68,7 +69,9 @@ const MappingSettings = ( props ) => {
 				</h2>
 			) }
 
-			<ClearCacheButton size="small" />
+			<Flex justify="flex-end">
+				<ClearCacheButton size="small" />
+			</Flex>
 			<Spacer />
 			{ isError && (
 				<>
