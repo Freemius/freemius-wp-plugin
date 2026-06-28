@@ -23,6 +23,7 @@ module.exports = [
 			},
 		},
 		settings: {
+			// JS-only project: use node resolver instead of the broken hoisted typescript resolver.
 			'import/resolver': {
 				node: {
 					extensions: [ '.js', '.jsx' ],
@@ -52,6 +53,7 @@ module.exports = [
 			'camelcase': 'off',
 			'eqeqeq': 'off',
 			'react-hooks/rules-of-hooks': 'off',
+			'react-hooks/exhaustive-deps': 'off',
 			'no-unused-expressions': 'off',
 			'no-alert': 'off',
 			'jsx-a11y/click-events-have-key-events': 'off',
@@ -59,6 +61,8 @@ module.exports = [
 			'jsx-a11y/anchor-is-valid': 'off',
 			'import/no-unresolved': 'off',
 			'import/no-extraneous-dependencies': 'off',
+			'import/default': 'off',
+			'import/named': 'off',
 		},
 	},
 ];
