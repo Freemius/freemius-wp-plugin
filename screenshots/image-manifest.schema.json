@@ -1,0 +1,160 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://freemius.com/schemas/image-manifest.schema.json",
+	"title": "Freemius image manifest",
+	"description": "Single source of truth for tracked screenshots under screenshots/{id}/.",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [ "version", "viewports", "images" ],
+	"properties": {
+		"$schema": {
+			"type": "string",
+			"minLength": 1,
+			"description": "JSON Schema reference for editor validation (e.g. ./image-manifest.schema.json)."
+		},
+		"version": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "Manifest format version."
+		},
+		"viewports": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [ "mobile", "tablet", "desktop", "wide" ],
+			"properties": {
+				"mobile": { "$ref": "#/$defs/viewport" },
+				"tablet": { "$ref": "#/$defs/viewport" },
+				"desktop": { "$ref": "#/$defs/viewport" },
+				"wide": { "$ref": "#/$defs/viewport" }
+			}
+		},
+		"images": {
+			"type": "array",
+			"minItems": 0,
+			"items": { "$ref": "#/$defs/imageEntry" }
+		}
+	},
+	"$defs": {
+		"viewport": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [ "width", "height" ],
+			"properties": {
+				"width": { "type": "integer", "minimum": 1 },
+				"height": { "type": "integer", "minimum": 1 }
+			}
+		},
+		"viewportName": {
+			"type": "string",
+			"enum": [ "mobile", "tablet", "desktop", "wide" ]
+		},
+		"imageId": {
+			"type": "string",
+			"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+			"description": "Kebab-case, unique, stable; directory screenshots/{id}/."
+		},
+		"useType": {
+			"type": "string",
+			"enum": [ "docs", "website", "review" ]
+		},
+		"embedStatus": {
+			"type": "string",
+			"enum": [ "placeholder", "captured" ]
+		},
+		"captureBlock": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [ "url", "viewports" ],
+			"properties": {
+				"url": {
+					"type": "string",
+					"minLength": 1,
+					"description": "Playwright navigation URL."
+				},
+				"viewports": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": { "$ref": "#/$defs/viewportName" }
+				},
+				"selector": {
+					"type": "string",
+					"minLength": 1,
+					"description": "Optional CSS selector; screenshot only this element."
+				},
+				"padding": {
+					"type": "integer",
+					"minimum": 0,
+					"description": "Optional extra pixels around capture.selector bounds."
+				},
+				"minDiffRatio": {
+					"type": "number",
+					"exclusiveMinimum": 0,
+					"maximum": 1,
+					"description": "Optional compare threshold for this capture (0..1)."
+				}
+			}
+		},
+		"embedBlock": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [ "from", "doc", "path", "alt", "status" ],
+			"properties": {
+				"from": {
+					"type": "string",
+					"pattern": "^screenshots/[a-z0-9]+(-[a-z0-9]+)*/[^/]+\\.png$",
+					"description": "Repo-root-relative source under screenshots/{id}/."
+				},
+				"doc": {
+					"type": "string",
+					"pattern": "^docs/.+\\.md$",
+					"description": "Repo-root-relative markdown file to embed in."
+				},
+				"path": {
+					"type": "string",
+					"pattern": "^docs/.+\\.(png|jpg|jpeg|webp|gif)$",
+					"description": "Repo-root-relative committed asset path."
+				},
+				"alt": {
+					"type": "string",
+					"minLength": 1,
+					"description": "Accessible alt text for the embedded image."
+				},
+				"status": { "$ref": "#/$defs/embedStatus" }
+			}
+		},
+		"imageEntry": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [ "id", "title", "description", "use" ],
+			"properties": {
+				"id": { "$ref": "#/$defs/imageId" },
+				"title": { "type": "string", "minLength": 1 },
+				"description": { "type": "string", "minLength": 1 },
+				"use": { "$ref": "#/$defs/useType" },
+				"match": {
+					"type": "array",
+					"items": { "type": "string", "minLength": 1 }
+				},
+				"capture": { "$ref": "#/$defs/captureBlock" },
+				"embed": { "$ref": "#/$defs/embedBlock" }
+			},
+			"allOf": [
+				{
+					"if": {
+						"properties": { "use": { "const": "docs" } },
+						"required": [ "use" ]
+					},
+					"then": { "required": [ "embed" ] }
+				},
+				{
+					"if": {
+						"properties": { "use": { "const": "review" } },
+						"required": [ "use" ]
+					},
+					"then": { "not": { "required": [ "embed" ] } }
+				}
+			]
+		}
+	}
+}

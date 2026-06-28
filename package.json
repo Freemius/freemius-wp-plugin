@@ -18,6 +18,9 @@
 		"lint:php:fix": "composer run lint:php:fix",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
+		"sync:screenshots-docs": "node scripts/sync-screenshots-docs.mjs",
+		"sync:screenshot-captions": "node scripts/sync-screenshot-captions.mjs",
+		"update-screenshots": "node scripts/update-doc-screenshots.mjs",
 		"start": "wp-scripts start  --experimental-modules",
 		"test:php": "composer run test:php"
 	},
@@ -40,11 +43,14 @@
 		"classnames": "^2.5.1"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.60.0",
 		"@wordpress/env": "^11.9.0",
 		"@wordpress/prettier-config": "^4.49.0",
 		"@wordpress/scripts": "^32.5.0",
 		"eslint": "^10.6.0",
 		"globals": "^15.14.0",
+		"looks-same": "^10.0.1",
+		"pngjs": "^7.0.0",
 		"prettier": "npm:wp-prettier@^3.0.3",
 		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"

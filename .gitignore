@@ -31,3 +31,13 @@ vendor/
 .env
 
 /vendor/
+
+# Screenshot captures (manifest and docs are committed)
+/screenshots/**
+!/screenshots/.gitkeep
+!/screenshots/README.md
+!/screenshots/image-manifest.json
+!/screenshots/image-manifest.schema.json
+
+
+.cursor/mcp.json

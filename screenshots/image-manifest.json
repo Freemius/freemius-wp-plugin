@@ -1,0 +1,257 @@
+{
+	"$schema": "./image-manifest.schema.json",
+	"version": 1,
+	"viewports": {
+		"mobile": {
+			"width": 390,
+			"height": 844
+		},
+		"tablet": {
+			"width": 768,
+			"height": 1024
+		},
+		"desktop": {
+			"width": 1280,
+			"height": 800
+		},
+		"wide": {
+			"width": 1920,
+			"height": 1080
+		}
+	},
+	"images": [
+		{
+			"id": "button-callback-editor",
+			"title": "Callback popout editor",
+			"description": "Expanded Popout Editor for custom checkout callback JavaScript on a button block.",
+			"use": "docs",
+			"match": [
+				"callback editor",
+				"popout editor",
+				"custom js"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".components-modal__frame",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/button-callback-editor/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-callback-editor.png",
+				"alt": "Callback popout editor with custom JavaScript",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "button-checkout",
+			"title": "Freemius Checkout on button",
+			"description": "Block editor sidebar with Freemius Checkout enabled on a core Button block.",
+			"use": "docs",
+			"match": [
+				"checkout",
+				"freemius checkout",
+				"button inspector"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/button-checkout/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-checkout.png",
+				"alt": "Freemius Checkout enabled on a button in the block inspector",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "button-key-settings",
+			"title": "Button key settings menu",
+			"description": "Freemius button toolbar overflow menu showing additional checkout settings.",
+			"use": "docs",
+			"match": [
+				"key settings",
+				"three dots",
+				"overflow menu"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/button-key-settings/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-key-settings.png",
+				"alt": "Additional Freemius button settings in the overflow menu",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "button-popout-editor",
+			"title": "Popout Editor button",
+			"description": "Freemius sidebar showing the Popout Editor control for custom callback code.",
+			"use": "docs",
+			"match": [
+				"popout editor",
+				"events",
+				"callbacks"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/button-popout-editor/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-popout-editor.png",
+				"alt": "Popout Editor control in the Freemius button settings",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "button-preview",
+			"title": "Checkout preview",
+			"description": "Freemius Preview control in the button block sidebar for testing checkout before publish.",
+			"use": "docs",
+			"match": [
+				"preview",
+				"checkout preview"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/button-preview/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-preview.png",
+				"alt": "Preview button in the Freemius button settings sidebar",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "button-scopes",
+			"title": "Configuration scopes",
+			"description": "Freemius scope hierarchy (global, page, button) in the block editor sidebar.",
+			"use": "docs",
+			"match": [
+				"scopes",
+				"configuration scopes",
+				"global page button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/button-scopes/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-scopes.png",
+				"alt": "Freemius configuration scopes in the block editor sidebar",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "scope-enable-checkout",
+			"title": "Enable checkout on scope",
+			"description": "Freemius panel on a scoped container block with checkout enabled.",
+			"use": "docs",
+			"match": [
+				"enable checkout",
+				"scope",
+				"group block"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
+				"padding": 16
+			},
+			"embed": {
+				"from": "screenshots/scope-enable-checkout/source.png",
+				"doc": "docs/user-guide/scopes/README.md",
+				"path": "docs/assets/scope-enable-checkout.png",
+				"alt": "Freemius checkout enabled on a scoped block in the editor",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "scope-modifiers",
+			"title": "Scope modifiers",
+			"description": "Freemius Scope modifier block in the editor canvas with settings sidebar open.",
+			"use": "docs",
+			"match": [
+				"modifiers",
+				"scope modifier",
+				"freemius scope block"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/scope-modifiers/source.png",
+				"doc": "docs/user-guide/scopes/modifiers.md",
+				"path": "docs/assets/scope-modifiers.png",
+				"alt": "Freemius Scope modifier block in the block editor",
+				"status": "placeholder"
+			}
+		},
+		{
+			"id": "scope-pricing-mapped",
+			"title": "Mapped pricing with scopes",
+			"description": "Editor canvas showing scoped blocks with mapped plan fields (purple scope outline and dotted mapping outline).",
+			"use": "docs",
+			"match": [
+				"pricing",
+				"mapping",
+				"scope outline"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/scope-pricing-mapped/source.png",
+				"doc": "docs/user-guide/scopes/mapping.md",
+				"path": "docs/assets/scope-pricing-mapped.png",
+				"alt": "Pricing layout with Freemius scope and field mapping outlines",
+				"status": "placeholder"
+			}
+		}
+	]
+}
