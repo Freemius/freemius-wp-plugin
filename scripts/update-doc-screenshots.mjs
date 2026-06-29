@@ -586,6 +586,32 @@ function canvasModifierLocator( page ) {
 }
 
 /**
+ * Locator for the flex group that contains the modifier toggle blocks only.
+ *
+ * @param {import('playwright').Page} page
+ * @returns {import('playwright').Locator}
+ */
+function pricingModifiersRowGroupLocator( page ) {
+	const frame = page.frameLocator( 'iframe[name="editor-canvas"]' );
+
+	return frame
+		.locator( '.wp-block-group' )
+		.filter( { has: frame.locator( '[data-type="freemius/modifier"]' ) } )
+		.filter( { hasNot: frame.locator( '.wp-block-columns' ) } )
+		.first();
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function deselectAllBlocks( page ) {
+	await page.evaluate( () => {
+		window.wp?.data?.dispatch( 'core/block-editor' )?.clearSelectedBlock();
+	} );
+	await page.waitForTimeout( 300 );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function selectFirstButtonBlock( page ) {
@@ -1885,6 +1911,96 @@ async function captureScopePricingMapped( page, outputAbs, capture ) {
 }
 
 /**
+ * Pricing page canvas clip of the modifier toggle row with a red outline annotation.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function capturePricingPageModifiersRow( page, outputAbs, capture ) {
+	const frame = page.frameLocator( 'iframe[name="editor-canvas"]' );
+	const pricingSection = pricingTableSectionLocator( page );
+	const modifiersRow = pricingModifiersRowGroupLocator( page );
+	const heading = frame.getByText( 'Freemius for WordPress', { exact: true } );
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await heading.waitFor( { state: 'visible', timeout: 10_000 } );
+	await modifiersRow.waitFor( { state: 'visible', timeout: 10_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const sectionBox = await pricingSection.boundingBox();
+	const headingBox = await heading.boundingBox();
+	const rowBox = await modifiersRow.boundingBox();
+
+	if ( ! sectionBox || ! headingBox || ! rowBox ) {
+		throw new Error(
+			'Pricing modifiers row is not visible for pricing-page-modifiers-row capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clip = {
+		x: Math.max( 0, sectionBox.x - padding ),
+		y: Math.max( 0, headingBox.y - padding ),
+		width: sectionBox.width + padding * 2,
+		height: rowBox.y + rowBox.height - headingBox.y + padding * 2,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		rowBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		rowBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		rowBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		rowBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function preparePricingPageModifiersRow( page ) {
+	await closeListViewIfOpen( page );
+	await deselectAllBlocks( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+	await dismissAutosaveNoticeIfPresent( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function prepareScopeModifiers( page ) {
@@ -1958,6 +2074,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'button-preview': prepareButtonPreview,
 	'scope-enable-checkout': prepareScopeEnableCheckout,
 	'scope-pricing-mapped': prepareScopePricingMapped,
+	'pricing-page-modifiers-row': preparePricingPageModifiersRow,
 	'scope-modifiers': prepareScopeModifiers,
 	'settings-editor': prepareSettingsEditor,
 	'settings-products': prepareSettingsProducts,
@@ -2138,6 +2255,15 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'scope-enable-checkout' ) {
 			await captureScopeEnableCheckout( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'pricing-page-modifiers-row' ) {
+			await capturePricingPageModifiersRow(
+				page,
+				outputAbs,
+				entry.capture
+			);
 			return;
 		}
 

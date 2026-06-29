@@ -177,6 +177,32 @@
 			}
 		},
 		{
+			"id": "pricing-page-modifiers-row",
+			"title": "Pricing modifier toggles",
+			"description": "Editor canvas showing the currency, billing cycle, and license modifier button row on the pricing page, with the row outlined.",
+			"use": "docs",
+			"match": [
+				"modifiers row",
+				"pricing toggles",
+				"currency billing licenses"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-modifiers-row/source.png",
+				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-modifiers-row.png",
+				"alt": "Pricing page editor with the modifier toggle row outlined",
+				"status": "captured"
+			}
+		},
+		{
 			"id": "pricing-page-playground",
 			"title": "Published pricing page",
 			"description": "Frontend pricing page with plan columns, modifiers, and checkout buttons.",

@@ -71,7 +71,7 @@ Let visitors change currency, billing cycle, and license count without leaving t
    - **Billing cycle** — Monthly, Annual, Lifetime
    - **Licenses** — e.g. 1, 2, 10, Unlimited
 
-![Freemius Scope modifier block in the block editor](../assets/scope-modifiers.png)
+![Pricing page editor with the modifier toggle row outlined](../assets/pricing-page-modifiers-row.png)
 
 Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](scopes/modifiers.md) for details.
 
