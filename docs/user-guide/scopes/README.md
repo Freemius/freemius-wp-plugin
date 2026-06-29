@@ -9,9 +9,15 @@ A scope can be enabled on these blocks (or their children):
 - Column Block
 - Button Block
 
-![Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel](../../assets/scope-enable-checkout.png)
+![Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted](../../assets/scope-columns-overview.png)
 
-Each scope inherits properties from its parent scope. The outermost scope inherits defaults from **Editor Settings** (global).
+In the editor, each plan column is its own scope (arrows above). A typical pricing page has one scope per plan column, plus an outer scope for the whole pricing area.
+
+**Scopes** show a **purple outline** — the Freemius-enabled block that owns checkout settings for that area (product, plan, currency, and so on). Child blocks inherit from their parent scope unless you override them.
+
+**Mapping fields** show a **dotted outline** — individual Paragraph, Heading, or Button blocks inside a scope that display plan data (price, title, description, and similar). Mapping binds block content to a Freemius field; it does not create a new scope.
+
+Each scope inherits properties from its parent scope. The outermost scope inherits defaults from **Editor Settings**.
 
 ## Related topics
 

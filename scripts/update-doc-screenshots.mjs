@@ -2025,6 +2025,31 @@ async function selectPricingTableScopeGroup( page ) {
 /**
  * @param {import('playwright').Page} page
  */
+async function prepareScopeColumnsOverview( page ) {
+	await closeListViewIfOpen( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+	await selectPricingTableScopeGroup( page );
+	await openFreemiusPanel( page );
+	await page
+		.locator( '.freemius-button-scope-settings' )
+		.getByText( /Product ID/i )
+		.first()
+		.waitFor( { state: 'visible', timeout: 15_000 } );
+	await page.waitForTimeout( 300 );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
 async function prepareScopePricingMapped( page ) {
 	await closeListViewIfOpen( page );
 
@@ -2079,6 +2104,144 @@ async function captureScopePricingMapped( page, outputAbs, capture ) {
 		path: outputAbs,
 		clip,
 	} );
+}
+
+/**
+ * Pricing table with arrows pointing at each plan column scope.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureScopeColumnsOverview( page, outputAbs, capture ) {
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+	const pricingSection = pricingTableSectionLocator( page );
+	const freemiusPanel = page
+		.locator( '.freemius-button-scope-settings' )
+		.first();
+	const enableHelp = page.getByText( 'Enable Freemius for this area.', {
+		exact: true,
+	} );
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await editorBody.waitFor( { state: 'visible', timeout: 10_000 } );
+	await freemiusPanel.waitFor( { state: 'visible', timeout: 10_000 } );
+	await enableHelp.waitFor( { state: 'visible', timeout: 10_000 } );
+	await assertLayoutPanelCollapsed( page );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const bodyBox = await editorBody.boundingBox();
+	const panelBox = await freemiusPanel.boundingBox();
+	const panelHeader = freemiusPanel
+		.locator( '.components-tools-panel-header' )
+		.first();
+	const panelHeaderBox = await panelHeader.boundingBox();
+	const enableHelpBox = await enableHelp.boundingBox();
+
+	if (
+		! bodyBox ||
+		! panelBox ||
+		! panelHeaderBox ||
+		! enableHelpBox
+	) {
+		throw new Error(
+			'Pricing table, Freemius panel, or editor body is not visible for scope-columns-overview capture'
+		);
+	}
+
+	const padding = capture.padding ?? 0;
+	const clip = {
+		x: Math.max( 0, bodyBox.x - padding ),
+		y: Math.max( 0, bodyBox.y - padding ),
+		width: bodyBox.width + padding * 2,
+		height: bodyBox.height + padding * 2,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const panelHighlightX = snapPixel(
+		panelBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const panelHighlightY = snapPixel(
+		panelHeaderBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const panelHighlightWidth = snapPixel(
+		panelBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const panelHighlightHeight = snapPixel(
+		enableHelpBox.y +
+			enableHelpBox.height -
+			panelHeaderBox.y +
+			CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		panelHighlightX,
+		panelHighlightY,
+		panelHighlightWidth,
+		panelHighlightHeight,
+		ANNOTATION_RED
+	);
+
+	const panelTailX = snapPixel( panelHighlightX - 34 );
+	const panelTailY = snapPixel(
+		panelHighlightY + panelHighlightHeight + 38
+	);
+	const panelTip = arrowTipBeforeRect(
+		panelTailX,
+		panelTailY,
+		panelHighlightX,
+		panelHighlightY,
+		panelHighlightWidth,
+		panelHighlightHeight,
+		KEY_SETTINGS_ARROW_TIP_GAP
+	);
+
+	drawPngSolidArrow(
+		capturePng,
+		panelTailX,
+		panelTailY,
+		panelTip.x,
+		panelTip.y,
+		ANNOTATION_RED
+	);
+
+	const columns = pricingPlanColumnLocator( page );
+	const columnCount = Math.min( await columns.count(), 3 );
+
+	for ( let index = 0; index < columnCount; index += 1 ) {
+		const columnBox = await columns.nth( index ).boundingBox();
+
+		if ( ! columnBox ) {
+			continue;
+		}
+
+		const tipX = snapPixel( columnBox.x + columnBox.width / 2 - clip.x );
+		const tipY = snapPixel( columnBox.y - clip.y + 10 );
+		const tailX = tipX;
+		const tailY = snapPixel( Math.max( 8, tipY - 42 ) );
+
+		drawPngSolidArrow(
+			capturePng,
+			tailX,
+			tailY,
+			tipX,
+			tipY,
+			ANNOTATION_RED
+		);
+	}
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
 }
 
 /**
@@ -3185,6 +3348,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'button-key-settings': prepareButtonKeySettings,
 	'button-track-callback': prepareButtonTrackCallback,
 	'button-preview': prepareButtonPreview,
+	'scope-columns-overview': prepareScopeColumnsOverview,
 	'scope-enable-checkout': prepareScopeEnableCheckout,
 	'scope-pricing-mapped': prepareScopePricingMapped,
 	'pricing-page-checkout-button': preparePricingPageCheckoutButton,
@@ -3377,6 +3541,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'button-track-callback' ) {
 			await captureButtonTrackCallback( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'scope-columns-overview' ) {
+			await captureScopeColumnsOverview( page, outputAbs, entry.capture );
 			return;
 		}
 

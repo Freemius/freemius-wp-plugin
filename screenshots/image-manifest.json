@@ -333,6 +333,33 @@
 			}
 		},
 		{
+			"id": "scope-columns-overview",
+			"title": "Pricing plan column scopes",
+			"description": "Pricing table editor with arrows on each plan column scope, Freemius panel highlighted, and purple or dotted outlines visible.",
+			"use": "docs",
+			"match": [
+				"scope columns",
+				"plan scopes",
+				"purple outline",
+				"dotted outline"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/scope-columns-overview/source.png",
+				"doc": "docs/user-guide/scopes/README.md",
+				"path": "docs/assets/scope-columns-overview.png",
+				"alt": "Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted",
+				"status": "captured"
+			}
+		},
+		{
 			"id": "scope-enable-checkout",
 			"title": "Enable Freemius on scope",
 			"description": "Block editor with a scoped Group block selected, purple scope outline on the canvas, and the Freemius sidebar panel highlighted.",
@@ -352,7 +379,6 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-enable-checkout/source.png",
-				"doc": "docs/user-guide/scopes/README.md",
 				"path": "docs/assets/scope-enable-checkout.png",
 				"alt": "Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel",
 				"status": "captured"
