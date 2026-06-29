@@ -41,6 +41,7 @@
 			},
 			"embed": {
 				"from": "screenshots/button-checkout/source.png",
+				"doc": "docs/getting-started.md",
 				"path": "docs/assets/button-checkout.png",
 				"alt": "Freemius Checkout button selected in the editor with Freemius sidebar settings",
 				"status": "captured"
@@ -328,6 +329,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-enable-checkout/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/scope-enable-checkout.png",
 				"alt": "Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel",
 				"status": "captured"
