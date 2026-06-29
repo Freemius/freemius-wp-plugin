@@ -27,10 +27,6 @@ A typical pricing page has:
 
 ![Published Freemius pricing page with plan columns and billing toggles](assets/pricing-page-playground.png)
 
-The editor view below shows the same layout with **purple scope outlines** around each Freemius-enabled block:
-
-![Pricing page in the block editor with purple Freemius scope outlines](assets/scope-pricing-mapped.png)
-
 ## Before you start
 
 1. Install and activate Freemius for WordPress.
@@ -59,7 +55,7 @@ The outer scope sets the **product** and default **currency** and **billing cycl
 
 ![Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel](assets/scope-enable-checkout.png)
 
-This block is now the parent scope. Every child block inside it inherits these settings unless you override them.
+This block is now the parent scope. Every child block inside it inherits these settings unless you override them. You can add additional **child scopes** to change properties of child blocks — see [Scopes](scopes.md) for details.
 
 ## Step 3: Add pricing toggles
 
