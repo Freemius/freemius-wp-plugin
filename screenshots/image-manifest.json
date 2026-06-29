@@ -166,7 +166,7 @@
 					"wide"
 				],
 				"selector": ".interface-interface-skeleton__body",
-				"padding": 0
+				"padding": 24
 			},
 			"embed": {
 				"from": "screenshots/button-track-callback/source.png",
