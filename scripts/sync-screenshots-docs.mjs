@@ -11,9 +11,9 @@ const outPath = resolve( rootDir, 'screenshots/INVENTORY.md' );
 
 const manifest = JSON.parse( readFileSync( manifestPath, 'utf8' ) );
 
-/** @type {Array<{ id: string, title: string, description?: string, embed: { doc: string, path: string, alt: string, status: string } }>} */
+/** @type {Array<{ id: string, title: string, description?: string, embed: { doc?: string, path: string, alt: string, status: string } }>} */
 const docImages = manifest.images
-	.filter( ( entry ) => entry.use === 'docs' && entry.embed )
+	.filter( ( entry ) => entry.use === 'docs' && entry.embed?.doc )
 	.sort( ( a, b ) => a.id.localeCompare( b.id ) );
 
 /**
@@ -57,6 +57,11 @@ function docSectionTitle( docPath ) {
 const byDoc = new Map();
 for ( const entry of docImages ) {
 	const doc = entry.embed.doc;
+
+	if ( ! doc ) {
+		continue;
+	}
+
 	if ( ! byDoc.has( doc ) ) {
 		byDoc.set( doc, [] );
 	}
