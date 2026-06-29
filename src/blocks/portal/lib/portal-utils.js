@@ -2,8 +2,6 @@
  * Shared portal embed utilities.
  */
 
-export const MAX_ZINDEX = 2147483647;
-
 export const DEFAULT_BASE_URL = 'https://customers.freemius.com';
 
 function s4() {

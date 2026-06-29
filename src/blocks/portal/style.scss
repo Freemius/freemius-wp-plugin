@@ -39,6 +39,27 @@
 	}
 }
 
+.freemius-portal-loader-overlay {
+	position: absolute;
+	inset: 0;
+	text-align: left;
+	background: rgba(0, 0, 0, 0.6);
+
+	svg {
+		position: absolute;
+		top: 40%;
+		left: 50%;
+		transform: translateX(-50%);
+		display: block;
+		background: #fff;
+		padding: 10px;
+		border-radius: 50%;
+		box-sizing: border-box;
+		box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+		color: var(--fs-spinner-color, #6753ff);
+	}
+}
+
 .freemius-portal-error {
 	padding: 1rem;
 	color: #b32d2e;

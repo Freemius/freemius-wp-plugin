@@ -1,25 +1,6 @@
-/**
- * WordPress dependencies
- */
-import { MAX_ZINDEX } from '../lib/portal-utils';
-
 export default function PortalLoader() {
 	return (
-		<div
-			className="freemius-portal-loader-overlay"
-			style={ {
-				position: 'absolute',
-				zIndex: MAX_ZINDEX,
-				width: '100%',
-				height: '100%',
-				top: 0,
-				right: 0,
-				bottom: 0,
-				left: 0,
-				textAlign: 'left',
-				background: 'rgba(0,0,0,0.6)',
-			} }
-		>
+		<div className="freemius-portal-loader-overlay">
 			<svg
 				width="52"
 				height="52"
@@ -27,19 +8,6 @@ export default function PortalLoader() {
 				xmlns="http://www.w3.org/2000/svg"
 				role="img"
 				aria-label="Loading animation"
-				style={ {
-					position: 'absolute',
-					top: '40%',
-					left: '50%',
-					marginLeft: -26,
-					display: 'block',
-					background: '#fff',
-					padding: 10,
-					borderRadius: '50%',
-					boxSizing: 'border-box',
-					boxShadow: '2px 2px 2px rgba(0,0,0,0.1)',
-					color: 'var(--fs-spinner-color, #6753FF)',
-				} }
 			>
 				<path
 					d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
