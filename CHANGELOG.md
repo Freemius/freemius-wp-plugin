@@ -5,6 +5,8 @@ All notable changes to Freemius for WordPress are documented in this file.
 ## [Unreleased]
 
 - added: Freemius Customer Portal block to embed the members dashboard on your site
+- improved: portal block height adapts to iframe content with viewport-based limits instead of a fixed pixel size on the frontend
+- improved: portal block editor preview height supports px, vh, vw, rem, em, and % units
 ## [0.4.2]
 
 - fixed: missing import for MappingSettings

@@ -2,16 +2,17 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useMemo } from '@wordpress/element';
+import { useLayoutEffect, useMemo, useRef, useState } from '@wordpress/element';
 import {
 	useBlockProps,
 	__experimentalUseBorderProps as useBorderProps,
 	InspectorControls,
+	useSetting,
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	TextControl,
-	__experimentalNumberControl as NumberControl,
+	__experimentalUnitControl as UnitControl,
 	ResizableBox,
 } from '@wordpress/components';
 
@@ -21,8 +22,13 @@ import {
 import './editor.scss';
 import './style.scss';
 import PortalEmbed from './components/PortalEmbed';
+import {
+	normalizePreviewHeight,
+	PREVIEW_HEIGHT_UNITS,
+	sanitizePreviewHeight,
+} from './lib/portal-preview-height';
 
-const MIN_HEIGHT = 300;
+const MIN_HEIGHT_PX = 300;
 
 function getEditorCanvasWindow() {
 	const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
@@ -34,13 +40,35 @@ function getEditorCanvasDocument() {
 	return iframe?.contentDocument ?? document;
 }
 
-function parseHeight( value, fallback ) {
+function parsePositiveInt( value ) {
 	const parsed = parseInt( value, 10 );
-	return Number.isFinite( parsed ) ? parsed : fallback;
+	return Number.isFinite( parsed ) ? parsed : undefined;
+}
+
+function usePreviewHeightUnits() {
+	const spacingUnits = useSetting( 'spacing.units' );
+
+	return useMemo( () => {
+		if ( ! Array.isArray( spacingUnits ) || spacingUnits.length === 0 ) {
+			return PREVIEW_HEIGHT_UNITS;
+		}
+
+		return spacingUnits.map( ( unit ) => ( {
+			value: unit,
+			label: unit,
+			...( unit === 'px' ? { default: 0 } : {} ),
+		} ) );
+	}, [ spacingUnits ] );
 }
 
 export default function Edit( { attributes, setAttributes, toggleSelection } ) {
-	const { store_id, public_key, height = MIN_HEIGHT } = attributes;
+	const { store_id, public_key, height } = attributes;
+	const previewHeight = normalizePreviewHeight( height );
+	const previewHeightUnits = usePreviewHeightUnits();
+
+	const previewContainerRef = useRef( null );
+	const [ resizableHeightPx, setResizableHeightPx ] =
+		useState( MIN_HEIGHT_PX );
 
 	const editorPortalCss = useMemo(
 		() => ( {
@@ -54,6 +82,15 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 		[]
 	);
 
+	useLayoutEffect( () => {
+		const el = previewContainerRef.current;
+		if ( ! el ) {
+			return;
+		}
+
+		setResizableHeightPx( el.offsetHeight );
+	}, [ previewHeight ] );
+
 	const blockProps = useBlockProps( {
 		style: {
 			borderStyle: 'none',
@@ -66,7 +103,7 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 		...borderProps.style,
 		textAlign: 'center',
 		alignContent: 'space-evenly',
-		height: height + 'px',
+		height: previewHeight,
 		overflow: 'hidden',
 	};
 
@@ -76,15 +113,16 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Portal Settings', 'freemius' ) }>
-					<NumberControl
+					<TextControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						label={ __( 'Store ID', 'freemius' ) }
+						type="number"
 						min={ 1 }
-						value={ store_id }
+						value={ store_id ? String( store_id ) : '' }
 						onChange={ ( value ) =>
 							setAttributes( {
-								store_id: parseHeight( value, undefined ),
+								store_id: parsePositiveInt( value ),
 							} )
 						}
 					/>
@@ -97,16 +135,19 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 							setAttributes( { public_key: value } )
 						}
 					/>
-					<NumberControl
+					<UnitControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={ __( 'Height', 'freemius' ) }
-						min={ MIN_HEIGHT }
-						max={ 9000 }
-						value={ height }
+						label={ __( 'Preview height', 'freemius' ) }
+						value={ previewHeight }
+						units={ previewHeightUnits }
+						help={ __(
+							'Editor preview only. The live portal resizes to fit its content.',
+							'freemius'
+						) }
 						onChange={ ( value ) =>
 							setAttributes( {
-								height: parseHeight( value, MIN_HEIGHT ),
+								height: sanitizePreviewHeight( value || '' ),
 							} )
 						}
 					/>
@@ -116,9 +157,9 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 				<ResizableBox
 					className="freemius-portal-resizable-box"
 					size={ {
-						height,
+						height: resizableHeightPx,
 					} }
-					minHeight={ MIN_HEIGHT }
+					minHeight={ MIN_HEIGHT_PX }
 					enable={ {
 						top: false,
 						right: false,
@@ -131,7 +172,7 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 					} }
 					onResizeStop={ ( event, direction, elt, delta ) => {
 						setAttributes( {
-							height: height + delta.height,
+							height: `${ resizableHeightPx + delta.height }px`,
 						} );
 						toggleSelection( true );
 					} }
@@ -140,6 +181,7 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 					} }
 				>
 					<div
+						ref={ previewContainerRef }
 						className="fs-dashboard-container"
 						style={ innerStyle }
 					>
@@ -147,7 +189,8 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 							<PortalEmbed
 								storeId={ store_id }
 								publicKey={ public_key }
-								height={ height }
+								height={ previewHeight }
+								autoHeight={ false }
 								allowInIframe
 								targetWindow={ getEditorCanvasWindow() }
 								targetDocument={ getEditorCanvasDocument() }

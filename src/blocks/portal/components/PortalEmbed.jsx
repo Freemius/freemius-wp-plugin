@@ -7,13 +7,15 @@ import { useRef } from '@wordpress/element';
  * Internal dependencies
  */
 import { usePortalEmbed } from '../hooks/usePortalEmbed';
+import { toPreviewHeightCSSValue } from '../lib/portal-preview-height';
 import PortalLoader from './PortalLoader';
 
 /**
  * @param {{
  *   storeId: number,
  *   publicKey: string,
- *   height: number,
+ *   height?: string | number,
+ *   autoHeight?: boolean,
  *   allowInIframe?: boolean,
  *   targetWindow?: Window,
  *   targetDocument?: Document,
@@ -28,6 +30,7 @@ export default function PortalEmbed( {
 	storeId,
 	publicKey,
 	height,
+	autoHeight = true,
 	allowInIframe = false,
 	targetWindow,
 	targetDocument,
@@ -43,6 +46,7 @@ export default function PortalEmbed( {
 		storeId,
 		publicKey,
 		height,
+		autoHeight,
 		allowInIframe,
 		targetWindow,
 		targetDocument,
@@ -53,13 +57,20 @@ export default function PortalEmbed( {
 		onLogout,
 	} );
 
+	const previewHeightCss = toPreviewHeightCSSValue( height );
+
+	const rootStyle = {
+		...( ! autoHeight &&
+			previewHeightCss && {
+				'--freemius-portal-height': previewHeightCss,
+			} ),
+		...( containerCss || {} ),
+	};
+
 	return (
 		<div
 			className="freemius-portal-root fs_dashboard_container"
-			style={ {
-				'--freemius-portal-height': `${ height }px`,
-				...( containerCss || {} ),
-			} }
+			style={ rootStyle }
 		>
 			<div ref={ containerRef } className="freemius-portal-iframe-host" />
 			{ isLoading && <PortalLoader /> }

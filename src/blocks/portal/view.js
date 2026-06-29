@@ -32,8 +32,6 @@ domReady( () => {
 
 		const storeId = data.store_id;
 		const publicKey = data.public_key;
-		const blockHeight =
-			typeof data.height === 'number' ? data.height : 300;
 
 		if ( ! storeId || ! publicKey ) {
 			return;
@@ -45,11 +43,7 @@ domReady( () => {
 
 		const root = createRoot( mount );
 		root.render(
-			<PortalEmbed
-				storeId={ storeId }
-				publicKey={ publicKey }
-				height={ blockHeight }
-			/>
+			<PortalEmbed storeId={ storeId } publicKey={ publicKey } />
 		);
 	} );
 } );

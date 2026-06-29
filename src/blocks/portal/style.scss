@@ -1,19 +1,24 @@
 .wp-block-freemius-portal {
 	overflow: hidden;
+	min-height: min(75vh, 900px);
 }
 
 .freemius-portal-root {
 	width: 100%;
 	position: relative;
 	overflow: hidden;
-	min-height: var(--freemius-portal-height, 300px);
+	min-height: var(--freemius-portal-height, min(75vh, 900px));
+	transition: min-height 0.2s ease;
 }
 
 .freemius-portal-iframe-host {
 	width: 100%;
-	height: var(--freemius-portal-height, 300px);
-	min-height: var(--freemius-portal-height, 300px);
+	height: var(--freemius-portal-height, min(75vh, 900px));
+	min-height: var(--freemius-portal-height, min(75vh, 900px));
 	position: relative;
+	transition:
+		height 0.2s ease,
+		min-height 0.2s ease;
 }
 
 .freemius-portal-iframe {

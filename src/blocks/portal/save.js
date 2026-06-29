@@ -9,16 +9,12 @@ import { useBlockProps } from '@wordpress/block-editor';
 import './style.scss';
 
 export default function Save( { attributes } ) {
-	const { store_id, public_key, height = 300 } = attributes;
+	const { store_id, public_key } = attributes;
 
 	const blockProps = useBlockProps.save( {
-		style: {
-			height: height + 'px',
-		},
 		'data-freemius-portal': JSON.stringify( {
 			store_id,
 			public_key,
-			height,
 		} ),
 	} );
 

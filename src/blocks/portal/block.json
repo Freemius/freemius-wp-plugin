@@ -1,51 +1,54 @@
 {
-	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "freemius/portal",
-	"version": "0.1.0",
-	"title": "Freemius Customer Portal",
-	"category": "widgets",
-	"description": "Add a customer portal to your site.",
-	"example": {},
-	"supports": {
-		"html": false,
-		"anchor": true,
-		"align": true,
-		"color": false,
-		"spacing": {
-			"margin": true,
-			"padding": true,
-			"blockGap": false
-		},
-		"shadow": true,
-		"__experimentalBorder": {
-			"color": true,
-			"width": true,
-			"style": true,
-			"radius": true,
-			"__experimentalDefaultControls": {
-				"color": false,
-				"width": false,
-				"style": false,
-				"radius": false
-			}
-		}
-	},
-	"attributes": {
-		"store_id": {
-			"type": "number"
-		},
-		"public_key": {
-			"type": "string"
-		},
-		"height": {
-			"type": "number",
-			"default": 300
-		}
-	},
-	"textdomain": "freemius",
-	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js"
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "freemius/portal",
+    "version": "0.1.0",
+    "title": "Freemius Customer Portal",
+    "category": "widgets",
+    "description": "Add a customer portal to your site.",
+    "example": {},
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "color": false,
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": false
+        },
+        "shadow": true,
+        "__experimentalBorder": {
+            "color": true,
+            "width": true,
+            "style": true,
+            "radius": true,
+            "__experimentalDefaultControls": {
+                "color": false,
+                "width": false,
+                "style": false,
+                "radius": false
+            }
+        }
+    },
+    "attributes": {
+        "store_id": {
+            "type": "number"
+        },
+        "public_key": {
+            "type": "string"
+        },
+        "height": {
+            "type": "string",
+            "default": "80vh"
+        }
+    },
+    "textdomain": "freemius",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css",
+    "viewScript": "file:./view.js"
 }
