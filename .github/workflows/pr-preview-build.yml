@@ -1,0 +1,61 @@
+---
+# Builds freemius.zip from the PR branch. After this workflow is merged to
+# develop, subsequent PRs get a Playground Preview button once publish runs.
+name: PR Preview - Build
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, edited]
+
+jobs:
+    build:
+        uses: WordPress/action-wp-playground-pr-preview/.github/workflows/preview-build.yml@v3
+        with:
+            artifacts: freemius=freemius.zip
+            blueprint-from-build: blueprint.json
+            node-version: '24'
+            php-version: '8.2'
+            build-command: |
+                set -euo pipefail
+                npm ci
+                composer install --no-dev --optimize-autoloader --no-interaction
+                npm run build
+                npm run plugin-zip
+
+                node <<'NODE'
+                const fs = require('fs');
+
+                const repo = '${{ github.event.pull_request.head.repo.full_name }}';
+                const sha = '${{ github.event.pull_request.head.sha }}';
+                const blueprintPath = '.wordpress-org/blueprints/blueprint.json';
+                const contentUrl = `https://raw.githubusercontent.com/${repo}/${sha}/.wordpress-org/blueprints/content.xml`;
+
+                const blueprint = JSON.parse(fs.readFileSync(blueprintPath, 'utf8'));
+
+                blueprint.steps = blueprint.steps.map((step) => {
+                    if (step.step === 'installPlugin') {
+                        return {
+                            step: 'installPlugin',
+                            pluginZipFile: {
+                                resource: 'url',
+                                url: '{{ARTIFACT_URL:freemius}}',
+                            },
+                            options: step.options ?? { activate: true },
+                        };
+                    }
+
+                    if (step.step === 'importWxr' && step.file) {
+                        return {
+                            ...step,
+                            file: {
+                                resource: 'url',
+                                url: contentUrl,
+                            },
+                        };
+                    }
+
+                    return step;
+                });
+
+                fs.writeFileSync('blueprint.json', JSON.stringify(blueprint));
+                NODE

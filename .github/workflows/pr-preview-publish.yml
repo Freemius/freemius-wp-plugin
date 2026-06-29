@@ -1,0 +1,24 @@
+---
+# Publishes the built ZIP to ci-artifacts and posts the Preview button on the PR.
+# Blueprint JSON is produced per PR in the build workflow from
+# .wordpress-org/blueprints/blueprint.json (including content.xml from the same commit).
+# Both preview workflows must exist on develop before previews work on other PRs.
+name: PR Preview - Publish
+
+on:
+    workflow_run:
+        workflows: ['PR Preview - Build']
+        types: [completed]
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    publish:
+        permissions:
+            contents: write
+            pull-requests: write
+        uses: WordPress/action-wp-playground-pr-preview/.github/workflows/preview-publish.yml@v3
+        with:
+            blueprint-from-artifact: true
