@@ -6,6 +6,7 @@ Documentation for site owners and editors using the Freemius for WordPress plugi
 
 - [Overview](user-guide/README.md)
 - [Getting started](user-guide/getting-started.md)
+- [Creating your Pricing page](user-guide/creating-your-pricing-page.md)
 - [Freemius Button](user-guide/button.md)
 - [Scopes](user-guide/scopes/README.md)
   - [Field mapping](user-guide/scopes/mapping.md)

@@ -632,6 +632,16 @@ function isSettingsCapture( entry ) {
 }
 
 /**
+ * @param {{ id: string, capture: { url: string } }} entry
+ */
+function isFrontendCapture( entry ) {
+	return (
+		entry.id.startsWith( 'pricing-page-' ) ||
+		entry.capture.url.includes( '/playground' )
+	);
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function openFreemiusPanel( page ) {
@@ -1622,6 +1632,9 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 	} );
 	if ( isSettingsCapture( entry ) ) {
 		await waitForSettingsReady( page );
+	} else if ( isFrontendCapture( entry ) ) {
+		await page.waitForSelector( 'body', { timeout: 30_000 } );
+		await page.waitForTimeout( CAPTURE_WAIT_MS );
 	} else {
 		await waitForEditorReady( page );
 	}
@@ -1653,6 +1666,54 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'settings-editor' ) {
 			await captureSettingsEditor( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( isFrontendCapture( entry ) ) {
+			const target = page.locator( entry.capture.selector ).first();
+			if ( ( await target.count() ) === 0 ) {
+				throw new Error(
+					`Capture selector not found: ${ entry.capture.selector }`
+				);
+			}
+
+			const padding = entry.capture.padding ?? 0;
+
+			if ( padding > 0 ) {
+				const box = await target.boundingBox();
+				if ( ! box ) {
+					throw new Error(
+						`Capture selector is not visible: ${ entry.capture.selector }`
+					);
+				}
+
+				const x = Math.max( 0, box.x - padding );
+				const y = Math.max( 0, box.y - padding );
+				const viewportSize = page.viewportSize();
+				const viewportWidth = viewportSize?.width ?? viewport.width;
+				const viewportHeight = viewportSize?.height ?? viewport.height;
+				const right = Math.min(
+					viewportWidth,
+					box.x + box.width + padding
+				);
+				const bottom = Math.min(
+					viewportHeight,
+					box.y + box.height + padding
+				);
+
+				await page.screenshot( {
+					path: outputAbs,
+					clip: {
+						x,
+						y,
+						width: right - x,
+						height: bottom - y,
+					},
+				} );
+				return;
+			}
+
+			await target.screenshot( { path: outputAbs } );
 			return;
 		}
 

@@ -17,3 +17,5 @@ See [Settings](settings.md) for the full admin screen.
 4. Use **Preview** in the sidebar to test checkout before publishing.
 
 Details: [Freemius Button](button.md).
+
+For a full multi-plan layout, continue with [Creating your Pricing page](creating-your-pricing-page.md).

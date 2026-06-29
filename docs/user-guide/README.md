@@ -15,5 +15,6 @@ The plugin uses the Freemius API to fetch product data and display it in the blo
 ## Next steps
 
 - [Getting started](getting-started.md) — install and connect your Freemius account
+- [Creating your Pricing page](creating-your-pricing-page.md) — build a multi-plan pricing page step by step
 - [Freemius Button](button.md) — enable checkout on a button block
 - [Scopes](scopes/README.md) — multiple pricing contexts on one page
