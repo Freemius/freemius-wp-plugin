@@ -387,7 +387,7 @@
 		{
 			"id": "scope-modifiers",
 			"title": "Scope modifiers",
-			"description": "Freemius Scope modifier block in the editor canvas with settings sidebar open.",
+			"description": "Pricing page editor with the currency, billing cycle, and license modifier toggle row outlined and the Freemius modifier sidebar open.",
 			"use": "docs",
 			"match": [
 				"modifiers",
@@ -397,16 +397,16 @@
 			"capture": {
 				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
 				"viewports": [
-					"desktop"
+					"wide"
 				],
-				"selector": ".interface-interface-skeleton__editor",
+				"selector": ".interface-interface-skeleton__body",
 				"padding": 24
 			},
 			"embed": {
 				"from": "screenshots/scope-modifiers/source.png",
 				"doc": "docs/modifiers.md",
 				"path": "docs/assets/scope-modifiers.png",
-				"alt": "Freemius Scope modifier block in the block editor",
+				"alt": "Pricing page editor with modifier toggles outlined and Freemius modifier settings in the sidebar",
 				"status": "captured"
 			}
 		},

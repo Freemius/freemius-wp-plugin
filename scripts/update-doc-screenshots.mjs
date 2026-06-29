@@ -772,8 +772,12 @@ async function openFreemiusPanel( page ) {
 	} );
 
 	if ( ( await freemiusHeading.count() ) > 0 ) {
-		await freemiusHeading.click();
-		await page.waitForTimeout( 300 );
+		const expanded = await freemiusHeading.getAttribute( 'aria-expanded' );
+		if ( expanded !== 'true' ) {
+			await freemiusHeading.click();
+			await page.waitForTimeout( 300 );
+		}
+
 		return;
 	}
 
@@ -2315,6 +2319,94 @@ async function capturePricingPageModifiersRow( page, outputAbs, capture ) {
 }
 
 /**
+ * Pricing page editor with the modifier toggle row outlined and sidebar open.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureScopeModifiers( page, outputAbs, capture ) {
+	const frame = page.frameLocator( 'iframe[name="editor-canvas"]' );
+	const pricingSection = pricingTableSectionLocator( page );
+	const modifiersRow = pricingModifiersRowGroupLocator( page );
+	const heading = frame.getByText( 'Freemius for WordPress', { exact: true } );
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await heading.waitFor( { state: 'visible', timeout: 10_000 } );
+	await modifiersRow.waitFor( { state: 'visible', timeout: 10_000 } );
+	await page
+		.getByLabel( 'Type', { exact: true } )
+		.waitFor( { state: 'visible', timeout: 10_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const bodyBox = await editorBody.boundingBox();
+	const headingBox = await heading.boundingBox();
+	const rowBox = await modifiersRow.boundingBox();
+	const freemiusPanelBody = page
+		.locator( '.components-panel__body.is-opened' )
+		.filter( {
+			has: page.getByRole( 'button', { name: 'Freemius', exact: true } ),
+		} )
+		.first();
+	const panelBox = await freemiusPanelBody.boundingBox();
+
+	if ( ! bodyBox || ! headingBox || ! rowBox || ! panelBox ) {
+		throw new Error(
+			'Pricing modifiers row or Freemius panel is not visible for scope-modifiers capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clipY = Math.max( 0, headingBox.y - padding );
+	const clipBottom = Math.max(
+		rowBox.y + rowBox.height + padding,
+		panelBox.y + panelBox.height + padding
+	);
+	const clip = {
+		x: Math.max( 0, bodyBox.x ),
+		y: clipY,
+		width: bodyBox.width,
+		height: clipBottom - clipY,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		rowBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		rowBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		rowBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		rowBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
  * Select a scoped pricing plan column by index (0 = first plan column).
  *
  * @param {import('playwright').Page} page
@@ -3280,7 +3372,25 @@ async function preparePricingPagePlanColumn( page ) {
  * @param {import('playwright').Page} page
  */
 async function prepareScopeModifiers( page ) {
-	const modifier = canvasModifierLocator( page );
+	await closeListViewIfOpen( page );
+	await ensureBlockSidebarOpen( page );
+	await ensureBlockInspectorTab( page );
+	await ensureBlockSettingsTab( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+
+	const modifiersRow = pricingModifiersRowGroupLocator( page );
+	const modifier = modifiersRow
+		.locator( '[data-type="freemius/modifier"]' )
+		.first();
 
 	if ( ( await modifier.count() ) === 0 ) {
 		throw new Error(
@@ -3291,6 +3401,11 @@ async function prepareScopeModifiers( page ) {
 	await modifier.click();
 	await page.waitForTimeout( 500 );
 	await openFreemiusPanel( page );
+	await page
+		.getByLabel( 'Type', { exact: true } )
+		.waitFor( { state: 'visible', timeout: 10_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await page.waitForTimeout( 300 );
 }
 
 /**
@@ -3569,6 +3684,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 				outputAbs,
 				entry.capture
 			);
+			return;
+		}
+
+		if ( entry.id === 'scope-modifiers' ) {
+			await captureScopeModifiers( page, outputAbs, entry.capture );
 			return;
 		}
 
