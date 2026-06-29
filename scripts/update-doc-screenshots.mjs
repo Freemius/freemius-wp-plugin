@@ -1392,6 +1392,56 @@ async function captureSettingsEditor( page, outputAbs, capture ) {
 }
 
 /**
+ * Clip the settings app from the header through the Products fields.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureSettingsProducts( page, outputAbs, capture ) {
+	const app = page.locator( '#freemius-settings-app' ).first();
+	const header = page.locator( '.freemius-header' ).first();
+	const productIdControl = page
+		.getByLabel( 'Product ID', { exact: true } )
+		.first()
+		.locator(
+			'xpath=ancestor::div[contains(@class,"components-base-control")]'
+		)
+		.first();
+	const addProductButton = page.getByRole( 'button', {
+		name: 'Add a new product',
+		exact: true,
+	} );
+
+	const appBox = await app.boundingBox();
+	const headerBox = await header.boundingBox();
+	const productIdBox = await productIdControl.boundingBox();
+	const addButtonBox = await addProductButton.boundingBox().catch( () => null );
+
+	if ( ! appBox || ! headerBox || ! productIdBox ) {
+		throw new Error(
+			'Products fields are not visible for settings-products capture'
+		);
+	}
+
+	const padding = capture.padding ?? 16;
+	const contentBottom = addButtonBox
+		? addButtonBox.y + addButtonBox.height
+		: productIdBox.y + productIdBox.height;
+	const clip = {
+		x: appBox.x,
+		y: Math.max( 0, headerBox.y - padding ),
+		width: appBox.width,
+		height: contentBottom - headerBox.y + padding + 24,
+	};
+
+	await page.screenshot( {
+		path: outputAbs,
+		clip,
+	} );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function prepareButtonPopoutEditor( page ) {
@@ -1715,6 +1765,30 @@ async function prepareSettingsEditor( page ) {
 		.waitFor( { state: 'visible', timeout: 10_000 } );
 }
 
+/**
+ * @param {import('playwright').Page} page
+ */
+async function prepareSettingsProducts( page ) {
+	await page.waitForSelector( '#freemius-settings-app', {
+		timeout: 15_000,
+	} );
+
+	const productsTab = page.getByRole( 'tab', {
+		name: 'Products',
+		exact: true,
+	} );
+
+	if ( ( await productsTab.count() ) > 0 ) {
+		await productsTab.click();
+		await page.waitForTimeout( 300 );
+	}
+
+	await page
+		.getByLabel( 'Product ID', { exact: true } )
+		.first()
+		.waitFor( { state: 'visible', timeout: 10_000 } );
+}
+
 /** @type {Record<string, (page: import('playwright').Page) => Promise<void>>} */
 const PRE_CAPTURE_ACTIONS = {
 	'button-checkout': prepareButtonCheckout,
@@ -1727,6 +1801,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'scope-pricing-mapped': prepareScopePricingMapped,
 	'scope-modifiers': prepareScopeModifiers,
 	'settings-editor': prepareSettingsEditor,
+	'settings-products': prepareSettingsProducts,
 };
 
 /**
@@ -1904,6 +1979,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'settings-editor' ) {
 			await captureSettingsEditor( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'settings-products' ) {
+			await captureSettingsProducts( page, outputAbs, entry.capture );
 			return;
 		}
 

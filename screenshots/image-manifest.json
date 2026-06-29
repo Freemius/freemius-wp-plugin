@@ -306,6 +306,32 @@
 				"alt": "Editor Settings tab on the Freemius settings page",
 				"status": "captured"
 			}
+		},
+		{
+			"id": "settings-products",
+			"title": "Products tab",
+			"description": "Freemius admin settings page with the Products tab selected, showing Product ID and Token fields.",
+			"use": "docs",
+			"match": [
+				"products tab",
+				"connect product",
+				"product id token"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/options-general.php?page=freemius-settings#products",
+				"viewports": [
+					"desktop"
+				],
+				"selector": "#freemius-settings-app",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/settings-products/source.png",
+				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"path": "docs/assets/settings-products.png",
+				"alt": "Products tab on the Freemius settings page",
+				"status": "captured"
+			}
 		}
 	]
 }

@@ -35,9 +35,10 @@ The editor view below shows the same layout with **purple scope outlines** aroun
 
 1. Install and activate Freemius for WordPress.
 2. Connect your product under **Settings → Freemius → Products** (Product ID and Token from the [Freemius Developer Dashboard](https://dashboard.freemius.com/)).
-3. Set site-wide defaults under **Editor Settings** — at minimum **Product ID** and a default **Plan**.
 
-![Editor Settings tab on the Freemius settings page](../assets/settings-editor.png)
+![Products tab on the Freemius settings page](../assets/settings-products.png)
+
+3. Set site-wide defaults under **Editor Settings** — at minimum **Product ID** and a default **Plan**.
 
 See [Getting started](getting-started.md) and [Settings](settings.md) if you have not done this yet.
 

@@ -18,6 +18,8 @@ Page- and block-level settings override these defaults. See [Configuration scope
 
 Add the Freemius products you want to use across the site. For each product, enter a **Product ID** and **Token**. You can find both in the [Freemius Developer Dashboard](https://dashboard.freemius.com/) — open your product’s **Settings**, then the **API Token** tab, and copy the values from there.
 
+![Products tab on the Freemius settings page](../assets/settings-products.png)
+
 Use the **Products** tab when you sell more than one product and need separate credentials for each.
 
 ## Get Started
