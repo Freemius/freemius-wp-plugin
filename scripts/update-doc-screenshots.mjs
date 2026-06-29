@@ -849,6 +849,7 @@ const KEY_SETTINGS_CANVAS_INSET_LEFT = 88;
 const KEY_SETTINGS_CANVAS_INSET = 16;
 const KEY_SETTINGS_ARROW_MAX_LENGTH = 88;
 const KEY_SETTINGS_ARROW_TIP_GAP = 6;
+const CHECKOUT_PANEL_ANNOTATION_INSET = 6;
 
 /**
  * @param {number} value
@@ -1267,6 +1268,23 @@ async function captureButtonCheckout( page, outputAbs, capture ) {
 		}
 	}
 
+	const panelBox = await freemiusPanel.boundingBox();
+	const panelHeader = freemiusPanel
+		.locator( '.components-tools-panel-header' )
+		.first();
+	const enableHelp = page.getByText(
+		'Enable Freemius for this area.',
+		{ exact: true }
+	);
+	const panelHeaderBox = await panelHeader.boundingBox();
+	const enableHelpBox = await enableHelp.boundingBox();
+
+	if ( ! panelBox || ! panelHeaderBox || ! enableHelpBox ) {
+		throw new Error(
+			'Freemius panel header or Enable Freemius control is not visible for button-checkout capture'
+		);
+	}
+
 	const padding = capture.padding ?? 0;
 	const clip = {
 		x: Math.max( 0, bodyBox.x - padding ),
@@ -1275,10 +1293,39 @@ async function captureButtonCheckout( page, outputAbs, capture ) {
 		height: bodyBox.height + padding * 2,
 	};
 
-	await page.screenshot( {
-		path: outputAbs,
-		clip,
-	} );
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		panelBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		panelHeaderBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		panelBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		enableHelpBox.y +
+			enableHelpBox.height -
+			panelHeaderBox.y +
+			CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
 }
 
 /**
