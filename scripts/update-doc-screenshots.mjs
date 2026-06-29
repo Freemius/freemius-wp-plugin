@@ -602,6 +602,35 @@ function pricingModifiersRowGroupLocator( page ) {
 }
 
 /**
+ * Columns block that contains scoped plan columns on the pricing fixture.
+ *
+ * @param {import('playwright').Page} page
+ * @returns {import('playwright').Locator}
+ */
+function pricingPlanColumnsLocator( page ) {
+	const frame = page.frameLocator( 'iframe[name="editor-canvas"]' );
+
+	return frame
+		.locator( '.wp-block-columns' )
+		.filter( {
+			has: frame.locator( '.wp-block-column.has-freemius-scope' ),
+		} )
+		.first();
+}
+
+/**
+ * Scoped plan columns inside the pricing table (one per Freemius plan).
+ *
+ * @param {import('playwright').Page} page
+ * @returns {import('playwright').Locator}
+ */
+function pricingPlanColumnLocator( page ) {
+	return page
+		.frameLocator( 'iframe[name="editor-canvas"]' )
+		.locator( '.wp-block-column.has-freemius-scope' );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function deselectAllBlocks( page ) {
@@ -1981,6 +2010,255 @@ async function capturePricingPageModifiersRow( page, outputAbs, capture ) {
 }
 
 /**
+ * Select a scoped pricing plan column by index (0 = first plan column).
+ *
+ * @param {import('playwright').Page} page
+ * @param {number} columnIndex
+ */
+async function selectPricingPlanColumn( page, columnIndex = 0 ) {
+	const selected = await page.evaluate( ( index ) => {
+		const store = window.wp?.data;
+		if ( ! store ) {
+			return false;
+		}
+
+		/** @param {Array<{ clientId: string, name: string, attributes?: { freemius_enabled?: boolean }, innerBlocks?: unknown[] }>} blocks @param {string[]} acc */
+		const collectColumns = ( blocks, acc = [] ) => {
+			for ( const block of blocks ) {
+				if (
+					block.name === 'core/column' &&
+					block.attributes?.freemius_enabled
+				) {
+					acc.push( block.clientId );
+				}
+
+				collectColumns( block.innerBlocks ?? [], acc );
+			}
+
+			return acc;
+		};
+
+		const columnIds = collectColumns(
+			store.select( 'core/block-editor' ).getBlocks()
+		);
+		const clientId = columnIds[ index ];
+
+		if ( ! clientId ) {
+			return false;
+		}
+
+		store.dispatch( 'core/block-editor' ).selectBlock( clientId );
+		return true;
+	}, columnIndex );
+
+	if ( ! selected ) {
+		const column = pricingPlanColumnLocator( page ).nth( columnIndex );
+
+		if ( ( await column.count() ) === 0 ) {
+			throw new Error(
+				'Scoped plan column not found on fixture post 428 — enable Freemius on each pricing column'
+			);
+		}
+
+		await column.click( { force: true } );
+	} else {
+		await page.waitForTimeout( 600 );
+	}
+
+	await closeListViewIfOpen( page );
+	await collapseLayoutPanel( page );
+	await openFreemiusPanel( page );
+	await scrollSidebarToPlanField( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
+ * Scroll the block sidebar so the Plan field is visible.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function scrollSidebarToPlanField( page ) {
+	await ensureBlockSidebarOpen( page );
+	await page
+		.getByText( /The ID of the plan that will load with the checkout/i )
+		.first()
+		.waitFor( { state: 'visible', timeout: 10_000 } );
+
+	await page.evaluate( () => {
+		const area = document.querySelector(
+			'.interface-complementary-area, .edit-post-sidebar'
+		);
+		const planHelp = Array.from(
+			area?.querySelectorAll( '.components-base-control__help' ) ?? []
+		).find( ( element ) =>
+			element.textContent?.includes(
+				'The ID of the plan that will load with the checkout'
+			)
+		);
+
+		planHelp?.scrollIntoView( { block: 'center' } );
+	} );
+
+	await page.waitForTimeout( 300 );
+}
+
+/**
+ * Bounding boxes for the Plan field annotation in the Freemius sidebar.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function getPlanFieldAnnotationBoxes( page ) {
+	const freemiusPanel = page
+		.locator( '.freemius-button-scope-settings' )
+		.first();
+	const planItem = freemiusPanel
+		.locator( '.freemius-button-scope' )
+		.filter( { has: page.getByText( 'Plan', { exact: true } ) } )
+		.first();
+	const planHelp = page.getByText(
+		/The ID of the plan that will load with the checkout/i
+	);
+
+	await planItem.waitFor( { state: 'visible', timeout: 10_000 } );
+	await planHelp.waitFor( { state: 'visible', timeout: 10_000 } );
+
+	const itemBox = await planItem.boundingBox();
+	const helpBox = await planHelp.boundingBox();
+
+	if ( ! itemBox || ! helpBox ) {
+		throw new Error(
+			'Plan field is not visible for pricing-page-plan-column capture'
+		);
+	}
+
+	return {
+		x: itemBox.x,
+		y: itemBox.y,
+		width: itemBox.width,
+		height: helpBox.y + helpBox.height - itemBox.y,
+	};
+}
+
+/**
+ * Pricing page canvas clip of the plan columns with one column outlined.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function capturePricingPagePlanColumn( page, outputAbs, capture ) {
+	const pricingSection = pricingTableSectionLocator( page );
+	const columnsBlock = pricingPlanColumnsLocator( page );
+	const planColumn = pricingPlanColumnLocator( page ).first();
+	const modifiersRow = pricingModifiersRowGroupLocator( page );
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await columnsBlock.waitFor( { state: 'visible', timeout: 10_000 } );
+	await planColumn.waitFor( { state: 'visible', timeout: 10_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const bodyBox = await editorBody.boundingBox();
+	const columnsBox = await columnsBlock.boundingBox();
+	const columnBox = await planColumn.boundingBox();
+	const modifiersBox = await modifiersRow.boundingBox().catch( () => null );
+	const planFieldBox = await getPlanFieldAnnotationBoxes( page );
+
+	if ( ! bodyBox || ! columnsBox || ! columnBox ) {
+		throw new Error(
+			'Pricing plan columns are not visible for pricing-page-plan-column capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clipTop = modifiersBox
+		? Math.max( 0, modifiersBox.y - padding )
+		: Math.max( 0, columnsBox.y - padding );
+	const clip = {
+		x: Math.max( 0, bodyBox.x ),
+		y: clipTop,
+		width: bodyBox.width,
+		height: columnsBox.y + columnsBox.height - clipTop + padding,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		columnBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		columnBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		columnBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		columnBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	const planHighlightX = snapPixel(
+		planFieldBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const planHighlightY = snapPixel(
+		planFieldBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const planHighlightWidth = snapPixel(
+		planFieldBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const planHighlightHeight = snapPixel(
+		planFieldBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const planTailX = snapPixel( planHighlightX - 34 );
+	const planTailY = snapPixel( planHighlightY - 38 );
+	const planTip = arrowTipBeforeRect(
+		planTailX,
+		planTailY,
+		planHighlightX,
+		planHighlightY,
+		planHighlightWidth,
+		planHighlightHeight,
+		KEY_SETTINGS_ARROW_TIP_GAP
+	);
+
+	drawPngRect(
+		capturePng,
+		planHighlightX,
+		planHighlightY,
+		planHighlightWidth,
+		planHighlightHeight,
+		ANNOTATION_RED
+	);
+	drawPngSolidArrow(
+		capturePng,
+		planTailX,
+		planTailY,
+		planTip.x,
+		planTip.y,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function preparePricingPageModifiersRow( page ) {
@@ -1996,6 +2274,26 @@ async function preparePricingPageModifiersRow( page ) {
 	}
 
 	await pricingSection.scrollIntoViewIfNeeded();
+	await dismissAutosaveNoticeIfPresent( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function preparePricingPagePlanColumn( page ) {
+	await closeListViewIfOpen( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+	await selectPricingPlanColumn( page, 0 );
 	await dismissAutosaveNoticeIfPresent( page );
 	await page.waitForTimeout( 300 );
 }
@@ -2075,6 +2373,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'scope-enable-checkout': prepareScopeEnableCheckout,
 	'scope-pricing-mapped': prepareScopePricingMapped,
 	'pricing-page-modifiers-row': preparePricingPageModifiersRow,
+	'pricing-page-plan-column': preparePricingPagePlanColumn,
 	'scope-modifiers': prepareScopeModifiers,
 	'settings-editor': prepareSettingsEditor,
 	'settings-products': prepareSettingsProducts,
@@ -2260,6 +2559,15 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'pricing-page-modifiers-row' ) {
 			await capturePricingPageModifiersRow(
+				page,
+				outputAbs,
+				entry.capture
+			);
+			return;
+		}
+
+		if ( entry.id === 'pricing-page-plan-column' ) {
+			await capturePricingPagePlanColumn(
 				page,
 				outputAbs,
 				entry.capture

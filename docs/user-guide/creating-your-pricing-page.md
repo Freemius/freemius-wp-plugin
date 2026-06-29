@@ -75,23 +75,22 @@ Let visitors change currency, billing cycle, and license count without leaving t
 
 Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](scopes/modifiers.md) for details.
 
-## Step 4: Add a column for each plan
+## Step 4: Add a column scope and map plan fields
+
+Each Freemius plan needs its **own scope** on the page — usually a **Column** block (or a nested **Group** inside a column) with Freemius enabled and a **Plan ID** set. Without a separate scope per plan, every column would show the same prices, titles, and checkout settings.
+
+### Set up each column
 
 1. Add a **Columns** block inside the outer scope.
-2. Use one **Column** per Freemius plan (Free, Starter, Professional, etc.).
-3. Style each column with borders, background, and spacing to match your theme.
+2. Add one **Column** per plan (Free, Starter, Professional, and so on).
+3. Select each column, open **Freemius** in the sidebar, enable **Freemius**, and set **Plan ID** to that column's plan.
+4. Style each column with borders, background, and spacing to match your theme.
 
-## Step 5: Set the plan on each column
+![Pricing page editor with one plan column selected and outlined](../assets/pricing-page-plan-column.png)
 
-Each column needs its own scope so it shows a different plan.
+Repeat for every column. Blocks inside a column inherit that column's plan. See [Scopes](scopes/README.md) for how nested scopes work.
 
-1. Select a **Column** block.
-2. In the sidebar, open **Freemius** and enable **Freemius Checkout**.
-3. Set **Plan ID** to the plan this column represents.
-
-Repeat for every column. Child blocks inside a column inherit that column's plan.
-
-## Step 6: Map plan fields to content
+### Map prices and copy inside each column
 
 Inside each column, add blocks and map Freemius fields so prices and copy are filled from your product **while you edit**. The editor fetches product data from Freemius and writes the current values into each mapped block; those values are stored in the page when you publish.
 
@@ -112,7 +111,7 @@ Inside each column, add blocks and map Freemius fields so prices and copy are fi
 
 Mapped blocks show a dotted outline in the editor. See [Field mapping](scopes/mapping.md).
 
-## Step 7: Add a checkout button per plan
+## Step 5: Add a checkout button per plan
 
 1. At the bottom of each column, add a **Button** block.
 2. Enable **Freemius Checkout** on the button.
@@ -122,11 +121,11 @@ Mapped blocks show a dotted outline in the editor. See [Field mapping](scopes/ma
 
 The button inherits the column's plan and the outer scope's currency and billing cycle. See [Freemius Button](button.md).
 
-## Step 8: Add feature lists
+## Step 6: Add feature lists
 
 Plan features (bullet lists, checkmarks, separators) are ordinary blocks — add them manually in each column. They are not synced from Freemius; only pricing fields are mapped.
 
-## Step 9: Preview and publish
+## Step 7: Preview and publish
 
 1. Select any scoped block or checkout button.
 2. In the Freemius sidebar, click **Preview** to open checkout with the current settings.

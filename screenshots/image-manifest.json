@@ -203,6 +203,32 @@
 			}
 		},
 		{
+			"id": "pricing-page-plan-column",
+			"title": "Pricing plan column scope",
+			"description": "Editor canvas showing the pricing plan columns with one scoped column selected and outlined.",
+			"use": "docs",
+			"match": [
+				"plan column",
+				"pricing column scope",
+				"column per plan"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-plan-column/source.png",
+				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-plan-column.png",
+				"alt": "Pricing page editor with one plan column selected and outlined",
+				"status": "captured"
+			}
+		},
+		{
 			"id": "pricing-page-playground",
 			"title": "Published pricing page",
 			"description": "Frontend pricing page with plan columns, modifiers, and checkout buttons.",
