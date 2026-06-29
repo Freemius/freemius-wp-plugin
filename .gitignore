@@ -40,4 +40,5 @@ vendor/
 !/screenshots/image-manifest.schema.json
 
 
-.cursor/mcp.json
+# Cursor IDE config (local nested repo; not shared on origin)
+.cursor/
