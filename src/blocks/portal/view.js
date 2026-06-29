@@ -14,9 +14,7 @@ domReady( () => {
 		'.wp-block-freemius-portal[data-freemius-portal]'
 	);
 
-	if ( portals.length === 0 ) {
-		return;
-	}
+	if ( portals.length === 0 ) return;
 
 	Array.prototype.forEach.call( portals, ( portalEl ) => {
 		let data;
@@ -26,16 +24,17 @@ domReady( () => {
 			);
 		} catch ( err ) {
 			// eslint-disable-next-line no-console -- invalid block configuration
-			console.error( 'Freemius portal: invalid data-freemius-portal', err );
+			console.error(
+				'Freemius portal: invalid data-freemius-portal',
+				err
+			);
 			return;
 		}
 
 		const storeId = data.store_id;
 		const publicKey = data.public_key;
 
-		if ( ! storeId || ! publicKey ) {
-			return;
-		}
+		if ( ! storeId || ! publicKey ) return;
 
 		const mount = document.createElement( 'div' );
 		mount.className = 'freemius-portal-mount';

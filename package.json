@@ -43,12 +43,8 @@
 		"@wordpress/env": "^11.9.0",
 		"@wordpress/prettier-config": "^4.49.0",
 		"@wordpress/scripts": "^32.5.0",
-		"eslint": "^10.6.0",
 		"globals": "^15.14.0",
 		"prettier": "npm:wp-prettier@^3.0.3",
 		"webpack-remove-empty-scripts": "^1.0.4"
-	},
-	"overrides": {
-		"eslint": "^10.6.0"
 	}
 }

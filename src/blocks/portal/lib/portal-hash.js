@@ -28,9 +28,7 @@ export function updateHash( win, path, state ) {
 		'!' +
 		path;
 
-	if ( newHash === win.location.hash ) {
-		return false;
-	}
+	if ( newHash === win.location.hash ) return false;
 
 	state.lastPath = path;
 	win.location.hash = newHash;
@@ -45,12 +43,11 @@ export function tryFixEncoding( win ) {
 
 	if ( ! ( hash.indexOf( '!' ) >= 0 ) ) {
 		const encodedHashPosition = hash.indexOf( '%21' );
-		if ( encodedHashPosition >= 0 ) {
+		if ( encodedHashPosition >= 0 )
 			hash =
 				hash.substring( 0, encodedHashPosition ) +
 				'!' +
 				hash.substr( encodedHashPosition + 3 );
-		}
 	}
 
 	if ( hash.indexOf( 'reset_token=' ) >= 0 ) {
@@ -58,12 +55,11 @@ export function tryFixEncoding( win ) {
 		if (
 			queryStringParts.length === 2 &&
 			queryStringParts[ 1 ].indexOf( '?' ) >= 0
-		) {
+		)
 			hash =
 				queryStringParts[ 0 ] +
 				'reset_token=' +
 				encodeURIComponent( queryStringParts[ 1 ] );
-		}
 	}
 
 	win.location.hash = hash;

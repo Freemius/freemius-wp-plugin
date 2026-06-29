@@ -29,20 +29,15 @@ import {
  * @param {string | number} heightValue
  */
 function setPortalHeight( el, heightValue ) {
-	if ( ! el ) {
-		return;
-	}
+	if ( ! el ) return;
 
 	let cssValue = null;
-	if ( typeof heightValue === 'number' && Number.isFinite( heightValue ) ) {
+	if ( typeof heightValue === 'number' && Number.isFinite( heightValue ) )
 		cssValue = heightValue + 'px';
-	} else if ( typeof heightValue === 'string' && heightValue.trim() ) {
+	else if ( typeof heightValue === 'string' && heightValue.trim() )
 		cssValue = heightValue.trim();
-	}
 
-	if ( ! cssValue ) {
-		return;
-	}
+	if ( ! cssValue ) return;
 
 	el.style.setProperty( '--freemius-portal-height', cssValue );
 }
@@ -104,9 +99,7 @@ export function usePortalEmbed( {
 		const container = containerRef.current;
 		const isFlashingBrowser = detectFlashingBrowser( win );
 
-		if ( ! container || ! storeId || ! publicKey ) {
-			return undefined;
-		}
+		if ( ! container || ! storeId || ! publicKey ) return undefined;
 
 		if ( ! allowInIframe && isRunningInIframe( win ) ) {
 			setError(
@@ -131,28 +124,24 @@ export function usePortalEmbed( {
 
 		const applyAutoHeight = ( reportedPx ) => {
 			const root = getPortalRoot( container );
-			if ( ! root ) {
-				return;
-			}
+			if ( ! root ) return;
+
 			lastReportedHeight = reportedPx;
 			setPortalHeight( root, clampPortalHeight( reportedPx, win ) );
 		};
 
 		const applyPlaceholderHeight = () => {
 			const root = getPortalRoot( container );
-			if ( root && autoHeight ) {
+			if ( root && autoHeight )
 				setPortalHeight( root, getPortalPlaceholderHeight( win ) );
-			}
 		};
 
 		if ( autoHeight ) {
 			applyPlaceholderHeight();
 			viewportResizeHandler = function () {
-				if ( lastReportedHeight != null ) {
+				if ( lastReportedHeight != null )
 					applyAutoHeight( lastReportedHeight );
-				} else {
-					applyPlaceholderHeight();
-				}
+				else applyPlaceholderHeight();
 			};
 			win.addEventListener( 'resize', viewportResizeHandler );
 		}
@@ -175,14 +164,17 @@ export function usePortalEmbed( {
 			iframe.setAttribute( 'allowtransparency', 'true' );
 			iframe.setAttribute( 'frameborder', '0' );
 			iframe.title = 'Freemius Customer Portal';
-			if ( isFlashingBrowser ) {
+			if ( isFlashingBrowser )
 				iframe.classList.add( 'freemius-portal-iframe--hidden' );
-			}
 
 			container.appendChild( iframe );
 			iframeRef.current = iframe;
 
-			hub = createParentPostMessageHub( win, portalBaseUrl, () => iframe );
+			hub = createParentPostMessageHub(
+				win,
+				portalBaseUrl,
+				() => iframe
+			);
 			hubRef.current = hub;
 			hub.init( [ iframe ] );
 
@@ -211,22 +203,17 @@ export function usePortalEmbed( {
 			} );
 
 			hub.receiveOnce( 'localStorage.setItem', function ( data ) {
-				if (
-					data.key.length > 3 &&
-					data.key.substr( 0, 3 ) === 'fs_'
-				) {
+				if ( data.key.length > 3 && data.key.substr( 0, 3 ) === 'fs_' )
 					win.localStorage.setItem( data.key, data.value );
-				}
 			} );
 
 			hub.receiveOnce( 'localStorage.removeItem', function ( key ) {
-				if ( key.length > 3 && key.substr( 0, 3 ) === 'fs_' ) {
+				if ( key.length > 3 && key.substr( 0, 3 ) === 'fs_' )
 					win.localStorage.removeItem( key );
-				}
 			} );
 
 			hub.receiveOnce( 'localStorage.getItem', function ( key ) {
-				if ( key.length > 3 && key.substr( 0, 3 ) === 'fs_' ) {
+				if ( key.length > 3 && key.substr( 0, 3 ) === 'fs_' )
 					hub.post(
 						'localStorage.getItem',
 						{
@@ -235,7 +222,6 @@ export function usePortalEmbed( {
 						},
 						iframe
 					);
-				}
 			} );
 
 			hub.receive( 'height', function ( data ) {
@@ -244,14 +230,11 @@ export function usePortalEmbed( {
 					! data ||
 					data.height == null ||
 					! container
-				) {
+				)
 					return;
-				}
 
 				const reportedHeight = Number( data.height );
-				if ( ! Number.isFinite( reportedHeight ) ) {
-					return;
-				}
+				if ( ! Number.isFinite( reportedHeight ) ) return;
 
 				clearTimeout( heightDebounceTimer );
 				heightDebounceTimer = setTimeout( function () {
@@ -267,9 +250,7 @@ export function usePortalEmbed( {
 
 				const newPath = parsePathFromHash( win );
 
-				if ( newPath === hashState.lastPath ) {
-					return;
-				}
+				if ( newPath === hashState.lastPath ) return;
 
 				hub.post( 'pathChanged', { path: newPath }, iframe );
 				hashState.lastPath = newPath;
@@ -283,9 +264,7 @@ export function usePortalEmbed( {
 					eventName,
 					function ( param ) {
 						const callback = callbacksRef.current[ callbackKey ];
-						if ( callback ) {
-							callback( param );
-						}
+						if ( callback ) callback( param );
 					},
 					true
 				);
@@ -297,11 +276,10 @@ export function usePortalEmbed( {
 					hub.post( 'handshake', uniqueID, iframe );
 					hub.postScroll( iframe );
 
-					if ( isFlashingBrowser && iframe ) {
+					if ( isFlashingBrowser && iframe )
 						iframe.classList.remove(
 							'freemius-portal-iframe--hidden'
 						);
-					}
 
 					setIsLoading( false );
 					callbacksRef.current.onLoad?.();
@@ -323,9 +301,8 @@ export function usePortalEmbed( {
 		return () => {
 			clearTimeout( heightDebounceTimer );
 
-			if ( viewportResizeHandler ) {
+			if ( viewportResizeHandler )
 				win.removeEventListener( 'resize', viewportResizeHandler );
-			}
 
 			if ( hashChangeHandlerRef.current ) {
 				win.removeEventListener(
@@ -335,19 +312,17 @@ export function usePortalEmbed( {
 				hashChangeHandlerRef.current = null;
 			}
 
-			if ( hub ) {
-				hub.dispose();
-			}
+			if ( hub ) hub.dispose();
+
 			hubRef.current = null;
 
-			if ( iframe && iframe.parentNode ) {
+			if ( iframe && iframe.parentNode )
 				iframe.parentNode.removeChild( iframe );
-			}
+
 			iframeRef.current = null;
 
-			while ( container.firstChild ) {
+			while ( container.firstChild )
 				container.removeChild( container.firstChild );
-			}
 		};
 		// Height updates handled separately to avoid iframe reload.
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- see above
@@ -363,9 +338,7 @@ export function usePortalEmbed( {
 	] );
 
 	useEffect( () => {
-		if ( autoHeight || height == null ) {
-			return;
-		}
+		if ( autoHeight || height == null ) return;
 
 		setPortalHeight( containerRef.current?.parentElement ?? null, height );
 	}, [ autoHeight, height, containerRef ] );

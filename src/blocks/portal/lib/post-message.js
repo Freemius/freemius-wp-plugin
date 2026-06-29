@@ -43,9 +43,8 @@ export function createNoJQueryPostMessageTransport(
 			targetOrigin,
 			targetWindow
 		) {
-			if ( ! targetOrigin ) {
-				return;
-			}
+			if ( ! targetOrigin ) return;
+
 			const origin = targetOrigin.replace( /([^:]+:\/\/[^/]+).*/, '$1' );
 			targetWindow.postMessage( message, origin );
 		};
@@ -54,20 +53,17 @@ export function createNoJQueryPostMessageTransport(
 				detachListener( boundHandler );
 				boundHandler = null;
 			}
-			if ( ! handler ) {
-				return false;
-			}
+			if ( ! handler ) return false;
+
 			boundHandler = function ( event ) {
 				switch ( Object.prototype.toString.call( originFilter ) ) {
 					case '[object String]':
-						if ( originFilter !== event.origin ) {
-							return false;
-						}
+						if ( originFilter !== event.origin ) return false;
+
 						break;
 					case '[object Function]':
-						if ( originFilter( event.origin ) ) {
-							return false;
-						}
+						if ( originFilter( event.origin ) ) return false;
+
 						break;
 				}
 				handler( event );
@@ -80,9 +76,8 @@ export function createNoJQueryPostMessageTransport(
 			targetOrigin,
 			targetWindow
 		) {
-			if ( ! targetOrigin ) {
-				return;
-			}
+			if ( ! targetOrigin ) return;
+
 			targetWindow.location =
 				targetOrigin.replace( /#.*$/, '' ) +
 				'#' +
@@ -100,15 +95,12 @@ export function createNoJQueryPostMessageTransport(
 				clearInterval( hashPollId );
 				hashPollId = null;
 			}
-			if ( ! handler ) {
-				return false;
-			}
+			if ( ! handler ) return false;
+
 			let pollMs = 100;
-			if ( typeof originFilter === 'number' ) {
-				pollMs = originFilter;
-			} else if ( typeof interval === 'number' ) {
-				pollMs = interval;
-			}
+			if ( typeof originFilter === 'number' ) pollMs = originFilter;
+			else if ( typeof interval === 'number' ) pollMs = interval;
+
 			hashPollId = setInterval( function () {
 				const hash = listenerWindow.document.location.hash;
 				const prefix = /^#?\d+&/;
@@ -152,12 +144,9 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 
 	function dispatch( event ) {
 		const iframeEl = getIframe();
-		if ( ! iframeEl || ! iframeEl.contentWindow ) {
-			return;
-		}
-		if ( event.source !== iframeEl.contentWindow ) {
-			return;
-		}
+		if ( ! iframeEl || ! iframeEl.contentWindow ) return;
+
+		if ( event.source !== iframeEl.contentWindow ) return;
 
 		try {
 			if (
@@ -168,11 +157,9 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 			) {
 				const payload = JSON.parse( event.data );
 				const list = callbacks[ payload.type ];
-				if ( list ) {
-					for ( let i = 0; i < list.length; i++ ) {
+				if ( list )
+					for ( let i = 0; i < list.length; i++ )
 						list[ i ]( payload.data, event );
-					}
-				}
 			}
 		} catch ( err ) {
 			// Ignore malformed messages.
@@ -180,13 +167,12 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 	}
 
 	function post( type, data, iframe ) {
-		if ( iframe ) {
+		if ( iframe )
 			postman.postMessage(
 				JSON.stringify( { type, data } ),
 				iframe.src,
 				iframe.contentWindow
 			);
-		}
 	}
 
 	function postScroll( iframe ) {
@@ -216,9 +202,8 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 			iframes = iframes || [];
 			if ( iframes.length > 0 ) {
 				scrollHandler = function () {
-					for ( let i = 0; i < iframes.length; i++ ) {
+					for ( let i = 0; i < iframes.length; i++ )
 						postScroll( iframes[ i ] );
-					}
 				};
 				resizeHandler = scrollHandler;
 				win.addEventListener( 'scroll', scrollHandler );
@@ -228,24 +213,17 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 		post,
 		postScroll,
 		receive( type, callback ) {
-			if (
-				callbacks[ type ] === undefined ||
-				callbacks[ type ] === null
-			) {
+			if ( callbacks[ type ] === undefined || callbacks[ type ] === null )
 				callbacks[ type ] = [];
-			}
+
 			callbacks[ type ].push( callback );
 		},
 		receiveOnce( type, callback, flush ) {
-			if ( flush ) {
-				callbacks[ type ] = null;
-			}
-			if (
-				callbacks[ type ] !== undefined &&
-				callbacks[ type ] !== null
-			) {
+			if ( flush ) callbacks[ type ] = null;
+
+			if ( callbacks[ type ] !== undefined && callbacks[ type ] !== null )
 				return;
-			}
+
 			this.receive( type, callback );
 		},
 		dispose() {
@@ -258,9 +236,7 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 				resizeHandler = null;
 			}
 			postman.dispose();
-			for ( const k of Object.keys( callbacks ) ) {
-				callbacks[ k ] = null;
-			}
+			for ( const k of Object.keys( callbacks ) ) callbacks[ k ] = null;
 		},
 	};
 }

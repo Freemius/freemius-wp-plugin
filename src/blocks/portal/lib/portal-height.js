@@ -42,7 +42,10 @@ export function getViewportHeight( win ) {
 export function getPortalPlaceholderHeight( win ) {
 	const viewportHeight = getViewportHeight( win );
 	return Math.min(
-		Math.max( PORTAL_MIN_HEIGHT_PX, viewportHeight * PORTAL_PLACEHOLDER_VH ),
+		Math.max(
+			PORTAL_MIN_HEIGHT_PX,
+			viewportHeight * PORTAL_PLACEHOLDER_VH
+		),
 		PORTAL_PLACEHOLDER_MAX_PX
 	);
 }

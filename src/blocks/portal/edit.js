@@ -33,17 +33,14 @@ import {
 } from './lib/portal-preview-height';
 
 const MIN_HEIGHT_PX = 300;
-const DASHBOARD_STORES_URL =
-	'https://dashboard.freemius.com/#!/live/stores/';
+const DASHBOARD_STORES_URL = 'https://dashboard.freemius.com/#!/live/stores/';
 
 /**
  * @param {number | undefined} storeId
  * @return {string}
  */
 function getPublicKeySettingsUrl( storeId ) {
-	if ( ! storeId ) {
-		return DASHBOARD_STORES_URL;
-	}
+	if ( ! storeId ) return DASHBOARD_STORES_URL;
 
 	return `https://dashboard.freemius.com/#!/live/stores/${ storeId }/settings/keys/`;
 }
@@ -109,9 +106,7 @@ function PortalCredentialFields( { store_id, public_key, setAttributes } ) {
 				__next40pxDefaultSize
 				label={ __( 'Public Key', 'freemius' ) }
 				value={ public_key || '' }
-				onChange={ ( value ) =>
-					setAttributes( { public_key: value } )
-				}
+				onChange={ ( value ) => setAttributes( { public_key: value } ) }
 			/>
 		</>
 	);
@@ -193,9 +188,8 @@ function usePreviewHeightUnits() {
 	const spacingUnits = useSetting( 'spacing.units' );
 
 	return useMemo( () => {
-		if ( ! Array.isArray( spacingUnits ) || spacingUnits.length === 0 ) {
+		if ( ! Array.isArray( spacingUnits ) || spacingUnits.length === 0 )
 			return PREVIEW_HEIGHT_UNITS;
-		}
 
 		return spacingUnits.map( ( unit ) => ( {
 			value: unit,
@@ -229,14 +223,10 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 	);
 
 	useLayoutEffect( () => {
-		if ( ! hasCredentials ) {
-			return;
-		}
+		if ( ! hasCredentials ) return;
 
 		const el = previewContainerRef.current;
-		if ( ! el ) {
-			return;
-		}
+		if ( ! el ) return;
 
 		setResizableHeightPx( el.offsetHeight );
 	}, [ hasCredentials, previewHeight ] );
@@ -325,7 +315,9 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 							) }
 							onChange={ ( value ) =>
 								setAttributes( {
-									height: sanitizePreviewHeight( value || '' ),
+									height: sanitizePreviewHeight(
+										value || ''
+									),
 								} )
 							}
 						/>
@@ -352,7 +344,9 @@ export default function Edit( { attributes, setAttributes, toggleSelection } ) {
 						} }
 						onResizeStop={ ( event, direction, elt, delta ) => {
 							setAttributes( {
-								height: `${ resizableHeightPx + delta.height }px`,
+								height: `${
+									resizableHeightPx + delta.height
+								}px`,
 							} );
 							toggleSelection( true );
 						} }
