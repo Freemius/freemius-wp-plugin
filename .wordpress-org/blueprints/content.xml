@@ -17,13 +17,13 @@
  7. WordPress will then import each of the posts, pages, comments, categories, etc.
     contained in this file into your site.
 -->
-<!-- generator="WordPress/7.0" created="2026-06-29 14:29" -->
+<!-- generator="WordPress/7.0" created="2026-06-29 00:00" -->
 <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
   <channel>
 <title>Freemius for WordPress</title>
 <link>https://dev.local</link>
 <description>Just another WordPress site</description>
-<pubDate>Mon, 29 Jun 2026 14:29:17 +0000</pubDate>
+<pubDate>Mon, 29 Jun 2026 00:00:00 +0000</pubDate>
 <language>en-US</language>
 <wp:wxr_version>1.2</wp:wxr_version>
 <wp:base_site_url>https://dev.local</wp:base_site_url>
@@ -37,33 +37,6 @@
   <wp:author_last_name><![CDATA[]]></wp:author_last_name>
 </wp:author>
 <generator>https://wordpress.org/?v=7.0</generator>
-<item>
-  <title><![CDATA[Hello world!]]></title>
-  <link>https://dev.local/hello-world/</link>
-  <pubDate>Thu, 16 Apr 2020 14:56:04 +0000</pubDate>
-  <dc:creator>xaver</dc:creator>
-  <guid isPermaLink="false">https://dev.local/?p=1</guid>
-  <description/>
-  <content:encoded><![CDATA[<!-- wp:paragraph -->
-<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
-<!-- /wp:paragraph -->]]></content:encoded>
-  <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-  <wp:post_id>1</wp:post_id>
-  <wp:post_date>2020-04-16 14:56:04</wp:post_date>
-  <wp:post_date_gmt>2020-04-16 14:56:04</wp:post_date_gmt>
-  <wp:post_modified>2020-04-16 14:56:04</wp:post_modified>
-  <wp:post_modified_gmt>2020-04-16 14:56:04</wp:post_modified_gmt>
-  <wp:comment_status>open</wp:comment_status>
-  <wp:ping_status>open</wp:ping_status>
-  <wp:post_name>hello-world</wp:post_name>
-  <wp:status>publish</wp:status>
-  <wp:post_parent>0</wp:post_parent>
-  <wp:menu_order>0</wp:menu_order>
-  <wp:post_type>post</wp:post_type>
-  <wp:post_password/>
-  <wp:is_sticky>0</wp:is_sticky>
-  <category domain="category" nicename="uncategorized"><![CDATA[Uncategorized]]></category>
-</item>
 <item>
   <title><![CDATA[Freemius Button]]></title>
   <link>https://dev.local/freemius-button/</link>
@@ -697,39 +670,6 @@
   <wp:post_type>page</wp:post_type>
   <wp:post_password/>
   <wp:is_sticky>0</wp:is_sticky>
-</item>
-<item>
-  <title><![CDATA[Screen Shot 2025-06-16 at 09.01.02]]></title>
-  <link>https://dev.local/freemius-pricing/screen-shot-2025-06-16-at-09-01-02/</link>
-  <pubDate>Mon, 16 Jun 2025 07:01:27 +0000</pubDate>
-  <dc:creator>xaver</dc:creator>
-  <guid isPermaLink="false">https://dev.local/wp-content/uploads/2025/06/Screen-Shot-2025-06-16-at-09.01.02.png</guid>
-  <description/>
-  <content:encoded><![CDATA[]]></content:encoded>
-  <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-  <wp:post_id>97</wp:post_id>
-  <wp:post_date>2025-06-16 09:01:27</wp:post_date>
-  <wp:post_date_gmt>2025-06-16 07:01:27</wp:post_date_gmt>
-  <wp:post_modified>2025-06-16 09:01:27</wp:post_modified>
-  <wp:post_modified_gmt>2025-06-16 07:01:27</wp:post_modified_gmt>
-  <wp:comment_status>open</wp:comment_status>
-  <wp:ping_status>closed</wp:ping_status>
-  <wp:post_name>screen-shot-2025-06-16-at-09-01-02</wp:post_name>
-  <wp:status>inherit</wp:status>
-  <wp:post_parent>80</wp:post_parent>
-  <wp:menu_order>0</wp:menu_order>
-  <wp:post_type>attachment</wp:post_type>
-  <wp:post_password/>
-  <wp:is_sticky>0</wp:is_sticky>
-  <wp:attachment_url>https://dev.local/wp-content/uploads/2025/06/Screen-Shot-2025-06-16-at-09.01.02.png</wp:attachment_url>
-  <wp:postmeta>
-    <wp:meta_key>_wp_attached_file</wp:meta_key>
-    <wp:meta_value><![CDATA[2025/06/Screen-Shot-2025-06-16-at-09.01.02.png]]></wp:meta_value>
-  </wp:postmeta>
-  <wp:postmeta>
-    <wp:meta_key>_wp_attachment_metadata</wp:meta_key>
-    <wp:meta_value><![CDATA[a:6:{s:5:"width";i:1332;s:6:"height";i:1232;s:4:"file";s:46:"2025/06/Screen-Shot-2025-06-16-at-09.01.02.png";s:8:"filesize";i:153772;s:5:"sizes";a:4:{s:6:"medium";a:5:{s:4:"file";s:46:"Screen-Shot-2025-06-16-at-09.01.02-300x277.png";s:5:"width";i:300;s:6:"height";i:277;s:9:"mime-type";s:9:"image/png";s:8:"filesize";i:11797;}s:5:"large";a:5:{s:4:"file";s:47:"Screen-Shot-2025-06-16-at-09.01.02-1024x947.png";s:5:"width";i:1024;s:6:"height";i:947;s:9:"mime-type";s:9:"image/png";s:8:"filesize";i:49348;}s:9:"thumbnail";a:5:{s:4:"file";s:46:"Screen-Shot-2025-06-16-at-09.01.02-150x150.png";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:9:"image/png";s:8:"filesize";i:5245;}s:12:"medium_large";a:5:{s:4:"file";s:46:"Screen-Shot-2025-06-16-at-09.01.02-768x710.png";s:5:"width";i:768;s:6:"height";i:710;s:9:"mime-type";s:9:"image/png";s:8:"filesize";i:45718;}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}]]></wp:meta_value>
-  </wp:postmeta>
 </item>
 <item>
   <title><![CDATA[Pricing]]></title>
@@ -2234,7 +2174,7 @@
 <div class="wp-block-group alignwide"><!-- wp:site-title {"level":0} /-->
 
 <!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-<div class="wp-block-group">
+<div class="wp-block-group"><!-- wp:navigation {"ref":533} /-->
 
 <!-- wp:navigation {"ref":5} /--></div>
 <!-- /wp:group --></div>
@@ -2244,8 +2184,8 @@
   <wp:post_id>460</wp:post_id>
   <wp:post_date>2025-07-28 10:47:29</wp:post_date>
   <wp:post_date_gmt>2025-07-28 08:47:29</wp:post_date_gmt>
-  <wp:post_modified>2026-06-29 16:04:31</wp:post_modified>
-  <wp:post_modified_gmt>2026-06-29 14:04:31</wp:post_modified_gmt>
+  <wp:post_modified>2026-06-29 14:46:24</wp:post_modified>
+  <wp:post_modified_gmt>2026-06-29 12:46:24</wp:post_modified_gmt>
   <wp:comment_status>closed</wp:comment_status>
   <wp:ping_status>closed</wp:ping_status>
   <wp:post_name>header</wp:post_name>
@@ -2260,39 +2200,6 @@
   <wp:postmeta>
     <wp:meta_key>origin</wp:meta_key>
     <wp:meta_value><![CDATA[theme]]></wp:meta_value>
-  </wp:postmeta>
-</item>
-<item>
-  <title><![CDATA[Symbol Colored with bg - Circle - 300x300]]></title>
-  <link>https://dev.local/playground/symbol-colored-with-bg-circle-300x300/</link>
-  <pubDate>Mon, 28 Jul 2025 09:09:09 +0000</pubDate>
-  <dc:creator>xaver</dc:creator>
-  <guid isPermaLink="false">https://dev.local/wp-content/uploads/2025/07/Symbol-Colored-with-bg-Circle-300x300-1.jpg</guid>
-  <description/>
-  <content:encoded><![CDATA[]]></content:encoded>
-  <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-  <wp:post_id>470</wp:post_id>
-  <wp:post_date>2025-07-28 11:09:09</wp:post_date>
-  <wp:post_date_gmt>2025-07-28 09:09:09</wp:post_date_gmt>
-  <wp:post_modified>2025-07-28 11:09:09</wp:post_modified>
-  <wp:post_modified_gmt>2025-07-28 09:09:09</wp:post_modified_gmt>
-  <wp:comment_status>open</wp:comment_status>
-  <wp:ping_status>closed</wp:ping_status>
-  <wp:post_name>symbol-colored-with-bg-circle-300x300</wp:post_name>
-  <wp:status>inherit</wp:status>
-  <wp:post_parent>428</wp:post_parent>
-  <wp:menu_order>0</wp:menu_order>
-  <wp:post_type>attachment</wp:post_type>
-  <wp:post_password/>
-  <wp:is_sticky>0</wp:is_sticky>
-  <wp:attachment_url>https://dev.local/wp-content/uploads/2025/07/Symbol-Colored-with-bg-Circle-300x300-1.jpg</wp:attachment_url>
-  <wp:postmeta>
-    <wp:meta_key>_wp_attached_file</wp:meta_key>
-    <wp:meta_value><![CDATA[2025/07/Symbol-Colored-with-bg-Circle-300x300-1.jpg]]></wp:meta_value>
-  </wp:postmeta>
-  <wp:postmeta>
-    <wp:meta_key>_wp_attachment_metadata</wp:meta_key>
-    <wp:meta_value><![CDATA[a:6:{s:5:"width";i:300;s:6:"height";i:300;s:4:"file";s:51:"2025/07/Symbol-Colored-with-bg-Circle-300x300-1.jpg";s:8:"filesize";i:17258;s:5:"sizes";a:1:{s:9:"thumbnail";a:5:{s:4:"file";s:51:"Symbol-Colored-with-bg-Circle-300x300-1-150x150.jpg";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";s:8:"filesize";i:2722;}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}]]></wp:meta_value>
   </wp:postmeta>
 </item>
 <item>
@@ -2409,13 +2316,13 @@
   <dc:creator>xaver</dc:creator>
   <guid isPermaLink="false">https://dev.local/?p=533</guid>
   <description/>
-  <content:encoded><![CDATA[<!-- wp:navigation-link {"label":"Playground","type":"page","id":428,"url":"https://dev.local/","kind":"post-type","metadata":{"bindings":{"url":{"source":"core/post-data","args":{"field":"link"}}}}} /-->]]></content:encoded>
+  <content:encoded><![CDATA[<!-- wp:navigation-link {"label":"Playground","type":"page","id":428,"url":"https://dev.local/playground/","kind":"post-type","metadata":{"bindings":{"url":{"source":"core/post-data","args":{"field":"link"}}}}} /-->]]></content:encoded>
   <excerpt:encoded><![CDATA[]]></excerpt:encoded>
   <wp:post_id>533</wp:post_id>
   <wp:post_date>2026-06-29 14:46:24</wp:post_date>
   <wp:post_date_gmt>2026-06-29 12:46:24</wp:post_date_gmt>
-  <wp:post_modified>2026-06-29 16:04:31</wp:post_modified>
-  <wp:post_modified_gmt>2026-06-29 14:04:31</wp:post_modified_gmt>
+  <wp:post_modified>2026-06-29 14:46:24</wp:post_modified>
+  <wp:post_modified_gmt>2026-06-29 12:46:24</wp:post_modified_gmt>
   <wp:comment_status>closed</wp:comment_status>
   <wp:ping_status>closed</wp:ping_status>
   <wp:post_name>menu</wp:post_name>
