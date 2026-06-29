@@ -204,27 +204,27 @@
 		},
 		{
 			"id": "scope-enable-checkout",
-			"title": "Enable checkout on scope",
-			"description": "Freemius panel on a scoped container block with checkout enabled.",
+			"title": "Enable Freemius on scope",
+			"description": "Block editor with a scoped Group block selected, purple scope outline on the canvas, and the Freemius sidebar panel highlighted.",
 			"use": "docs",
 			"match": [
-				"enable checkout",
+				"enable freemius",
 				"scope",
 				"group block"
 			],
 			"capture": {
 				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
 				"viewports": [
-					"desktop"
+					"wide"
 				],
-				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
-				"padding": 16
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 0
 			},
 			"embed": {
 				"from": "screenshots/scope-enable-checkout/source.png",
 				"doc": "docs/user-guide/scopes/README.md",
 				"path": "docs/assets/scope-enable-checkout.png",
-				"alt": "Freemius checkout enabled on a scoped block in the editor",
+				"alt": "Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel",
 				"status": "captured"
 			}
 		},

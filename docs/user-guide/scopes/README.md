@@ -9,7 +9,7 @@ A scope can be enabled on these blocks (or their children):
 - Column Block
 - Button Block
 
-![Freemius checkout enabled on a scoped block in the editor](../../assets/scope-enable-checkout.png)
+![Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel](../../assets/scope-enable-checkout.png)
 
 Each scope inherits properties from its parent scope. The outermost scope inherits defaults from **Editor Settings** (global).
 

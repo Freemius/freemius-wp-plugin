@@ -603,6 +603,42 @@ async function selectFirstButtonBlock( page ) {
 }
 
 /**
+ * Dismiss the WordPress editor autosave notice when it is visible.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function dismissAutosaveNoticeIfPresent( page ) {
+	const notice = page
+		.locator( '.components-notice' )
+		.filter( { hasText: /autosave of this post/i } )
+		.first();
+
+	if (
+		( await notice.count() ) === 0 ||
+		! ( await notice.isVisible().catch( () => false ) )
+	) {
+		return;
+	}
+
+	const dismissButtons = [
+		notice.locator( 'button.components-notice__dismiss' ),
+		notice.getByRole( 'button', { name: 'Dismiss this notice' } ),
+		notice.locator( 'button[aria-label="Dismiss this notice"]' ),
+	];
+
+	for ( const dismiss of dismissButtons ) {
+		if (
+			( await dismiss.count() ) > 0 &&
+			( await dismiss.first().isVisible().catch( () => false ) )
+		) {
+			await dismiss.first().click();
+			await page.waitForTimeout( 300 );
+			return;
+		}
+	}
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function waitForEditorReady( page ) {
@@ -611,6 +647,7 @@ async function waitForEditorReady( page ) {
 		{ timeout: 30_000 }
 	);
 	await page.waitForTimeout( 1000 );
+	await dismissAutosaveNoticeIfPresent( page );
 }
 
 /**
@@ -1346,6 +1383,111 @@ async function captureButtonCheckout( page, outputAbs, capture ) {
 }
 
 /**
+ * Editor body with the pricing scope group selected and Freemius panel annotated.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureScopeEnableCheckout( page, outputAbs, capture ) {
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+	const pricingSection = pricingTableSectionLocator( page );
+	const freemiusPanel = page
+		.locator( '.freemius-button-scope-settings' )
+		.first();
+	const enableHelp = page.getByText( 'Enable Freemius for this area.', {
+		exact: true,
+	} );
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await freemiusPanel.waitFor( { state: 'visible', timeout: 10_000 } );
+	await enableHelp.waitFor( { state: 'visible', timeout: 10_000 } );
+	await assertLayoutPanelCollapsed( page );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const bodyBox = await editorBody.boundingBox();
+	const panelBox = await freemiusPanel.boundingBox();
+	const panelHeader = freemiusPanel
+		.locator( '.components-tools-panel-header' )
+		.first();
+	const panelHeaderBox = await panelHeader.boundingBox();
+	const enableHelpBox = await enableHelp.boundingBox();
+
+	if ( ! bodyBox || ! panelBox || ! panelHeaderBox || ! enableHelpBox ) {
+		throw new Error(
+			'Pricing scope group or Freemius panel is not visible for scope-enable-checkout capture'
+		);
+	}
+
+	const padding = capture.padding ?? 0;
+	const clip = {
+		x: Math.max( 0, bodyBox.x - padding ),
+		y: Math.max( 0, bodyBox.y - padding ),
+		width: bodyBox.width + padding * 2,
+		height: bodyBox.height + padding * 2,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		panelBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		panelHeaderBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		panelBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		enableHelpBox.y +
+			enableHelpBox.height -
+			panelHeaderBox.y +
+			CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	const tailX = snapPixel( highlightX - 34 );
+	const tailY = snapPixel( highlightY + highlightHeight + 38 );
+	const tip = arrowTipBeforeRect(
+		tailX,
+		tailY,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		KEY_SETTINGS_ARROW_TIP_GAP
+	);
+
+	drawPngSolidArrow(
+		capturePng,
+		tailX,
+		tailY,
+		tip.x,
+		tip.y,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
  * Clip the settings app from the header through the Body ID field.
  *
  * @param {import('playwright').Page} page
@@ -1475,8 +1617,25 @@ async function prepareButtonPreview( page ) {
  * @param {import('playwright').Page} page
  */
 async function prepareScopeEnableCheckout( page ) {
-	await selectFirstButtonBlock( page );
-	await openFreemiusPanel( page );
+	await closeListViewIfOpen( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) > 0 ) {
+		await pricingSection.scrollIntoViewIfNeeded();
+		await selectPricingTableScopeGroup( page );
+		await openFreemiusPanel( page );
+		await page
+			.locator( '.freemius-button-scope-settings' )
+			.getByText( /Product ID/i )
+			.first()
+			.waitFor( { state: 'visible', timeout: 15_000 } );
+		return;
+	}
+
+	throw new Error(
+		'Scoped group block not found on fixture post 428 — add a Freemius-enabled group'
+	);
 }
 
 /**
@@ -1974,6 +2133,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'button-checkout' ) {
 			await captureButtonCheckout( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'scope-enable-checkout' ) {
+			await captureScopeEnableCheckout( page, outputAbs, entry.capture );
 			return;
 		}
 

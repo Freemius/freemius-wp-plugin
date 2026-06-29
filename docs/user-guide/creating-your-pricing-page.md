@@ -54,10 +54,10 @@ The outer scope sets the **product** and default **currency** and **billing cycl
 
 1. Add a **Group** block (or **Columns** / **Section** wrapper) that will contain the whole pricing area.
 2. Select that block.
-3. In the block sidebar, open **Freemius** and enable **Freemius Checkout**.
+3. In the block sidebar, open **Freemius** and enable **Freemius**.
 4. Confirm **Product ID** is set (it inherits from Editor Settings if you configured it there).
 
-![Freemius checkout enabled on a scoped block in the editor](../assets/scope-enable-checkout.png)
+![Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel](../assets/scope-enable-checkout.png)
 
 This block is now the parent scope. Every child block inside it inherits these settings unless you override them.
 
