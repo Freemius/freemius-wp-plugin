@@ -4,8 +4,8 @@
 
 1. Install the plugin via the WordPress admin panel (Plugins → Add New, or upload the zip).
 2. Activate the plugin.
-3. Open **Settings → Freemius** and enter your Freemius API token.
-4. Configure default product settings under **Editor Settings** (`product_id`, `public_key`).
+3. Open **Settings → Freemius** and add your product under **Products** (Product ID and Token from the [Freemius Developer Dashboard](https://dashboard.freemius.com/)).
+4. Under **Editor Settings**, set site-wide defaults such as Product ID and Plan.
 
 See [Settings](settings.md) for the full admin screen.
 

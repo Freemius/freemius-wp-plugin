@@ -4,7 +4,9 @@ The Freemius Button extends the core Button block with Freemius Checkout. When e
 
 ## Overview
 
-![Freemius Checkout enabled on a button in the block inspector](../assets/button-checkout.png)
+![Freemius Checkout button selected in the editor with Freemius sidebar settings](../assets/button-checkout.png)
+
+The example above uses a scoped group with a plan modifier and a core Button block with Freemius Checkout enabled. See [Scopes](scopes/README.md) and [Mapping](scopes/mapping.md) for building similar layouts.
 
 ## Getting started
 
@@ -34,9 +36,9 @@ More specific scopes override broader ones.
 
 See [Freemius checkout documentation](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/) for details.
 
-Hidden settings appear in the block toolbar overflow menu:
+Hidden settings are listed in the Freemius **options menu** (three dots on the Freemius panel header). Open it to show or hide fields such as Product ID and Plan:
 
-![Additional Freemius button settings in the overflow menu](../assets/button-key-settings.png)
+![Freemius options menu with additional checkout field toggles](../assets/button-key-settings.png)
 
 ## Customization
 

@@ -48,54 +48,55 @@
 		},
 		{
 			"id": "button-checkout",
-			"title": "Freemius Checkout on button",
-			"description": "Block editor sidebar with Freemius Checkout enabled on a core Button block.",
+			"title": "Freemius Checkout button",
+			"description": "Block editor with the Single Button scope group selected, Layout collapsed, and the Freemius sidebar panel spanning the inspector.",
 			"use": "docs",
 			"match": [
 				"checkout",
 				"freemius checkout",
-				"button inspector"
+				"single button",
+				"checkout button"
 			],
 			"capture": {
 				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
 				"viewports": [
 					"desktop"
 				],
-				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
-				"padding": 16
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 0
 			},
 			"embed": {
 				"from": "screenshots/button-checkout/source.png",
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-checkout.png",
-				"alt": "Freemius Checkout enabled on a button in the block inspector",
+				"alt": "Freemius Checkout button selected in the editor with Freemius sidebar settings",
 				"status": "captured"
 			}
 		},
 		{
 			"id": "button-key-settings",
-			"title": "Button key settings menu",
-			"description": "Freemius button toolbar overflow menu showing additional checkout settings.",
+			"title": "Freemius options menu",
+			"description": "Freemius ToolsPanel overflow menu on a button block showing optional checkout fields such as Product ID and Plan.",
 			"use": "docs",
 			"match": [
 				"key settings",
 				"three dots",
-				"overflow menu"
+				"overflow menu",
+				"freemius options"
 			],
 			"capture": {
 				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
 				"viewports": [
-					"desktop"
+					"wide"
 				],
-				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
-				"padding": 16
+				"selector": ".freemius-button-scope-settings"
 			},
 			"embed": {
 				"from": "screenshots/button-key-settings/source.png",
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-key-settings.png",
-				"alt": "Additional Freemius button settings in the overflow menu",
-				"status": "placeholder"
+				"alt": "Freemius options menu with additional checkout field toggles",
+				"status": "captured"
 			}
 		},
 		{
@@ -121,7 +122,7 @@
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-popout-editor.png",
 				"alt": "Popout Editor control in the Freemius button settings",
-				"status": "placeholder"
+				"status": "captured"
 			}
 		},
 		{
@@ -146,7 +147,7 @@
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-preview.png",
 				"alt": "Preview button in the Freemius button settings sidebar",
-				"status": "placeholder"
+				"status": "captured"
 			}
 		},
 		{
@@ -172,7 +173,7 @@
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-scopes.png",
 				"alt": "Freemius configuration scopes in the block editor sidebar",
-				"status": "placeholder"
+				"status": "captured"
 			}
 		},
 		{
@@ -198,7 +199,7 @@
 				"doc": "docs/user-guide/scopes/README.md",
 				"path": "docs/assets/scope-enable-checkout.png",
 				"alt": "Freemius checkout enabled on a scoped block in the editor",
-				"status": "placeholder"
+				"status": "captured"
 			}
 		},
 		{
@@ -250,7 +251,33 @@
 				"doc": "docs/user-guide/scopes/mapping.md",
 				"path": "docs/assets/scope-pricing-mapped.png",
 				"alt": "Pricing layout with Freemius scope and field mapping outlines",
-				"status": "placeholder"
+				"status": "captured"
+			}
+		},
+		{
+			"id": "settings-editor",
+			"title": "Editor Settings tab",
+			"description": "Freemius admin settings page with the Editor Settings tab selected, showing site-wide default checkout fields.",
+			"use": "docs",
+			"match": [
+				"editor settings",
+				"defaults",
+				"global settings"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/options-general.php?page=freemius-settings#defaults",
+				"viewports": [
+					"desktop"
+				],
+				"selector": "#freemius-settings-app",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/settings-editor/source.png",
+				"doc": "docs/user-guide/settings.md",
+				"path": "docs/assets/settings-editor.png",
+				"alt": "Editor Settings tab on the Freemius settings page",
+				"status": "captured"
 			}
 		}
 	]
