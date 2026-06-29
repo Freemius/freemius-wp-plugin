@@ -938,14 +938,6 @@ async function prepareButtonCheckout( page ) {
 /**
  * @param {import('playwright').Page} page
  */
-async function prepareButtonScopes( page ) {
-	await selectFirstButtonBlock( page );
-	await openFreemiusPanel( page );
-}
-
-/**
- * @param {import('playwright').Page} page
- */
 async function prepareButtonKeySettings( page ) {
 	await selectButtonWithFreemiusPanel( page );
 	await ensureBlockInspectorTab( page );
@@ -1804,14 +1796,6 @@ async function captureButtonTrackCallback( page, outputAbs, capture ) {
 	}
 
 	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
-}
-
-/**
- * @param {import('playwright').Page} page
- */
-async function prepareButtonPreview( page ) {
-	await selectFirstButtonBlock( page );
-	await openFreemiusPanel( page );
 }
 
 /**
@@ -3459,10 +3443,8 @@ async function prepareSettingsProducts( page ) {
 const PRE_CAPTURE_ACTIONS = {
 	'button-checkout': prepareButtonCheckout,
 	'button-overview': prepareButtonOverview,
-	'button-scopes': prepareButtonScopes,
 	'button-key-settings': prepareButtonKeySettings,
 	'button-track-callback': prepareButtonTrackCallback,
-	'button-preview': prepareButtonPreview,
 	'scope-columns-overview': prepareScopeColumnsOverview,
 	'scope-enable-checkout': prepareScopeEnableCheckout,
 	'scope-pricing-mapped': prepareScopePricingMapped,

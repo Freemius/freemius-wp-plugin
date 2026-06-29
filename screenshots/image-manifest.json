@@ -99,57 +99,6 @@
 			}
 		},
 		{
-			"id": "button-preview",
-			"title": "Checkout preview",
-			"description": "Freemius Preview control in the button block sidebar for testing checkout before publish.",
-			"use": "docs",
-			"match": [
-				"preview",
-				"checkout preview"
-			],
-			"capture": {
-				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
-				"viewports": [
-					"desktop"
-				],
-				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
-				"padding": 16
-			},
-			"embed": {
-				"from": "screenshots/button-preview/source.png",
-				"doc": "docs/button.md",
-				"path": "docs/assets/button-preview.png",
-				"alt": "Preview button in the Freemius button settings sidebar",
-				"status": "captured"
-			}
-		},
-		{
-			"id": "button-scopes",
-			"title": "Configuration scopes",
-			"description": "Freemius scope hierarchy (global, page, button) in the block editor sidebar.",
-			"use": "docs",
-			"match": [
-				"scopes",
-				"configuration scopes",
-				"global page button"
-			],
-			"capture": {
-				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
-				"viewports": [
-					"desktop"
-				],
-				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
-				"padding": 16
-			},
-			"embed": {
-				"from": "screenshots/button-scopes/source.png",
-				"doc": "docs/button.md",
-				"path": "docs/assets/button-scopes.png",
-				"alt": "Freemius configuration scopes in the block editor sidebar",
-				"status": "captured"
-			}
-		},
-		{
 			"id": "button-track-callback",
 			"title": "Track Callback popout editor",
 			"description": "Get Professional Plan button with Track Callback highlighted in the sidebar and Popout Editor open.",
