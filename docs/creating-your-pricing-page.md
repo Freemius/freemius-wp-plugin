@@ -57,21 +57,7 @@ The outer scope sets the **product** and default **currency** and **billing cycl
 
 This block is now the parent scope. Every child block inside it inherits these settings unless you override them. You can add additional **child scopes** to change properties of child blocks — see [Scopes](scopes.md) for details.
 
-## Step 3: Add pricing toggles
-
-Let visitors change currency, billing cycle, and license count without leaving the page.
-
-1. Inside the outer scope, add a horizontal **Group** (flex layout works well).
-2. Insert a **Freemius Scope** block for each toggle you need:
-   - **Currency** — e.g. USD, EUR, GBP
-   - **Billing cycle** — Monthly, Annual, Lifetime
-   - **Licenses** — e.g. 1, 2, 10, Unlimited
-
-![Pricing page editor with the modifier toggle row outlined](assets/pricing-page-modifiers-row.png)
-
-Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](modifiers.md) for details.
-
-## Step 4: Add a column scope and map plan fields
+## Step 3: Add a column scope and map plan fields
 
 Each Freemius plan needs its **own scope** on the page — usually a **Column** block (or a nested **Group** inside a column) with Freemius enabled and a **Plan ID** set. Without a separate scope per plan, every column would show the same prices, titles, and checkout settings.
 
@@ -106,6 +92,20 @@ Inside each column, add blocks and map Freemius fields so prices and copy are fi
 4. Optionally set a **prefix** or **suffix** on the mapping (for example `Get ` and ` Plan` on a button label).
 
 Mapped blocks show a dotted outline in the editor. See [Field mapping](mapping.md).
+
+## Step 4: Add pricing toggles
+
+Let visitors change currency, billing cycle, and license count without leaving the page.
+
+1. Inside the outer scope, add a horizontal **Group** (flex layout works well).
+2. Insert a **Freemius Scope** block for each toggle you need:
+   - **Currency** — e.g. USD, EUR, GBP
+   - **Billing cycle** — Monthly, Annual, Lifetime
+   - **Licenses** — e.g. 1, 2, 10, Unlimited
+
+![Pricing page editor with the modifier toggle row outlined](assets/pricing-page-modifiers-row.png)
+
+Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](modifiers.md) for details.
 
 ## Step 5: Add a checkout button per plan
 
