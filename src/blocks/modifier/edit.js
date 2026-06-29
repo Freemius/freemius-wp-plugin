@@ -33,6 +33,7 @@ import './editor.scss';
 
 import { useData, useModifiers } from '../../hooks';
 import { ModifierButtons } from './ModifierButtons';
+import ClearCacheButton from '../../scope/ClearCacheButton';
 
 export default function Edit( props ) {
 	const { attributes, setAttributes, scopeData } = props;
@@ -175,12 +176,19 @@ export default function Edit( props ) {
 										'freemius'
 									) }
 								</h2>
-								<Button
-									onClick={ () => selectScope() }
-									variant="secondary"
+								<Flex
+									gap={ 2 }
+									justify="space-between"
+									align="center"
 								>
-									{ __( 'Select Scope', 'freemius' ) }
-								</Button>
+									<Button
+										onClick={ () => selectScope() }
+										variant="secondary"
+									>
+										{ __( 'Select Scope', 'freemius' ) }
+									</Button>
+									<ClearCacheButton />
+								</Flex>
 							</BaseControl>
 							<BaseControl __nextHasNoMarginBottom>
 								<TreeSelect

@@ -14,6 +14,7 @@ import {
 	PanelBody,
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	Button,
+	Flex,
 	__experimentalSpacer as Spacer,
 	Notice,
 } from '@wordpress/components';
@@ -25,6 +26,7 @@ import EnableCheckbox from './EnableCheckbox';
 import { useSettings, useData } from '../hooks';
 import Property from './Property';
 import ButtonSettings from './ButtonSettings';
+import ClearCacheButton from './ClearCacheButton';
 
 const PanelDescription = styled.div`
 	grid-column: span 2;
@@ -106,17 +108,22 @@ const Settings = ( props ) => {
 					}
 					{ ...props }
 				/>
-				{ freemius_enabled && freemius_modifications && (
-					<Button
-						onClick={ () =>
-							setAttributes( {
-								freemius_modifications: undefined,
-							} )
-						}
-						variant="secondary"
-					>
-						{ __( 'Reset Modifications', 'freemius' ) }
-					</Button>
+				{ freemius_enabled && (
+					<Flex gap={ 2 }>
+						{ freemius_modifications && (
+							<Button
+								onClick={ () =>
+									setAttributes( {
+										freemius_modifications: undefined,
+									} )
+								}
+								variant="secondary"
+							>
+								{ __( 'Reset Modifications', 'freemius' ) }
+							</Button>
+						) }
+						<ClearCacheButton />
+					</Flex>
 				) }
 				<Spacer />
 				{ freemius_enabled && errorMessage && (

@@ -14,6 +14,7 @@ import {
 	TextControl,
 	Button,
 	SelectControl,
+	Flex,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { useContext, useEffect } from '@wordpress/element';
@@ -23,6 +24,7 @@ import { useContext, useEffect } from '@wordpress/element';
  */
 import { useData, useMapping } from '../hooks';
 import { FreemiusContext } from '../context';
+import ClearCacheButton from './ClearCacheButton';
 
 const MappingSettings = ( props ) => {
 	const { attributes } = props;
@@ -67,6 +69,9 @@ const MappingSettings = ( props ) => {
 				</h2>
 			) }
 
+			<Flex justify="flex-end">
+				<ClearCacheButton />
+			</Flex>
 			<Spacer />
 			{ isError && (
 				<>
