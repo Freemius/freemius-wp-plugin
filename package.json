@@ -46,7 +46,6 @@
 		"eslint": "^10.6.0",
 		"globals": "^15.14.0",
 		"prettier": "npm:wp-prettier@^3.0.3",
-		"sounds-webpack-plugin": "^0.0.2",
 		"webpack-remove-empty-scripts": "^1.0.4"
 	},
 	"overrides": {
