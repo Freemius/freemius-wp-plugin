@@ -117,7 +117,7 @@ Mapped blocks show a dotted outline in the editor. See [Field mapping](scopes/ma
 2. Enable **Freemius Checkout** on the button.
 3. Optionally map the button label to **Title** with a prefix/suffix (e.g. `Get ` + plan name + ` Plan`).
 
-![Freemius Checkout button selected in the editor with Freemius sidebar settings](../assets/button-checkout.png)
+![Pricing page editor with a checkout button selected and Enable Freemius Checkout outlined](../assets/pricing-page-checkout-button.png)
 
 The button inherits the column's plan and the outer scope's currency and billing cycle. See [Freemius Button](button.md).
 

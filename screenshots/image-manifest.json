@@ -177,6 +177,32 @@
 			}
 		},
 		{
+			"id": "pricing-page-checkout-button",
+			"title": "Pricing checkout button",
+			"description": "Editor view with a plan checkout button selected in the pricing table and the Enable Freemius Checkout toggle outlined in the sidebar.",
+			"use": "docs",
+			"match": [
+				"pricing checkout button",
+				"enable freemius checkout",
+				"plan button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-checkout-button/source.png",
+				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-checkout-button.png",
+				"alt": "Pricing page editor with a checkout button selected and Enable Freemius Checkout outlined",
+				"status": "captured"
+			}
+		},
+		{
 			"id": "pricing-page-modifiers-row",
 			"title": "Pricing modifier toggles",
 			"description": "Editor canvas showing the currency, billing cycle, and license modifier button row on the pricing page, with the row outlined.",

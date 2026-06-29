@@ -2259,6 +2259,192 @@ async function capturePricingPagePlanColumn( page, outputAbs, capture ) {
 }
 
 /**
+ * Checkout button inside a pricing plan column on the fixture page.
+ *
+ * @param {import('playwright').Page} page
+ * @returns {import('playwright').Locator}
+ */
+function pricingCheckoutButtonLocator( page ) {
+	const frame = page.frameLocator( 'iframe[name="editor-canvas"]' );
+
+	return frame
+		.locator( '.wp-block-column.has-freemius-scope' )
+		.filter( { hasText: 'Professional' } )
+		.locator(
+			'.wp-block-button.has-freemius-scope .wp-block-button__link'
+		)
+		.first();
+}
+
+/**
+ * Select the Professional plan checkout button in the pricing table.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function selectPricingCheckoutButton( page ) {
+	const button = pricingCheckoutButtonLocator( page );
+
+	if ( ( await button.count() ) === 0 ) {
+		throw new Error(
+			'Professional plan checkout button not found on fixture post 428 — add a Freemius-enabled button to each pricing column'
+		);
+	}
+
+	await button.click( { force: true } );
+	await page.waitForTimeout( 600 );
+
+	await page
+		.getByLabel( 'Enable Freemius Checkout', { exact: true } )
+		.waitFor( { state: 'visible', timeout: 10_000 } );
+}
+
+/**
+ * Bounding box for the Enable Freemius Checkout toggle annotation.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function getEnableFreemiusCheckoutAnnotationBoxes( page ) {
+	const freemiusPanel = page
+		.locator( '.freemius-button-scope-settings' )
+		.first();
+	const enableLabel = page.getByText( 'Enable Freemius Checkout', {
+		exact: true,
+	} );
+	const enableHelp = page.getByText(
+		'Open a Freemius Checkout when the button is clicked.',
+		{ exact: true }
+	);
+
+	await enableLabel.waitFor( { state: 'visible', timeout: 10_000 } );
+	await enableHelp.waitFor( { state: 'visible', timeout: 10_000 } );
+
+	const panelBox = await freemiusPanel.boundingBox();
+	const labelBox = await enableLabel.boundingBox();
+	const helpBox = await enableHelp.boundingBox();
+
+	if ( ! panelBox || ! labelBox || ! helpBox ) {
+		throw new Error(
+			'Enable Freemius Checkout control is not visible for pricing-page-checkout-button capture'
+		);
+	}
+
+	return {
+		x: panelBox.x,
+		y: labelBox.y,
+		width: panelBox.width,
+		height: helpBox.y + helpBox.height - labelBox.y,
+	};
+}
+
+/**
+ * Pricing page editor clip with a checkout button selected and the toggle outlined.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function capturePricingPageCheckoutButton( page, outputAbs, capture ) {
+	const pricingSection = pricingTableSectionLocator( page );
+	const columnsBlock = pricingPlanColumnsLocator( page );
+	const modifiersRow = pricingModifiersRowGroupLocator( page );
+	const checkoutButton = pricingCheckoutButtonLocator( page );
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await columnsBlock.waitFor( { state: 'visible', timeout: 10_000 } );
+	await checkoutButton.waitFor( { state: 'visible', timeout: 10_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const bodyBox = await editorBody.boundingBox();
+	const columnsBox = await columnsBlock.boundingBox();
+	const modifiersBox = await modifiersRow.boundingBox().catch( () => null );
+	const firstColumn = pricingPlanColumnLocator( page ).nth( 1 );
+	const firstColumnBox = await firstColumn.boundingBox();
+	const checkoutToggleBox = await getEnableFreemiusCheckoutAnnotationBoxes(
+		page
+	);
+
+	if ( ! bodyBox || ! columnsBox || ! firstColumnBox ) {
+		throw new Error(
+			'Pricing checkout button is not visible for pricing-page-checkout-button capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clipTop = modifiersBox
+		? Math.max( 0, modifiersBox.y - padding )
+		: Math.max( 0, columnsBox.y - padding );
+	const clipLeft = Math.max( bodyBox.x, firstColumnBox.x - padding );
+	const clip = {
+		x: clipLeft,
+		y: clipTop,
+		width: bodyBox.x + bodyBox.width - clipLeft,
+		height: columnsBox.y + columnsBox.height - clipTop + padding,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		checkoutToggleBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		checkoutToggleBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		checkoutToggleBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		checkoutToggleBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function preparePricingPageCheckoutButton( page ) {
+	await closeListViewIfOpen( page );
+	await ensureBlockSidebarOpen( page );
+	await ensureBlockInspectorTab( page );
+	await ensureBlockSettingsTab( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+	await selectPricingCheckoutButton( page );
+	await collapseLayoutPanel( page );
+	await openFreemiusPanel( page );
+	await scrollSidebarToTop( page );
+	await dismissAutosaveNoticeIfPresent( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function preparePricingPageModifiersRow( page ) {
@@ -2372,6 +2558,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'button-preview': prepareButtonPreview,
 	'scope-enable-checkout': prepareScopeEnableCheckout,
 	'scope-pricing-mapped': prepareScopePricingMapped,
+	'pricing-page-checkout-button': preparePricingPageCheckoutButton,
 	'pricing-page-modifiers-row': preparePricingPageModifiersRow,
 	'pricing-page-plan-column': preparePricingPagePlanColumn,
 	'scope-modifiers': prepareScopeModifiers,
@@ -2554,6 +2741,15 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'scope-enable-checkout' ) {
 			await captureScopeEnableCheckout( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'pricing-page-checkout-button' ) {
+			await capturePricingPageCheckoutButton(
+				page,
+				outputAbs,
+				entry.capture
+			);
 			return;
 		}
 
