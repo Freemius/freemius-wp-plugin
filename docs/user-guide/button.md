@@ -6,9 +6,9 @@ Use it **standalone** on any Button block — enable Freemius Checkout and confi
 
 ## Overview
 
-![Freemius Checkout button selected in the editor with Freemius sidebar settings](../assets/button-checkout.png)
+![Mapped Freemius checkout button in the pricing table with Freemius sidebar settings highlighted](../assets/button-overview.png)
 
-The example above uses a scoped group with a plan modifier and a core Button block with Freemius Checkout enabled. See [Scopes](scopes/README.md) and [Mapping](scopes/mapping.md) for building similar layouts.
+The example above shows a mapped checkout button inside a pricing table scope. See [Scopes](scopes/README.md) and [Mapping](scopes/mapping.md) for building similar layouts.
 
 For installation, your first checkout button, and testing with Preview, see [Getting started](getting-started.md).
 

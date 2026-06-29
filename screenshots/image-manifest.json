@@ -41,7 +41,6 @@
 			},
 			"embed": {
 				"from": "screenshots/button-checkout/source.png",
-				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-checkout.png",
 				"alt": "Freemius Checkout button selected in the editor with Freemius sidebar settings",
 				"status": "captured"
@@ -70,6 +69,32 @@
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-key-settings.png",
 				"alt": "Freemius options menu with additional checkout field toggles",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "button-overview",
+			"title": "Freemius Checkout button overview",
+			"description": "Pricing table editor with the Professional plan checkout button selected and the Freemius sidebar panel highlighted.",
+			"use": "docs",
+			"match": [
+				"button overview",
+				"mapped checkout button",
+				"pricing table button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/button-overview/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-overview.png",
+				"alt": "Mapped Freemius checkout button in the pricing table with Freemius sidebar settings highlighted",
 				"status": "captured"
 			}
 		},

@@ -2559,6 +2559,173 @@ async function capturePricingPageCheckoutButton( page, outputAbs, capture ) {
 }
 
 /**
+ * Bounding box for the Freemius panel annotation on the button overview shot.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function getButtonOverviewAnnotationBoxes( page ) {
+	const freemiusPanel = page
+		.locator( '.freemius-button-scope-settings' )
+		.first();
+	const panelHeader = freemiusPanel
+		.locator( '.components-tools-panel-header' )
+		.first();
+	const mappingHelp = page.getByText(
+		'Select which field you like to map.',
+		{ exact: true }
+	);
+
+	await freemiusPanel.waitFor( { state: 'visible', timeout: 10_000 } );
+	await panelHeader.waitFor( { state: 'visible', timeout: 10_000 } );
+	await mappingHelp.waitFor( { state: 'visible', timeout: 10_000 } );
+
+	const panelBox = await freemiusPanel.boundingBox();
+	const panelHeaderBox = await panelHeader.boundingBox();
+	const mappingHelpBox = await mappingHelp.boundingBox();
+
+	if ( ! panelBox || ! panelHeaderBox || ! mappingHelpBox ) {
+		throw new Error(
+			'Freemius panel or mapping controls are not visible for button-overview capture'
+		);
+	}
+
+	return {
+		x: panelBox.x,
+		y: panelHeaderBox.y,
+		width: panelBox.width,
+		height: mappingHelpBox.y + mappingHelpBox.height - panelHeaderBox.y,
+	};
+}
+
+/**
+ * Pricing table editor with a mapped checkout button and annotated Freemius panel.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureButtonOverview( page, outputAbs, capture ) {
+	const pricingSection = pricingTableSectionLocator( page );
+	const columnsBlock = pricingPlanColumnsLocator( page );
+	const modifiersRow = pricingModifiersRowGroupLocator( page );
+	const checkoutButton = pricingCheckoutButtonLocator( page );
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await columnsBlock.waitFor( { state: 'visible', timeout: 10_000 } );
+	await checkoutButton.waitFor( { state: 'visible', timeout: 10_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await pricingSection.scrollIntoViewIfNeeded();
+	await page.waitForTimeout( 300 );
+
+	const bodyBox = await editorBody.boundingBox();
+	const columnsBox = await columnsBlock.boundingBox();
+	const modifiersBox = await modifiersRow.boundingBox().catch( () => null );
+	const professionalColumn = pricingPlanColumnLocator( page ).nth( 1 );
+	const professionalColumnBox = await professionalColumn.boundingBox();
+	const panelBox = await getButtonOverviewAnnotationBoxes( page );
+	const buttonBox = await checkoutButton.boundingBox();
+
+	if ( ! bodyBox || ! columnsBox || ! professionalColumnBox || ! buttonBox ) {
+		throw new Error(
+			'Mapped checkout button is not visible for button-overview capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clipTop = modifiersBox
+		? Math.max( 0, modifiersBox.y - padding )
+		: Math.max( 0, columnsBox.y - padding );
+	const clipLeft = Math.max( bodyBox.x, professionalColumnBox.x - padding );
+	const clip = {
+		x: clipLeft,
+		y: clipTop,
+		width: bodyBox.x + bodyBox.width - clipLeft,
+		height: columnsBox.y + columnsBox.height - clipTop + padding,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		panelBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		panelBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		panelBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		panelBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	const tailX = snapPixel( buttonBox.x + buttonBox.width - clip.x );
+	const tailY = snapPixel( buttonBox.y + buttonBox.height / 2 - clip.y );
+	const tip = arrowTipBeforeRect(
+		tailX,
+		tailY,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		KEY_SETTINGS_ARROW_TIP_GAP
+	);
+
+	drawPngSolidArrow(
+		capturePng,
+		tailX,
+		tailY,
+		tip.x,
+		tip.y,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function prepareButtonOverview( page ) {
+	await closeListViewIfOpen( page );
+	await ensureBlockSidebarOpen( page );
+	await ensureBlockInspectorTab( page );
+	await ensureBlockSettingsTab( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+	await selectPricingCheckoutButton( page );
+	await collapseLayoutPanel( page );
+	await openFreemiusPanel( page );
+	await scrollSidebarToTop( page );
+	await dismissAutosaveNoticeIfPresent( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function preparePricingPageCheckoutButton( page ) {
@@ -3013,6 +3180,7 @@ async function prepareSettingsProducts( page ) {
 /** @type {Record<string, (page: import('playwright').Page) => Promise<void>>} */
 const PRE_CAPTURE_ACTIONS = {
 	'button-checkout': prepareButtonCheckout,
+	'button-overview': prepareButtonOverview,
 	'button-scopes': prepareButtonScopes,
 	'button-key-settings': prepareButtonKeySettings,
 	'button-track-callback': prepareButtonTrackCallback,
@@ -3199,6 +3367,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'button-checkout' ) {
 			await captureButtonCheckout( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'button-overview' ) {
+			await captureButtonOverview( page, outputAbs, entry.capture );
 			return;
 		}
 
