@@ -27,9 +27,9 @@ A typical pricing page has:
 
 ![Published Freemius pricing page with plan columns and billing toggles](../assets/pricing-page-playground.png)
 
-The editor view below shows the same layout with scope outlines (purple) and mapped fields (dotted):
+The editor view below shows the same layout with **purple scope outlines** around each Freemius-enabled block:
 
-![Pricing layout with Freemius scope and field mapping outlines](../assets/scope-pricing-mapped.png)
+![Pricing page in the block editor with purple Freemius scope outlines](../assets/scope-pricing-mapped.png)
 
 ## Before you start
 

@@ -20,6 +20,6 @@ Map plan fields from your Freemius product to block content inside a scope.
 
 Scoped blocks show a purple outline; mapped fields use a dotted outline:
 
-![Pricing layout with Freemius scope and field mapping outlines](../../assets/scope-pricing-mapped.png)
+![Pricing page in the block editor with purple Freemius scope outlines](../../assets/scope-pricing-mapped.png)
 
 Configure mappings in the block sidebar under **Freemius** when a scoped block is selected.

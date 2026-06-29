@@ -632,6 +632,13 @@ function isSettingsCapture( entry ) {
 }
 
 /**
+ * @param {{ id: string, capture: { selector?: string } }} entry
+ */
+function isEditorCanvasCapture( entry ) {
+	return entry.id === 'scope-pricing-mapped';
+}
+
+/**
  * @param {{ id: string, capture: { url: string } }} entry
  */
 function isFrontendCapture( entry ) {
@@ -1423,18 +1430,249 @@ async function prepareScopeEnableCheckout( page ) {
 }
 
 /**
+ * Pricing table section in the fixture post (matches the playground page).
+ *
+ * @param {import('playwright').Page} page
+ * @returns {import('playwright').Locator}
+ */
+function pricingTableSectionLocator( page ) {
+	return page
+		.frameLocator( 'iframe[name="editor-canvas"]' )
+		.locator( 'section.has-freemius-scope, .has-freemius-scope' )
+		.filter( { hasText: 'Freemius for WordPress' } )
+		.first()
+		.or(
+			page
+				.locator( 'section.has-freemius-scope, .has-freemius-scope' )
+				.filter( { hasText: 'Freemius for WordPress' } )
+				.first()
+		);
+}
+
+/**
+ * Collapse the block inspector Layout panel when it is expanded.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function collapseLayoutPanel( page ) {
+	await ensureBlockSidebarOpen( page );
+	await ensureBlockInspectorTab( page );
+	await ensureBlockSettingsTab( page );
+
+	const layoutToggles = [
+		page
+			.locator( '.interface-complementary-area' )
+			.getByRole( 'button', { name: 'Layout', exact: true } ),
+		page
+			.locator( '.block-editor-block-inspector' )
+			.getByRole( 'button', { name: 'Layout', exact: true } ),
+	];
+
+	for ( const toggle of layoutToggles ) {
+		if ( ( await toggle.count() ) === 0 ) {
+			continue;
+		}
+
+		const expanded = await toggle.first().getAttribute( 'aria-expanded' );
+		if ( expanded === 'true' ) {
+			await toggle.first().click();
+			await page.waitForTimeout( 300 );
+		}
+	}
+
+	await collapsePanelByTitle( page, 'Layout' );
+
+	await page.evaluate( () => {
+		const area = document.querySelector(
+			'.interface-complementary-area, .block-editor-block-inspector'
+		);
+		if ( ! area ) {
+			return;
+		}
+
+		area.querySelectorAll( '.components-panel__body' ).forEach( ( panel ) => {
+			const title = panel.querySelector( '.components-panel__body-title' );
+			if ( title?.textContent?.trim() !== 'Layout' ) {
+				return;
+			}
+
+			const toggle = panel.querySelector( '.components-panel__body-toggle' );
+			if ( toggle?.getAttribute( 'aria-expanded' ) === 'true' ) {
+				toggle.click();
+			}
+		} );
+	} );
+
+	await page.waitForTimeout( 300 );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function assertLayoutPanelCollapsed( page ) {
+	const expandedLayout = page
+		.locator( '.interface-complementary-area .components-panel__body' )
+		.filter( {
+			has: page.getByText( 'Layout', { exact: true } ),
+		} )
+		.locator( '.components-panel__body-toggle[aria-expanded="true"]' );
+
+	if ( ( await expandedLayout.count() ) > 0 ) {
+		throw new Error(
+			'Layout panel must be collapsed for scope-pricing-mapped capture'
+		);
+	}
+}
+
+/**
+ * Select the pricing table outer scope group and collapse the Layout panel.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function selectPricingTableScopeGroup( page ) {
+	const selected = await page.evaluate( () => {
+		const store = window.wp?.data;
+		if ( ! store ) {
+			return false;
+		}
+
+		const targetNames = [
+			'Pricing Table With Testimonials (Freemius)',
+			'Pricing Table (Freemius)',
+		];
+
+		/** @param {Array<{ clientId: string, name: string, attributes?: { metadata?: { name?: string }, freemius_enabled?: boolean }, innerBlocks?: unknown[] }>} blocks */
+		const findScopeGroup = ( blocks ) => {
+			for ( const block of blocks ) {
+				const metaName = block.attributes?.metadata?.name;
+
+				if (
+					block.attributes?.freemius_enabled &&
+					block.name === 'core/group' &&
+					metaName &&
+					targetNames.includes( metaName )
+				) {
+					return block.clientId;
+				}
+
+				const nested = findScopeGroup( block.innerBlocks ?? [] );
+				if ( nested ) {
+					return nested;
+				}
+			}
+
+			return null;
+		};
+
+		/** @param {Array<{ clientId: string, name: string, attributes?: { freemius_enabled?: boolean }, innerBlocks?: unknown[] }>} blocks */
+		const findFirstScopeGroup = ( blocks ) => {
+			for ( const block of blocks ) {
+				if (
+					block.attributes?.freemius_enabled &&
+					block.name === 'core/group'
+				) {
+					return block.clientId;
+				}
+
+				const nested = findFirstScopeGroup( block.innerBlocks ?? [] );
+				if ( nested ) {
+					return nested;
+				}
+			}
+
+			return null;
+		};
+
+		const clientId =
+			findScopeGroup( store.select( 'core/block-editor' ).getBlocks() ) ??
+			findFirstScopeGroup(
+				store.select( 'core/block-editor' ).getBlocks()
+			);
+
+		if ( ! clientId ) {
+			return false;
+		}
+
+		store.dispatch( 'core/block-editor' ).selectBlock( clientId );
+		return true;
+	} );
+
+	if ( ! selected ) {
+		const pricingSection = pricingTableSectionLocator( page );
+
+		if ( ( await pricingSection.count() ) === 0 ) {
+			throw new Error(
+				'Pricing table scope group not found on fixture post 428'
+			);
+		}
+
+		await pricingSection.click( { force: true } );
+	} else {
+		await page.waitForTimeout( 600 );
+	}
+
+	await closeListViewIfOpen( page );
+	await collapseLayoutPanel( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function prepareScopePricingMapped( page ) {
-	const mapped = canvasButtonLocator( page );
+	await closeListViewIfOpen( page );
 
-	if ( ( await mapped.count() ) > 0 ) {
-		await mapped.click();
-	} else {
-		await selectFirstButtonBlock( page );
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
 	}
 
+	await pricingSection.scrollIntoViewIfNeeded();
+	await selectPricingTableScopeGroup( page );
 	await page.waitForTimeout( 500 );
+}
+
+/**
+ * Editor canvas clip of the pricing table with Freemius scope outlines.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureScopePricingMapped( page, outputAbs, capture ) {
+	const body = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+	const pricingSection = pricingTableSectionLocator( page );
+
+	await pricingSection.waitFor( { state: 'visible', timeout: 15_000 } );
+	await body.waitFor( { state: 'visible', timeout: 10_000 } );
+	await assertLayoutPanelCollapsed( page );
+
+	const bodyBox = await body.boundingBox();
+	const sectionBox = await pricingSection.boundingBox();
+
+	if ( ! bodyBox || ! sectionBox ) {
+		throw new Error(
+			'Pricing table or editor body is not visible for scope-pricing-mapped capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clip = {
+		x: Math.max( 0, bodyBox.x ),
+		y: Math.max( 0, sectionBox.y - padding ),
+		width: bodyBox.width,
+		height: sectionBox.height + padding * 2,
+	};
+
+	await page.screenshot( {
+		path: outputAbs,
+		clip,
+	} );
 }
 
 /**
@@ -1666,6 +1904,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'settings-editor' ) {
 			await captureSettingsEditor( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( isEditorCanvasCapture( entry ) ) {
+			await captureScopePricingMapped( page, outputAbs, entry.capture );
 			return;
 		}
 

@@ -257,17 +257,18 @@
 		{
 			"id": "scope-pricing-mapped",
 			"title": "Mapped pricing with scopes",
-			"description": "Editor canvas showing scoped blocks with mapped plan fields (purple scope outline and dotted mapping outline).",
+			"description": "Block editor canvas of the pricing table layout with purple Freemius scope outlines (same content as the playground page).",
 			"use": "docs",
 			"match": [
 				"pricing",
 				"mapping",
-				"scope outline"
+				"scope outline",
+				"pricing page editor"
 			],
 			"capture": {
 				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
 				"viewports": [
-					"desktop"
+					"wide"
 				],
 				"selector": ".interface-interface-skeleton__editor",
 				"padding": 24
@@ -276,7 +277,7 @@
 				"from": "screenshots/scope-pricing-mapped/source.png",
 				"doc": "docs/user-guide/scopes/mapping.md",
 				"path": "docs/assets/scope-pricing-mapped.png",
-				"alt": "Pricing layout with Freemius scope and field mapping outlines",
+				"alt": "Pricing page in the block editor with purple Freemius scope outlines",
 				"status": "captured"
 			}
 		},
