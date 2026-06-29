@@ -1,5 +1,7 @@
 ---
 # Publishes the built ZIP to ci-artifacts and posts the Preview button on the PR.
+# Blueprint JSON is produced per PR in the build workflow from
+# .wordpress-org/blueprints/blueprint.json (including content.xml from the same commit).
 # Both preview workflows must exist on develop before previews work on other PRs.
 name: PR Preview - Publish
 
@@ -19,49 +21,4 @@ jobs:
             pull-requests: write
         uses: WordPress/action-wp-playground-pr-preview/.github/workflows/preview-publish.yml@v3
         with:
-            blueprint: |
-                {
-                  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-                  "landingPage": "/wp-admin/post.php?post=4&action=edit",
-                  "preferredVersions": {
-                    "php": "8.3",
-                    "wp": "latest"
-                  },
-                  "features": {
-                    "networking": true
-                  },
-                  "login": true,
-                  "siteOptions": {
-                    "blogname": "Freemius for WordPress"
-                  },
-                  "steps": [
-                    {
-                      "step": "installPlugin",
-                      "pluginZipFile": {
-                        "resource": "url",
-                        "url": "{{ARTIFACT_URL:freemius}}"
-                      },
-                      "options": {
-                        "activate": true
-                      }
-                    },
-                    {
-                      "step": "installTheme",
-                      "themeData": {
-                        "resource": "wordpress.org/themes",
-                        "slug": "ollie"
-                      }
-                    },
-                    {
-                      "step": "importWxr",
-                      "file": {
-                        "resource": "url",
-                        "url": "https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/develop/.wordpress-org/blueprints/content.xml"
-                      }
-                    },
-                    {
-                      "step": "runPHP",
-                      "code": "<?php require '/wordpress/wp-load.php'; update_option( 'freemius_products', array( array( 'product_id' => 19794, 'token' => '1234567890' ) ) );"
-                    }
-                  ]
-                }
+            blueprint-from-artifact: true

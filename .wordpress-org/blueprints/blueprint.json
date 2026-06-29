@@ -1,6 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "/wp-admin/post.php?post=4&action=edit",
+	"landingPage": "/wp-admin/post.php?post=428&action=edit",
 	"preferredVersions": {
 		"php": "8.3",
 		"wp": "latest"
@@ -31,10 +31,20 @@
 			}
 		},
 		{
+			"step": "resetData"
+		},
+		{
 			"step": "importWxr",
 			"file": {
 				"resource": "url",
 				"url": "https://raw.githubusercontent.com/Freemius/freemius-wp-plugin/refs/heads/main/.wordpress-org/blueprints/content.xml"
+			}
+		},
+		{
+			"step": "setSiteOptions",
+			"options": {
+				"show_on_front": "page",
+				"page_on_front": 428
 			}
 		},
 		{
