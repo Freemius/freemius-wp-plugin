@@ -1,0 +1,22 @@
+---
+# Builds freemius.zip from the PR branch. After this workflow is merged to
+# develop, subsequent PRs get a Playground Preview button once publish runs.
+name: PR Preview - Build
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, edited]
+
+jobs:
+    build:
+        uses: WordPress/action-wp-playground-pr-preview/.github/workflows/preview-build.yml@v3
+        with:
+            artifacts: freemius=freemius.zip
+            node-version: '24'
+            php-version: '8.2'
+            build-command: |
+                set -euo pipefail
+                npm ci
+                composer install --no-dev --optimize-autoloader --no-interaction
+                npm run build
+                npm run plugin-zip
