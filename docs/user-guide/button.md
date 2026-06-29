@@ -15,7 +15,6 @@ For installation, your first checkout button, and testing with Preview, see [Get
 ## Key settings
 
 - **Product ID** — Freemius product ID (required)
-- **Public Key** — Freemius public key (required)
 - **Plan ID**, **Pricing ID**, **Billing Cycle**, **Currency**, **Quantity**, **Coupon**
 - **Success URL**, **Cancel URL**, **Custom Fields**
 
