@@ -132,7 +132,7 @@ Plan features (bullet lists, checkmarks, separators) are ordinary blocks — add
 3. On the frontend, click the currency and billing modifiers and confirm prices and labels look correct for the data you just saved.
 4. When everything looks right, **Publish** (or **Update**) the page.
 
-![Preview button in the Freemius button settings sidebar](../assets/button-preview.png)
+![Pricing page editor with checkout preview open and the Preview button outlined](../assets/pricing-page-preview.png)
 
 After you change pricing on the Freemius site, repeat these steps: open the page in the editor, wait for fresh data (clear cache if needed), then **Update** the page again.
 

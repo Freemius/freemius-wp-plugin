@@ -2270,9 +2270,7 @@ function pricingCheckoutButtonLocator( page ) {
 	return frame
 		.locator( '.wp-block-column.has-freemius-scope' )
 		.filter( { hasText: 'Professional' } )
-		.locator(
-			'.wp-block-button.has-freemius-scope .wp-block-button__link'
-		)
+		.locator( '.wp-block-button.has-freemius-scope' )
 		.first();
 }
 
@@ -2445,6 +2443,296 @@ async function preparePricingPageCheckoutButton( page ) {
 }
 
 /**
+ * Scroll the block sidebar so the Preview button is visible.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function scrollSidebarToPreviewButton( page ) {
+	await ensureBlockSidebarOpen( page );
+
+	const previewButton = previewButtonLocator( page );
+
+	if ( ( await previewButton.count() ) > 0 ) {
+		await previewButton.scrollIntoViewIfNeeded();
+		await page.waitForTimeout( 300 );
+		return;
+	}
+
+	await page.evaluate( () => {
+		const area = document.querySelector(
+			'.interface-complementary-area, .edit-post-sidebar'
+		);
+		const preview = Array.from( area?.querySelectorAll( 'button' ) ?? [] ).find(
+			( button ) => button.textContent?.trim() === 'Preview'
+		);
+
+		preview?.scrollIntoView( { block: 'center' } );
+	} );
+
+	await page.waitForTimeout( 300 );
+}
+
+/**
+ * Locator for the Freemius Preview control in the block sidebar.
+ *
+ * @param {import('playwright').Page} page
+ * @returns {import('playwright').Locator}
+ */
+function previewButtonLocator( page ) {
+	return page
+		.locator( '.freemius-button-scope-settings' )
+		.locator( 'button' )
+		.filter( { hasText: /^Preview$/ } )
+		.first();
+}
+
+/**
+ * Open the Freemius checkout preview overlay in the editor iframe.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function openPricingCheckoutPreview( page ) {
+	const previewButton = previewButtonLocator( page );
+
+	await previewButton.waitFor( { state: 'visible', timeout: 20_000 } );
+	await previewButton.click();
+
+	await page.waitForFunction(
+		() => {
+			if (
+				document.body.classList.contains( 'freemius-checkout-preview' )
+			) {
+				return true;
+			}
+
+			const iframe = document.querySelector(
+				'iframe[name="editor-canvas"]'
+			);
+			const doc = iframe?.contentDocument;
+
+			return !! (
+				doc?.querySelector( '[id^="fs-checkout-page-"]' ) ||
+				doc?.querySelector( 'div[data-testid]' )
+			);
+		},
+		{ timeout: 45_000 }
+	);
+
+	await page
+		.frameLocator( 'iframe[name="editor-canvas"]' )
+		.locator( '[id^="fs-checkout-page-"], div[data-testid]' )
+		.first()
+		.waitFor( { state: 'visible', timeout: 15_000 } );
+
+	await page.waitForTimeout( 1500 );
+}
+
+/**
+ * Bounding box for the Preview button annotation in the Freemius sidebar.
+ *
+ * @param {import('playwright').Page} page
+ */
+async function getPreviewButtonAnnotationBox( page ) {
+	const previewButton = previewButtonLocator( page );
+
+	await previewButton.waitFor( { state: 'visible', timeout: 20_000 } );
+
+	const box = await previewButton.boundingBox();
+
+	if ( ! box ) {
+		throw new Error(
+			'Preview button is not visible for pricing-page-preview capture'
+		);
+	}
+
+	return box;
+}
+
+/**
+ * Scroll the editor canvas so the checkout preview modal is fully visible.
+ *
+ * @param {import('playwright').Page} page
+ * @param {{ padding?: number }} capture
+ */
+async function ensureCheckoutOverlayFullyVisible( page, capture ) {
+	const checkoutOverlay = page
+		.frameLocator( 'iframe[name="editor-canvas"]' )
+		.locator( '[id^="fs-checkout-page-"], div[data-testid]' )
+		.first();
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+
+	await checkoutOverlay.waitFor( { state: 'visible', timeout: 15_000 } );
+
+	const padding = capture.padding ?? 24;
+	let checkoutBox = await checkoutOverlay.boundingBox();
+	const bodyBox = await editorBody.boundingBox();
+
+	if ( ! checkoutBox || ! bodyBox ) {
+		throw new Error(
+			'Checkout preview overlay is not visible for pricing-page-preview capture'
+		);
+	}
+
+	for ( let attempt = 0; attempt < 4; attempt += 1 ) {
+		const checkoutBottom = checkoutBox.y + checkoutBox.height;
+		const checkoutTop = checkoutBox.y;
+		const bodyBottom = bodyBox.y + bodyBox.height;
+		const bodyTop = bodyBox.y;
+		let delta = 0;
+
+		if ( checkoutBottom > bodyBottom - padding ) {
+			delta = checkoutBottom - bodyBottom + padding + 48;
+		} else if ( checkoutTop < bodyTop + padding ) {
+			delta = checkoutTop - bodyTop - padding - 48;
+		}
+
+		if ( Math.abs( delta ) < 4 ) {
+			break;
+		}
+
+		await scrollEditorCanvasBy( page, delta );
+		await page.waitForTimeout( 400 );
+
+		checkoutBox = await checkoutOverlay.boundingBox();
+		if ( ! checkoutBox ) {
+			break;
+		}
+	}
+}
+
+/**
+ * Editor view with checkout preview open and the Preview button outlined.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function capturePricingPagePreview( page, outputAbs, capture ) {
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+	const checkoutOverlay = page
+		.frameLocator( 'iframe[name="editor-canvas"]' )
+		.locator( '[id^="fs-checkout-page-"], div[data-testid]' )
+		.first();
+
+	await checkoutOverlay.waitFor( { state: 'visible', timeout: 15_000 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await ensureCheckoutOverlayFullyVisible( page, capture );
+
+	const bodyBox = await editorBody.boundingBox();
+	const checkoutBox = await checkoutOverlay.boundingBox();
+	const previewButtonBox = await getPreviewButtonAnnotationBox( page );
+
+	if ( ! bodyBox || ! checkoutBox ) {
+		throw new Error(
+			'Pricing preview overlay is not visible for pricing-page-preview capture'
+		);
+	}
+
+	const padding = capture.padding ?? 24;
+	const clipTop = Math.max(
+		0,
+		Math.min( bodyBox.y, checkoutBox.y ) - padding
+	);
+	const clipBottom =
+		Math.max(
+			bodyBox.y + bodyBox.height,
+			checkoutBox.y + checkoutBox.height
+		) + padding;
+	const clip = {
+		x: Math.max( 0, bodyBox.x - padding ),
+		y: clipTop,
+		width: bodyBox.width + padding * 2,
+		height: clipBottom - clipTop,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		previewButtonBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		previewButtonBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		previewButtonBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		previewButtonBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	const tailX = snapPixel( highlightX - 50 );
+	const tailY = snapPixel( highlightY + highlightHeight / 2 );
+	const tip = arrowTipBeforeRect(
+		tailX,
+		tailY,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		KEY_SETTINGS_ARROW_TIP_GAP
+	);
+
+	drawPngSolidArrow(
+		capturePng,
+		tailX,
+		tailY,
+		tip.x,
+		tip.y,
+		ANNOTATION_RED
+	);
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
+ * @param {import('playwright').Page} page
+ */
+async function preparePricingPagePreview( page ) {
+	await closeListViewIfOpen( page );
+	await ensureBlockSidebarOpen( page );
+	await ensureBlockInspectorTab( page );
+	await ensureBlockSettingsTab( page );
+
+	const pricingSection = pricingTableSectionLocator( page );
+
+	if ( ( await pricingSection.count() ) === 0 ) {
+		throw new Error(
+			'Pricing table section not found on fixture post 428 — add the Freemius pricing layout from the playground'
+		);
+	}
+
+	await pricingSection.scrollIntoViewIfNeeded();
+	await selectPricingCheckoutButton( page );
+	await collapseLayoutPanel( page );
+	await openFreemiusPanel( page );
+	await ensureCheckoutEnabled( page );
+	await page.waitForTimeout( 1500 );
+	await scrollSidebarToPreviewButton( page );
+	await openPricingCheckoutPreview( page );
+	await ensureCheckoutOverlayFullyVisible( page, { padding: 24 } );
+	await dismissAutosaveNoticeIfPresent( page );
+	await page.waitForTimeout( 300 );
+}
+
+/**
  * @param {import('playwright').Page} page
  */
 async function preparePricingPageModifiersRow( page ) {
@@ -2561,6 +2849,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'pricing-page-checkout-button': preparePricingPageCheckoutButton,
 	'pricing-page-modifiers-row': preparePricingPageModifiersRow,
 	'pricing-page-plan-column': preparePricingPagePlanColumn,
+	'pricing-page-preview': preparePricingPagePreview,
 	'scope-modifiers': prepareScopeModifiers,
 	'settings-editor': prepareSettingsEditor,
 	'settings-products': prepareSettingsProducts,
@@ -2768,6 +3057,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 				outputAbs,
 				entry.capture
 			);
+			return;
+		}
+
+		if ( entry.id === 'pricing-page-preview' ) {
+			await capturePricingPagePreview( page, outputAbs, entry.capture );
 			return;
 		}
 

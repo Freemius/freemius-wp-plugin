@@ -281,6 +281,32 @@
 			}
 		},
 		{
+			"id": "pricing-page-preview",
+			"title": "Pricing checkout preview",
+			"description": "Editor view with the Freemius checkout preview overlay open and the Preview button outlined in the sidebar.",
+			"use": "docs",
+			"match": [
+				"pricing preview",
+				"checkout preview popup",
+				"preview button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-preview/source.png",
+				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-preview.png",
+				"alt": "Pricing page editor with checkout preview open and the Preview button outlined",
+				"status": "captured"
+			}
+		},
+		{
 			"id": "scope-enable-checkout",
 			"title": "Enable Freemius on scope",
 			"description": "Block editor with a scoped Group block selected, purple scope outline on the canvas, and the Freemius sidebar panel highlighted.",
