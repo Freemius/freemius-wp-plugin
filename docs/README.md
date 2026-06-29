@@ -54,9 +54,9 @@ For step-by-step guides in this documentation, see [Getting started](getting-sta
 | [Getting started](getting-started.md) | Install the plugin, connect your Freemius product, add a checkout button, and build a pricing page |
 | [Creating your Pricing page](creating-your-pricing-page.md) | Build a multi-plan pricing page with modifiers, scoped columns, mapped fields, and checkout buttons |
 | [Freemius Button](button.md) | Enable checkout on a button, scopes, preview, and optional settings |
-| [Scopes](scopes/README.md) | Nested pricing contexts on one page (groups, columns, buttons) |
-| [Field mapping](scopes/mapping.md) | Pull plan price, title, description, and billing labels into blocks |
-| [Scope modifiers](scopes/modifiers.md) | Currency, billing cycle, and license toggles on the page |
+| [Scopes](scopes.md) | Nested pricing contexts on one page (groups, columns, buttons) |
+| [Field mapping](mapping.md) | Pull plan price, title, description, and billing labels into blocks |
+| [Scope modifiers](modifiers.md) | Currency, billing cycle, and license toggles on the page |
 | [Settings](settings.md) | Admin tabs: Products, Editor Settings, and site-wide defaults |
 
 ## FAQs

@@ -353,7 +353,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-columns-overview/source.png",
-				"doc": "docs/scopes/README.md",
+				"doc": "docs/scopes.md",
 				"path": "docs/assets/scope-columns-overview.png",
 				"alt": "Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted",
 				"status": "captured"
@@ -404,7 +404,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-modifiers/source.png",
-				"doc": "docs/scopes/modifiers.md",
+				"doc": "docs/modifiers.md",
 				"path": "docs/assets/scope-modifiers.png",
 				"alt": "Freemius Scope modifier block in the block editor",
 				"status": "captured"
@@ -431,7 +431,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-pricing-mapped/source.png",
-				"doc": "docs/scopes/mapping.md",
+				"doc": "docs/mapping.md",
 				"path": "docs/assets/scope-pricing-mapped.png",
 				"alt": "Pricing page in the block editor with purple Freemius scope outlines",
 				"status": "captured"

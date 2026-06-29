@@ -73,7 +73,7 @@ Let visitors change currency, billing cycle, and license count without leaving t
 
 ![Pricing page editor with the modifier toggle row outlined](assets/pricing-page-modifiers-row.png)
 
-Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](scopes/modifiers.md) for details.
+Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](modifiers.md) for details.
 
 ## Step 4: Add a column scope and map plan fields
 
@@ -88,7 +88,7 @@ Each Freemius plan needs its **own scope** on the page — usually a **Column** 
 
 ![Pricing page editor with one plan column selected and outlined](assets/pricing-page-plan-column.png)
 
-Repeat for every column. Blocks inside a column inherit that column's plan. See [Scopes](scopes/README.md) for how nested scopes work.
+Repeat for every column. Blocks inside a column inherit that column's plan. See [Scopes](scopes.md) for how nested scopes work.
 
 ### Map prices and copy inside each column
 
@@ -109,7 +109,7 @@ Inside each column, add blocks and map Freemius fields so prices and copy are fi
 3. Under **Field mapping**, choose the field (Price, Title, Description, etc.).
 4. Optionally set a **prefix** or **suffix** on the mapping (for example `Get ` and ` Plan` on a button label).
 
-Mapped blocks show a dotted outline in the editor. See [Field mapping](scopes/mapping.md).
+Mapped blocks show a dotted outline in the editor. See [Field mapping](mapping.md).
 
 ## Step 5: Add a checkout button per plan
 
@@ -146,7 +146,7 @@ After you change pricing on the Freemius site, repeat these steps: open the page
 
 ## Related guides
 
-- [Scopes](scopes/README.md) — how nested scopes inherit settings
-- [Field mapping](scopes/mapping.md) — supported fields and blocks
-- [Scope modifiers](scopes/modifiers.md) — currency, billing, and license toggles
+- [Scopes](scopes.md) — how nested scopes inherit settings
+- [Field mapping](mapping.md) — supported fields and blocks
+- [Scope modifiers](modifiers.md) — currency, billing, and license toggles
 - [Freemius Button](button.md) — checkout buttons and preview

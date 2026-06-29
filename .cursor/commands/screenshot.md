@@ -84,6 +84,6 @@ Run all manifest entries with `capture` blocks; embed docs entries when `embed.f
 2. Set `use`, `title`, `description`, optional `match`.
 3. For `docs`: `embed` with `status: placeholder` until captured.
 4. For Playwright: `capture.url` (use `FIXTURE_POST_ID` token in URL), `capture.viewports`, optional `selector`.
-5. Add `![alt](assets/….png)` (or `../assets/….png` under `docs/scopes/`) to the target docs page (user-facing prose only). Run `npm run sync:screenshot-captions` to strip any accidental caption lines.
+5. Add `![alt](assets/….png)` to the target docs page (user-facing prose only). Run `npm run sync:screenshot-captions` to strip any accidental caption lines.
 
 Execute the full workflow for the detected input mode unless the user narrowed scope.

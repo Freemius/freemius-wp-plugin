@@ -9,7 +9,7 @@ A scope can be enabled on these blocks (or their children):
 - Column Block
 - Button Block
 
-![Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted](../assets/scope-columns-overview.png)
+![Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted](assets/scope-columns-overview.png)
 
 In the editor, each plan column is its own scope (arrows above). A typical pricing page has one scope per plan column, plus an outer scope for the whole pricing area.
 
@@ -23,4 +23,4 @@ Each scope inherits properties from its parent scope. The outermost scope inheri
 
 - [Field mapping](mapping.md) — bind plan fields to block content
 - [Scope modifiers](modifiers.md) — change settings for the parent scope
-- [Freemius Button](../button.md) — button-level checkout and scopes
+- [Freemius Button](button.md) — button-level checkout and scopes
