@@ -2,30 +2,15 @@
 
 The Freemius Button extends the core Button block with Freemius Checkout. When enabled, clicking the button opens the Freemius Checkout popup.
 
+Use it **standalone** on any Button block — enable Freemius Checkout and configure checkout on the button itself. Or place it **inside a scope** (a Freemius-enabled Group, Column, or similar block) so it inherits product, plan, and modifiers from that scope.
+
 ## Overview
 
 ![Freemius Checkout button selected in the editor with Freemius sidebar settings](../assets/button-checkout.png)
 
 The example above uses a scoped group with a plan modifier and a core Button block with Freemius Checkout enabled. See [Scopes](scopes/README.md) and [Mapping](scopes/mapping.md) for building similar layouts.
 
-## Getting started
-
-1. Install [Freemius for WordPress](https://wordpress.org/plugins/freemius/).
-2. Add a Button block to your content.
-3. Enable **Freemius Checkout** in the block sidebar.
-4. Configure settings as needed.
-
-## Configuration scopes
-
-Button settings can be configured at three scopes:
-
-1. **Global** — site-wide defaults (Editor Settings)
-2. **Page** — current post or page
-3. **Button** — this button only
-
-![Freemius configuration scopes in the block editor sidebar](../assets/button-scopes.png)
-
-More specific scopes override broader ones.
+For installation, your first checkout button, and testing with Preview, see [Getting started](getting-started.md).
 
 ## Key settings
 
@@ -66,6 +51,6 @@ Use **Preview** in the sidebar or toolbar to test checkout. **Auto Refresh** upd
 
 ## Tips
 
-- Set common options at global scope; override on page or button when needed
+- Inside a scope, the button inherits parent settings; override on the button only when needed
 - Test with Preview before publishing
 - Use callbacks to integrate analytics or custom flows

@@ -12,7 +12,7 @@ Define site-wide defaults for checkout fields (such as Product ID and Plan). Eve
 
 ![Editor Settings tab on the Freemius settings page](../assets/settings-editor.png)
 
-Page- and block-level settings override these defaults. See [Configuration scopes](button.md#configuration-scopes) on the button guide.
+Scoped blocks and buttons override these defaults. See [Scopes](scopes/README.md) and [Freemius Button](button.md).
 
 ## Products
 
