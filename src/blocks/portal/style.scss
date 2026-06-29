@@ -1,6 +1,5 @@
 .wp-block-freemius-portal {
 	overflow: hidden;
-	min-height: min(75vh, 900px);
 }
 
 .freemius-portal-root {
@@ -38,18 +37,6 @@
 	&--hidden {
 		visibility: hidden;
 	}
-}
-
-.freemius-portal-placeholder {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 300px;
-	padding: 1.5rem;
-	text-align: center;
-	color: #757575;
-	background: #f0f0f0;
-	border: 1px dashed #ccc;
 }
 
 .freemius-portal-error {
