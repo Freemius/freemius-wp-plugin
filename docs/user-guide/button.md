@@ -40,8 +40,6 @@ Use **Track Callback** for advanced tracking across checkout events (currency ch
 
 For more `track` events, see the [Freemius checkout track documentation](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/#track).
 
-Examples: [Freemius tracking docs](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/#tracking_purchases_with_google_analytics_and_facebook).
-
 ## Preview
 
 ![Pricing page editor with checkout preview open and the Preview button outlined](../assets/pricing-page-preview.png)
