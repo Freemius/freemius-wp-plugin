@@ -45,7 +45,7 @@ Examples: [Freemius tracking docs](https://freemius.com/help/documentation/selli
 
 ## Preview
 
-![Preview button in the Freemius button settings sidebar](../assets/button-preview.png)
+![Pricing page editor with checkout preview open and the Preview button outlined](../assets/pricing-page-preview.png)
 
 Use **Preview** in the sidebar or toolbar to test checkout. **Auto Refresh** updates the preview when settings change.
 
