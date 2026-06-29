@@ -14,12 +14,21 @@ import {
 	updateHash,
 } from '../lib/portal-hash';
 import {
-	applyCssToElement,
 	createGuid,
 	detectFlashingBrowser,
 	isRunningInIframe,
-	MAX_ZINDEX,
 } from '../lib/portal-utils';
+
+/**
+ * @param {HTMLElement | null} el
+ * @param {number} heightPx
+ */
+function setPortalHeight( el, heightPx ) {
+	if ( ! el ) {
+		return;
+	}
+	el.style.setProperty( '--freemius-portal-height', heightPx + 'px' );
+}
 
 /**
  * @param {{
@@ -95,15 +104,7 @@ export function usePortalEmbed( {
 				store_id: storeId,
 				public_key: publicKey,
 				guid,
-				css: {
-					width: '100%',
-					minHeight: height + 'px',
-					height: height + 'px',
-					position: 'relative',
-				},
 			} );
-
-			applyCssToElement( container, options.css );
 
 			tryFixEncoding( win );
 
@@ -112,17 +113,13 @@ export function usePortalEmbed( {
 			iframe = doc.createElement( 'iframe' );
 			iframe.id = guid;
 			iframe.src = src;
-			iframe.width = '100%';
-			iframe.height = '100%';
+			iframe.className = 'freemius-portal-iframe';
 			iframe.setAttribute( 'allowtransparency', 'true' );
 			iframe.setAttribute( 'frameborder', '0' );
 			iframe.title = 'Freemius Customer Portal';
-			iframe.style.cssText =
-				'z-index: ' +
-				MAX_ZINDEX +
-				'; background: rgba(0,0,0,0.003); border: 0px none transparent; visibility: ' +
-				( isFlashingBrowser ? 'hidden' : 'visible' ) +
-				'; margin: 0px; padding: 0; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; -webkit-tap-highlight-color: transparent; overflow: hidden;';
+			if ( isFlashingBrowser ) {
+				iframe.classList.add( 'freemius-portal-iframe--hidden' );
+			}
 
 			container.appendChild( iframe );
 			iframeRef.current = iframe;
@@ -185,7 +182,10 @@ export function usePortalEmbed( {
 
 			hub.receive( 'height', function ( data ) {
 				if ( data && data.height != null && container ) {
-					container.style.height = data.height + 'px';
+					setPortalHeight(
+						container.closest( '.freemius-portal-root' ),
+						data.height
+					);
 				}
 			} );
 
@@ -228,7 +228,9 @@ export function usePortalEmbed( {
 					hub.postScroll( iframe );
 
 					if ( isFlashingBrowser && iframe ) {
-						iframe.style.visibility = 'visible';
+						iframe.classList.remove(
+							'freemius-portal-iframe--hidden'
+						);
 					}
 
 					setIsLoading( false );
@@ -284,17 +286,7 @@ export function usePortalEmbed( {
 	] );
 
 	useEffect( () => {
-		const container = containerRef.current?.parentElement;
-		if ( ! container ) {
-			return;
-		}
-		applyCssToElement( container, {
-			minHeight: height + 'px',
-		} );
-		applyCssToElement( containerRef.current, {
-			minHeight: height + 'px',
-			height: height + 'px',
-		} );
+		setPortalHeight( containerRef.current?.parentElement ?? null, height );
 	}, [ height, containerRef ] );
 
 	return { isLoading, error, iframeRef };

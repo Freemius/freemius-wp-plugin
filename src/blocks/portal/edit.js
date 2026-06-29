@@ -19,6 +19,7 @@ import {
  * Internal dependencies
  */
 import './editor.scss';
+import './style.scss';
 import PortalEmbed from './components/PortalEmbed';
 
 const MIN_HEIGHT = 300;

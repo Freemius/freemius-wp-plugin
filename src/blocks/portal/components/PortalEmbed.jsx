@@ -57,23 +57,11 @@ export default function PortalEmbed( {
 		<div
 			className="freemius-portal-root fs_dashboard_container"
 			style={ {
-				width: '100%',
-				minHeight: height,
-				position: 'relative',
-				overflow: 'hidden',
+				'--freemius-portal-height': `${ height }px`,
 				...( containerCss || {} ),
 			} }
 		>
-			<div
-				ref={ containerRef }
-				className="freemius-portal-iframe-host"
-				style={ {
-					width: '100%',
-					height: '100%',
-					minHeight: height,
-					position: 'relative',
-				} }
-			/>
+			<div ref={ containerRef } className="freemius-portal-iframe-host" />
 			{ isLoading && <PortalLoader /> }
 			{ error && (
 				<div className="freemius-portal-error" role="alert">
