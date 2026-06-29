@@ -1,7 +1,7 @@
 /**
  * Strip contributor-only caption lines from user-facing docs.
  *
- * User docs under docs/user-guide/ must not contain manifest placeholders
+ * User docs under docs/ must not contain manifest placeholders
  * or generated italic captions — only plugin guidance and images.
  *
  * Usage:
@@ -13,7 +13,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const rootDir = resolve( dirname( fileURLToPath( import.meta.url ) ), '..' );
-const userGuideDir = resolve( rootDir, 'docs/user-guide' );
+const docsDir = resolve( rootDir, 'docs' );
 
 /** @param {string} dir */
 function collectMarkdownFiles( dir ) {
@@ -47,7 +47,7 @@ function stripContributorCaptions( markdown ) {
 }
 
 function main() {
-	const files = collectMarkdownFiles( userGuideDir );
+	const files = collectMarkdownFiles( docsDir );
 	let updatedCount = 0;
 
 	for ( const abs of files ) {
@@ -64,7 +64,7 @@ function main() {
 	}
 
 	console.log(
-		`Caption cleanup: ${ updatedCount } updated (${ files.length } user-guide files scanned).`
+		`Caption cleanup: ${ updatedCount } updated (${ files.length } doc files scanned).`
 	);
 }
 

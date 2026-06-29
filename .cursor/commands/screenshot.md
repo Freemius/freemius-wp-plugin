@@ -31,7 +31,7 @@ See [`screenshots/fixture-post-428.md`](../../screenshots/fixture-post-428.md).
 | `capture` | Playwright: `url`, `viewports`, optional `selector`, `padding` |
 | `embed` | `use: docs` — `from`, `doc`, `path`, `alt`, `status` |
 
-**`use: docs`** — Copy `embed.from` → `embed.path`, set `embed.status` to `captured`. Do **not** add workflow text to `docs/user-guide/` markdown (images only).
+**`use: docs`** — Copy `embed.from` → `embed.path`, set `embed.status` to `captured`. Do **not** add workflow text to `docs/` markdown (images only).
 
 **`use: review`** — QA only; `npm run update-screenshots -- {id}` writes `screenshots/{id}/source.png`.
 
@@ -44,7 +44,7 @@ Doc bulk regen uses **desktop** viewport only (1280×800).
 1. Infer manifest entry from `title`, `description`, `match`, `embed.alt`.
 2. Confirm with the user.
 3. Save as `screenshots/{id}/source.png`.
-4. For `docs`: confirm alt text, copy to `embed.path`, ensure `![alt](…)` already exists in user-guide markdown, set `embed.status` to `captured`.
+4. For `docs`: confirm alt text, copy to `embed.path`, ensure `![alt](…)` already exists in docs markdown, set `embed.status` to `captured`.
 5. Rewrite manifest using [Determinism rules](#determinism-rules).
 
 ### 2. URL passed
@@ -68,7 +68,7 @@ Run all manifest entries with `capture` blocks; embed docs entries when `embed.f
 
 ## Alt text
 
-`embed.alt` must match the `![alt](…)` line already in `docs/user-guide/`. Propose alt text and **ask the user to confirm** before first embed. Bulk `update-screenshots` does not edit user-guide markdown.
+`embed.alt` must match the `![alt](…)` line already in `docs/`. Propose alt text and **ask the user to confirm** before first embed. Bulk `update-screenshots` does not edit docs markdown.
 
 ## Determinism rules
 
@@ -84,6 +84,6 @@ Run all manifest entries with `capture` blocks; embed docs entries when `embed.f
 2. Set `use`, `title`, `description`, optional `match`.
 3. For `docs`: `embed` with `status: placeholder` until captured.
 4. For Playwright: `capture.url` (use `FIXTURE_POST_ID` token in URL), `capture.viewports`, optional `selector`.
-5. Add `![alt](../assets/….png)` to the target user-guide page (user-facing prose only). Run `npm run sync:screenshot-captions` to strip any accidental caption lines.
+5. Add `![alt](assets/….png)` (or `../assets/….png` under `docs/scopes/`) to the target docs page (user-facing prose only). Run `npm run sync:screenshot-captions` to strip any accidental caption lines.
 
 Execute the full workflow for the detected input mode unless the user narrowed scope.

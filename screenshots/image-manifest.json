@@ -66,7 +66,7 @@
 			},
 			"embed": {
 				"from": "screenshots/button-key-settings/source.png",
-				"doc": "docs/user-guide/button.md",
+				"doc": "docs/button.md",
 				"path": "docs/assets/button-key-settings.png",
 				"alt": "Freemius options menu with additional checkout field toggles",
 				"status": "captured"
@@ -92,7 +92,7 @@
 			},
 			"embed": {
 				"from": "screenshots/button-overview/source.png",
-				"doc": "docs/user-guide/button.md",
+				"doc": "docs/button.md",
 				"path": "docs/assets/button-overview.png",
 				"alt": "Mapped Freemius checkout button in the pricing table with Freemius sidebar settings highlighted",
 				"status": "captured"
@@ -117,7 +117,7 @@
 			},
 			"embed": {
 				"from": "screenshots/button-preview/source.png",
-				"doc": "docs/user-guide/button.md",
+				"doc": "docs/button.md",
 				"path": "docs/assets/button-preview.png",
 				"alt": "Preview button in the Freemius button settings sidebar",
 				"status": "captured"
@@ -143,7 +143,7 @@
 			},
 			"embed": {
 				"from": "screenshots/button-scopes/source.png",
-				"doc": "docs/user-guide/button.md",
+				"doc": "docs/button.md",
 				"path": "docs/assets/button-scopes.png",
 				"alt": "Freemius configuration scopes in the block editor sidebar",
 				"status": "captured"
@@ -170,7 +170,7 @@
 			},
 			"embed": {
 				"from": "screenshots/button-track-callback/source.png",
-				"doc": "docs/user-guide/button.md",
+				"doc": "docs/button.md",
 				"path": "docs/assets/button-track-callback.png",
 				"alt": "Track Callback in the Freemius button sidebar with Popout Editor open",
 				"status": "captured"
@@ -222,7 +222,7 @@
 			},
 			"embed": {
 				"from": "screenshots/pricing-page-checkout-button/source.png",
-				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/pricing-page-checkout-button.png",
 				"alt": "Pricing page editor with a checkout button selected and Enable Freemius Checkout outlined",
 				"status": "captured"
@@ -248,7 +248,7 @@
 			},
 			"embed": {
 				"from": "screenshots/pricing-page-modifiers-row/source.png",
-				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/pricing-page-modifiers-row.png",
 				"alt": "Pricing page editor with the modifier toggle row outlined",
 				"status": "captured"
@@ -274,7 +274,7 @@
 			},
 			"embed": {
 				"from": "screenshots/pricing-page-plan-column/source.png",
-				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/pricing-page-plan-column.png",
 				"alt": "Pricing page editor with one plan column selected and outlined",
 				"status": "captured"
@@ -300,7 +300,7 @@
 			},
 			"embed": {
 				"from": "screenshots/pricing-page-playground/source.png",
-				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/pricing-page-playground.png",
 				"alt": "Published Freemius pricing page with plan columns and billing toggles",
 				"status": "captured"
@@ -326,7 +326,7 @@
 			},
 			"embed": {
 				"from": "screenshots/pricing-page-preview/source.png",
-				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/pricing-page-preview.png",
 				"alt": "Pricing page editor with checkout preview open and the Preview button outlined",
 				"status": "captured"
@@ -353,7 +353,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-columns-overview/source.png",
-				"doc": "docs/user-guide/scopes/README.md",
+				"doc": "docs/scopes/README.md",
 				"path": "docs/assets/scope-columns-overview.png",
 				"alt": "Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted",
 				"status": "captured"
@@ -404,7 +404,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-modifiers/source.png",
-				"doc": "docs/user-guide/scopes/modifiers.md",
+				"doc": "docs/scopes/modifiers.md",
 				"path": "docs/assets/scope-modifiers.png",
 				"alt": "Freemius Scope modifier block in the block editor",
 				"status": "captured"
@@ -431,7 +431,7 @@
 			},
 			"embed": {
 				"from": "screenshots/scope-pricing-mapped/source.png",
-				"doc": "docs/user-guide/scopes/mapping.md",
+				"doc": "docs/scopes/mapping.md",
 				"path": "docs/assets/scope-pricing-mapped.png",
 				"alt": "Pricing page in the block editor with purple Freemius scope outlines",
 				"status": "captured"
@@ -457,7 +457,7 @@
 			},
 			"embed": {
 				"from": "screenshots/settings-editor/source.png",
-				"doc": "docs/user-guide/settings.md",
+				"doc": "docs/settings.md",
 				"path": "docs/assets/settings-editor.png",
 				"alt": "Editor Settings tab on the Freemius settings page",
 				"status": "captured"
@@ -483,7 +483,7 @@
 			},
 			"embed": {
 				"from": "screenshots/settings-products/source.png",
-				"doc": "docs/user-guide/creating-your-pricing-page.md",
+				"doc": "docs/creating-your-pricing-page.md",
 				"path": "docs/assets/settings-products.png",
 				"alt": "Products tab on the Freemius settings page",
 				"status": "captured"

@@ -6,7 +6,7 @@ Use it **standalone** on any Button block — enable Freemius Checkout and confi
 
 ## Overview
 
-![Mapped Freemius checkout button in the pricing table with Freemius sidebar settings highlighted](../assets/button-overview.png)
+![Mapped Freemius checkout button in the pricing table with Freemius sidebar settings highlighted](assets/button-overview.png)
 
 The example above shows a mapped checkout button inside a pricing table scope. See [Scopes](scopes/README.md) and [Mapping](scopes/mapping.md) for building similar layouts.
 
@@ -22,7 +22,7 @@ See [Freemius checkout documentation](https://freemius.com/help/documentation/se
 
 Hidden settings are listed in the Freemius **options menu** (three dots on the Freemius panel header). Open it to show or hide fields such as Product ID and Plan:
 
-![Freemius options menu with additional checkout field toggles](../assets/button-key-settings.png)
+![Freemius options menu with additional checkout field toggles](assets/button-key-settings.png)
 
 ## Customization
 
@@ -36,13 +36,13 @@ Handle checkout events with custom JavaScript:
 
 Use **Track Callback** for advanced tracking across checkout events (currency changes, billing cycle updates, license count, and more). Open **Popout Editor** for a larger code editor:
 
-![Track Callback in the Freemius button sidebar with Popout Editor open](../assets/button-track-callback.png)
+![Track Callback in the Freemius button sidebar with Popout Editor open](assets/button-track-callback.png)
 
 For more `track` events, see the [Freemius checkout track documentation](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/#track).
 
 ## Preview
 
-![Pricing page editor with checkout preview open and the Preview button outlined](../assets/pricing-page-preview.png)
+![Pricing page editor with checkout preview open and the Preview button outlined](assets/pricing-page-preview.png)
 
 Use **Preview** in the sidebar or toolbar to test checkout. **Auto Refresh** updates the preview when settings change.
 

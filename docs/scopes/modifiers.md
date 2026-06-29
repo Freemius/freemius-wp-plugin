@@ -4,7 +4,7 @@
 
 Add a modifier with the **Freemius Scope** block:
 
-![Freemius Scope modifier block in the block editor](../../assets/scope-modifiers.png)
+![Freemius Scope modifier block in the block editor](../assets/scope-modifiers.png)
 
 Click the modifier in the editor to adjust plan, pricing, or billing options for that section of the page.
 

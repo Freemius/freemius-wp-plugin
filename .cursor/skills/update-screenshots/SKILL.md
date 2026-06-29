@@ -26,7 +26,7 @@ User invokes **`/update-screenshots`** or asks to refresh all doc screenshots.
 
 ## Manifest-first rule
 
-Every `docs/assets/*.png` and `![…](…)` in user-guide markdown must have a matching manifest entry.
+Every `docs/assets/*.png` and `![…](…)` in docs markdown must have a matching manifest entry.
 
 ## Workflow
 
@@ -40,7 +40,7 @@ Every `docs/assets/*.png` and `![…](…)` in user-guide markdown must have a m
    ```
 
 3. On failure, fix manifest or [`scripts/update-doc-screenshots.mjs`](../../../scripts/update-doc-screenshots.mjs).
-4. Show `git diff` for manifest and `docs/assets/*.png` only (`docs/user-guide/` markdown should not change on capture).
+4. Show `git diff` for manifest and `docs/assets/*.png` only (`docs/` markdown should not change on capture).
 5. Do not re-prompt for alt text on bulk refresh.
 6. Do not commit unless the user asks.
 
@@ -50,7 +50,7 @@ Every `docs/assets/*.png` and `![…](…)` in user-guide markdown must have a m
 
 - Processes `use: docs` entries with `capture`; desktop viewport; `ignoreHTTPSErrors: true`.
 - `CAPTURE_WAIT_MS` default 5000; fixture post `428` via `FIXTURE_POST_ID` in capture URLs.
-- Writes `embed.from` → copies to `embed.path` → verifies `![alt](…)` in user-guide markdown → `embed.status: captured`.
+- Writes `embed.from` → copies to `embed.path` → verifies `![alt](…)` in docs markdown → `embed.status: captured`.
 - Deduplicates by shared `embed.from`.
 - Compares to committed baseline via `looks-same`; `--force` skips compare.
 - Runs `sync:screenshots-docs` after successful updates.

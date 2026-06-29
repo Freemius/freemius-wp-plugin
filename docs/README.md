@@ -45,20 +45,19 @@ Here is a quick video demonstrating how to set up a Freemius checkout button:
 
 [How to set up a Freemius checkout button](https://www.youtube.com/watch?v=MTOuIBGan7E)
 
-For step-by-step guides in this documentation, see [Getting started](user-guide/getting-started.md).
+For step-by-step guides in this documentation, see [Getting started](getting-started.md).
 
 ## Documentation
 
 | Guide | What it covers |
 | ----- | -------------- |
-| [Getting started](user-guide/getting-started.md) | Install the plugin, connect your Freemius product, add a checkout button, and build a pricing page |
-| [Creating your Pricing page](user-guide/creating-your-pricing-page.md) | Build a multi-plan pricing page with modifiers, scoped columns, mapped fields, and checkout buttons |
-| [Freemius Button](user-guide/button.md) | Enable checkout on a button, scopes, preview, and optional settings |
-| [Scopes](user-guide/scopes/README.md) | Nested pricing contexts on one page (groups, columns, buttons) |
-| [Field mapping](user-guide/scopes/mapping.md) | Pull plan price, title, description, and billing labels into blocks |
-| [Scope modifiers](user-guide/scopes/modifiers.md) | Currency, billing cycle, and license toggles on the page |
-| [Settings](user-guide/settings.md) | Admin tabs: Products, Editor Settings, and site-wide defaults |
-| [How it works](user-guide/README.md) | Requirements, architecture, and how scopes inherit settings |
+| [Getting started](getting-started.md) | Install the plugin, connect your Freemius product, add a checkout button, and build a pricing page |
+| [Creating your Pricing page](creating-your-pricing-page.md) | Build a multi-plan pricing page with modifiers, scoped columns, mapped fields, and checkout buttons |
+| [Freemius Button](button.md) | Enable checkout on a button, scopes, preview, and optional settings |
+| [Scopes](scopes/README.md) | Nested pricing contexts on one page (groups, columns, buttons) |
+| [Field mapping](scopes/mapping.md) | Pull plan price, title, description, and billing labels into blocks |
+| [Scope modifiers](scopes/modifiers.md) | Currency, billing cycle, and license toggles on the page |
+| [Settings](settings.md) | Admin tabs: Products, Editor Settings, and site-wide defaults |
 
 ## FAQs
 
@@ -68,7 +67,7 @@ Yes, you can customize various aspects of the checkout process through the plugi
 
 ### How do I set up a Freemius checkout button?
 
-Add a **Button** block, turn on **Freemius Checkout** in the Freemius panel, and set your product under **Settings → Freemius**. See [Getting started](user-guide/getting-started.md) and [Freemius Button](user-guide/button.md).
+Add a **Button** block, turn on **Freemius Checkout** in the Freemius panel, and set your product under **Settings → Freemius**. See [Getting started](getting-started.md) and [Freemius Button](button.md).
 
 ### Is the plugin compatible with my theme?
 
@@ -76,4 +75,4 @@ The plugin targets the Block Editor (Gutenberg). It works with block themes and 
 
 ### Where is pricing data loaded from?
 
-Mapped prices and plan copy are saved when you edit and publish a page; the frontend does not call the Freemius API on every visit. After you change prices on the Freemius dashboard, reopen the page in the editor and **Update** it. See [Creating your Pricing page](user-guide/creating-your-pricing-page.md#important-pricing-data-is-not-live-on-the-frontend).
+Mapped prices and plan copy are saved when you edit and publish a page; the frontend does not call the Freemius API on every visit. After you change prices on the Freemius dashboard, reopen the page in the editor and **Update** it. See [Creating your Pricing page](creating-your-pricing-page.md#important-pricing-data-is-not-live-on-the-frontend).

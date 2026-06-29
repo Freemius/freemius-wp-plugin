@@ -25,18 +25,18 @@ A typical pricing page has:
 - **Mapped fields** for price, title, description, and billing labels
 - A **checkout button** in each column
 
-![Published Freemius pricing page with plan columns and billing toggles](../assets/pricing-page-playground.png)
+![Published Freemius pricing page with plan columns and billing toggles](assets/pricing-page-playground.png)
 
 The editor view below shows the same layout with **purple scope outlines** around each Freemius-enabled block:
 
-![Pricing page in the block editor with purple Freemius scope outlines](../assets/scope-pricing-mapped.png)
+![Pricing page in the block editor with purple Freemius scope outlines](assets/scope-pricing-mapped.png)
 
 ## Before you start
 
 1. Install and activate Freemius for WordPress.
 2. Connect your product under **Settings → Freemius → Products** (Product ID and Token from the [Freemius Developer Dashboard](https://dashboard.freemius.com/)).
 
-![Products tab on the Freemius settings page](../assets/settings-products.png)
+![Products tab on the Freemius settings page](assets/settings-products.png)
 
 3. Set site-wide defaults under **Editor Settings** — at minimum **Product ID** and a default **Plan**.
 
@@ -57,7 +57,7 @@ The outer scope sets the **product** and default **currency** and **billing cycl
 3. In the block sidebar, open **Freemius** and enable **Freemius**.
 4. Confirm **Product ID** is set (it inherits from Editor Settings if you configured it there).
 
-![Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel](../assets/scope-enable-checkout.png)
+![Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel](assets/scope-enable-checkout.png)
 
 This block is now the parent scope. Every child block inside it inherits these settings unless you override them.
 
@@ -71,7 +71,7 @@ Let visitors change currency, billing cycle, and license count without leaving t
    - **Billing cycle** — Monthly, Annual, Lifetime
    - **Licenses** — e.g. 1, 2, 10, Unlimited
 
-![Pricing page editor with the modifier toggle row outlined](../assets/pricing-page-modifiers-row.png)
+![Pricing page editor with the modifier toggle row outlined](assets/pricing-page-modifiers-row.png)
 
 Modifiers update the parent scope. On the published page, toggles switch between values that were available when you last saved the page — they do not fetch new data from Freemius on each visit. See [Scope modifiers](scopes/modifiers.md) for details.
 
@@ -86,7 +86,7 @@ Each Freemius plan needs its **own scope** on the page — usually a **Column** 
 3. Select each column, open **Freemius** in the sidebar, enable **Freemius**, and set **Plan ID** to that column's plan.
 4. Style each column with borders, background, and spacing to match your theme.
 
-![Pricing page editor with one plan column selected and outlined](../assets/pricing-page-plan-column.png)
+![Pricing page editor with one plan column selected and outlined](assets/pricing-page-plan-column.png)
 
 Repeat for every column. Blocks inside a column inherit that column's plan. See [Scopes](scopes/README.md) for how nested scopes work.
 
@@ -117,7 +117,7 @@ Mapped blocks show a dotted outline in the editor. See [Field mapping](scopes/ma
 2. Enable **Freemius Checkout** on the button.
 3. Optionally map the button label to **Title** with a prefix/suffix (e.g. `Get ` + plan name + ` Plan`).
 
-![Pricing page editor with a checkout button selected and Enable Freemius Checkout outlined](../assets/pricing-page-checkout-button.png)
+![Pricing page editor with a checkout button selected and Enable Freemius Checkout outlined](assets/pricing-page-checkout-button.png)
 
 The button inherits the column's plan and the outer scope's currency and billing cycle. See [Freemius Button](button.md).
 
@@ -132,7 +132,7 @@ Plan features (bullet lists, checkmarks, separators) are ordinary blocks — add
 3. On the frontend, click the currency and billing modifiers and confirm prices and labels look correct for the data you just saved.
 4. When everything looks right, **Publish** (or **Update**) the page.
 
-![Pricing page editor with checkout preview open and the Preview button outlined](../assets/pricing-page-preview.png)
+![Pricing page editor with checkout preview open and the Preview button outlined](assets/pricing-page-preview.png)
 
 After you change pricing on the Freemius site, repeat these steps: open the page in the editor, wait for fresh data (clear cache if needed), then **Update** the page again.
 

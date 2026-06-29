@@ -9,7 +9,7 @@ A scope can be enabled on these blocks (or their children):
 - Column Block
 - Button Block
 
-![Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted](../../assets/scope-columns-overview.png)
+![Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted](../assets/scope-columns-overview.png)
 
 In the editor, each plan column is its own scope (arrows above). A typical pricing page has one scope per plan column, plus an outer scope for the whole pricing area.
 
