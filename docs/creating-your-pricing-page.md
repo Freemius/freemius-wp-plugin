@@ -100,10 +100,11 @@ This step is optional. Skip it if you only need one currency, billing cycle, and
 Let visitors change currency, billing cycle, and license count without leaving the page.
 
 1. Inside the outer scope, add a horizontal **Group** (flex layout works well).
-2. Insert a **Freemius Scope** block for each toggle you need:
+2. From the block inserter, search for **Freemius** and insert a **Freemius Modifier** block for each toggle you need. Place each modifier inside the scoped area so it updates the parent scope:
    - **Currency** — e.g. USD, EUR, GBP
    - **Billing cycle** — Monthly, Annual, Lifetime
    - **Licenses** — e.g. 1, 2, 10, Unlimited
+3. In each modifier’s sidebar, choose its **type** and enabled options. Under **Styles**, pick **Button**, **Link**, or **Dropdown**.
 
 ![Pricing page editor with the modifier toggle row outlined](assets/pricing-page-modifiers-row.png)
 
