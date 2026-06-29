@@ -20,7 +20,7 @@ Until you update the page, visitors will keep seeing the prices and text from th
 A typical pricing page has:
 
 - One **outer scope** (Group or Section) tied to your product
-- **Modifiers** for currency, billing cycle, and license count
+- **Modifiers** (optional) for currency, billing cycle, and license count
 - One **column per plan**, each with its own scope and plan ID
 - **Mapped fields** for price, title, description, and billing labels
 - A **checkout button** in each column
@@ -93,7 +93,9 @@ Inside each column, add blocks and map Freemius fields so prices and copy are fi
 
 Mapped blocks show a dotted outline in the editor. See [Field mapping](mapping.md).
 
-## Step 4: Add pricing toggles
+## Step 4 (optional): Add pricing toggles
+
+This step is optional. Skip it if you only need one currency, billing cycle, and license count — set those on the outer scope in Step 2 instead.
 
 Let visitors change currency, billing cycle, and license count without leaving the page.
 
@@ -125,7 +127,7 @@ Plan features (bullet lists, checkmarks, separators) are ordinary blocks — add
 
 1. Select any scoped block or checkout button.
 2. In the Freemius sidebar, click **Preview** to open checkout with the current settings.
-3. On the frontend, click the currency and billing modifiers and confirm prices and labels look correct for the data you just saved.
+3. On the frontend, if you added pricing toggles, use them and confirm prices and labels look correct for the data you just saved.
 4. When everything looks right, **Publish** (or **Update**) the page.
 
 ![Pricing page editor with checkout preview open and the Preview button outlined](assets/pricing-page-preview.png)

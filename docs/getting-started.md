@@ -22,7 +22,6 @@ Details: [Freemius Button](button.md).
 
 1. Create a new page and add a **Group** block (or **Section**) as an outer scope — enable **Freemius** and set your **Product ID**.
 2. Add one **Column** per plan; enable **Freemius** on each column, set **Plan ID**, and map fields such as **Price**, **Title**, and **Description**.
-3. Inside the outer scope, add **Freemius Scope** modifiers for currency, billing cycle, and licenses.
-4. Add a **Button** with **Freemius Checkout** in each column, then use **Preview** before publishing.
+3. Add a **Button** with **Freemius Checkout** in each column, then use **Preview** before publishing.
 
 Details: [Creating your Pricing page](creating-your-pricing-page.md).
