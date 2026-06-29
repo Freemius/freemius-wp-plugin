@@ -51,7 +51,7 @@ For step-by-step guides in this documentation, see [Getting started](user-guide/
 
 | Guide | What it covers |
 | ----- | -------------- |
-| [Getting started](user-guide/getting-started.md) | Install the plugin, connect your Freemius product, and add your first checkout button |
+| [Getting started](user-guide/getting-started.md) | Install the plugin, connect your Freemius product, add a checkout button, and build a pricing page |
 | [Creating your Pricing page](user-guide/creating-your-pricing-page.md) | Build a multi-plan pricing page with modifiers, scoped columns, mapped fields, and checkout buttons |
 | [Freemius Button](user-guide/button.md) | Enable checkout on a button, scopes, preview, and optional settings |
 | [Scopes](user-guide/scopes/README.md) | Nested pricing contexts on one page (groups, columns, buttons) |
