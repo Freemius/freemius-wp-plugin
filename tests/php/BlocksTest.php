@@ -14,17 +14,18 @@ use Freemius\Blocks;
 
 class BlocksTest extends Freemius_TestCase {
 
-	public function test_register_blocks_registers_modifier_block(): void {
-		$registered_path = null;
+	public function test_register_blocks_registers_modifier_and_portal_blocks(): void {
+		$registered_paths = array();
 
 		Functions\when( 'register_block_type' )->alias(
-			static function ( $path ) use ( &$registered_path ) {
-				$registered_path = $path;
+			static function ( $path ) use ( &$registered_paths ) {
+				$registered_paths[] = $path;
 			}
 		);
 
 		Blocks::get_instance()->register_blocks();
 
-		$this->assertSame( FREEMIUS_PLUGIN_DIR . '/build/blocks/modifier', $registered_path );
+		$this->assertContains( FREEMIUS_PLUGIN_DIR . '/build/blocks/modifier', $registered_paths );
+		$this->assertContains( FREEMIUS_PLUGIN_DIR . '/build/blocks/portal', $registered_paths );
 	}
 }

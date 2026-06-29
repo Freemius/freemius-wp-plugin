@@ -4,6 +4,7 @@ All notable changes to Freemius for WordPress are documented in this file.
 
 ## [Unreleased]
 
+- added: Freemius Customer Portal block to embed the members dashboard on your site
 ## [0.4.2]
 
 - fixed: missing import for MappingSettings

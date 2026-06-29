@@ -1,0 +1,25 @@
+.wp-block-freemius-portal {
+	overflow: hidden;
+}
+
+.freemius-portal-root {
+	width: 100%;
+}
+
+.freemius-portal-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 300px;
+	padding: 1.5rem;
+	text-align: center;
+	color: #757575;
+	background: #f0f0f0;
+	border: 1px dashed #ccc;
+}
+
+.freemius-portal-error {
+	padding: 1rem;
+	color: #b32d2e;
+	background: #fcf0f1;
+}
