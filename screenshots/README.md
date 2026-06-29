@@ -44,8 +44,8 @@ npx playwright install chromium
 
 ```bash
 npm run update-screenshots
-npm run update-screenshots -- button-checkout
-npm run update-screenshots -- --force button-checkout
+npm run update-screenshots -- button-overview
+npm run update-screenshots -- --force button-overview
 ```
 
 Or `/update-screenshots` in Cursor. See [`.cursor/skills/update-screenshots/SKILL.md`](../.cursor/skills/update-screenshots/SKILL.md).

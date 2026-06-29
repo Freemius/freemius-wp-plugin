@@ -21,33 +21,6 @@
 	},
 	"images": [
 		{
-			"id": "button-checkout",
-			"title": "Freemius Checkout button",
-			"description": "Block editor with the Single Button scope group selected, Layout collapsed, and the Freemius sidebar panel spanning the inspector.",
-			"use": "docs",
-			"match": [
-				"checkout",
-				"freemius checkout",
-				"single button",
-				"checkout button"
-			],
-			"capture": {
-				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
-				"viewports": [
-					"desktop"
-				],
-				"selector": ".interface-interface-skeleton__body",
-				"padding": 0
-			},
-			"embed": {
-				"from": "screenshots/button-checkout/source.png",
-				"doc": "docs/getting-started.md",
-				"path": "docs/assets/button-checkout.png",
-				"alt": "Freemius Checkout button selected in the editor with Freemius sidebar settings",
-				"status": "captured"
-			}
-		},
-		{
 			"id": "button-key-settings",
 			"title": "Freemius options menu",
 			"description": "Freemius ToolsPanel overflow menu on a button block showing optional checkout fields such as Product ID and Plan.",

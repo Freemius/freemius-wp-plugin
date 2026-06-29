@@ -4,8 +4,8 @@
  * Usage:
  *   node scripts/update-doc-screenshots.mjs              # all docs entries with capture
  *   node scripts/update-doc-screenshots.mjs <id>         # single manifest id
- *   npm run update-screenshots -- button-checkout
- *   npm run update-screenshots -- --force button-checkout
+ *   npm run update-screenshots -- button-overview
+ *   npm run update-screenshots -- --force button-overview
  *
  * Prerequisites:
  * - npx playwright install chromium
@@ -375,7 +375,7 @@ async function closeListViewIfOpen( page ) {
 
 	if ( await secondarySidebar.isVisible().catch( () => false ) ) {
 		throw new Error(
-			'List View sidebar is still open — close it before capturing button-checkout'
+			'List View sidebar is still open — close it before capturing editor screenshots'
 		);
 	}
 }
@@ -428,43 +428,6 @@ async function scrollEditorCanvasBy( page, deltaY ) {
 			scrollContainer.scrollTop += offset;
 		}
 	}, deltaY );
-}
-
-/**
- * Scroll the editor canvas so the Single Button CTA bar lines up with the Freemius panel.
- *
- * @param {import('playwright').Page} page
- */
-async function alignCanvasBlockWithFreemiusPanel( page ) {
-	const ctaBar = singleButtonCtaBarLocator( page );
-	const freemiusPanel = page
-		.locator( '.freemius-button-scope-settings' )
-		.first();
-	const iframe = page.locator( 'iframe[name="editor-canvas"]' ).first();
-
-	await ctaBar.waitFor( { state: 'visible', timeout: 15_000 } );
-	await freemiusPanel.waitFor( { state: 'visible', timeout: 10_000 } );
-
-	const ctaBox = await ctaBar.boundingBox();
-	const panelBox = await freemiusPanel.boundingBox();
-	const iframeBox =
-		( await iframe.count() ) > 0
-			? await iframe.boundingBox()
-			: null;
-
-	if ( ! ctaBox || ! panelBox ) {
-		throw new Error(
-			'Could not measure block or Freemius panel for button-checkout alignment'
-		);
-	}
-
-	const blockTop = iframeBox ? iframeBox.y + ctaBox.y : ctaBox.y;
-	const delta = blockTop - panelBox.y;
-
-	if ( Math.abs( delta ) > 2 ) {
-		await scrollEditorCanvasBy( page, delta );
-		await page.waitForTimeout( 300 );
-	}
 }
 
 /**
@@ -551,26 +514,6 @@ function canvasButtonLocator( page ) {
 		.locator( '.wp-block-button .wp-block-button__link' )
 		.first()
 		.or( page.locator( '.wp-block-button .wp-block-button__link' ).first() );
-}
-
-/**
- * CTA bar in the fixture post "Single Button" section (Freemius Checkout Button demo).
- *
- * @param {import('playwright').Page} page
- * @returns {import('playwright').Locator}
- */
-function singleButtonCtaBarLocator( page ) {
-	return page
-		.frameLocator( 'iframe[name="editor-canvas"]' )
-		.locator( '.alignwide.has-freemius-scope' )
-		.filter( { hasText: 'Freemius Checkout Button' } )
-		.first()
-		.or(
-			page
-				.locator( '.alignwide.has-freemius-scope' )
-				.filter( { hasText: 'Freemius Checkout Button' } )
-				.first()
-		);
 }
 
 /**
@@ -825,114 +768,6 @@ async function isScopeGroupSidebarVisible( page ) {
 		( await enableScope.count() ) > 0 ||
 		( await resetMods.count() ) > 0
 	);
-}
-
-/**
- * Select the scoped CTA group block via the editor data store.
- *
- * @param {import('playwright').Page} page
- */
-async function selectSingleButtonScopeGroup( page ) {
-	const selected = await page.evaluate( () => {
-		const store = window.wp?.data;
-		if ( ! store ) {
-			return false;
-		}
-
-		/** @param {Array<{ clientId: string, attributes?: { metadata?: { name?: string } }, innerBlocks?: unknown[] }>} blocks */
-		const findCtaInSingleButton = ( blocks ) => {
-			for ( const block of blocks ) {
-				if ( block.attributes?.metadata?.name === 'Single Button' ) {
-					/** @param {Array<{ clientId: string, attributes?: { metadata?: { name?: string } }, innerBlocks?: unknown[] }>} innerBlocks */
-					const findCta = ( innerBlocks ) => {
-						for ( const inner of innerBlocks ) {
-							if (
-								inner.attributes?.metadata?.name ===
-								'CTA Bar (Freemius)'
-							) {
-								return inner.clientId;
-							}
-
-							const nested = findCta( inner.innerBlocks ?? [] );
-							if ( nested ) {
-								return nested;
-							}
-						}
-
-						return null;
-					};
-
-					const clientId = findCta( block.innerBlocks ?? [] );
-					if ( clientId ) {
-						return clientId;
-					}
-				}
-
-				const nestedMatch = findCtaInSingleButton(
-					block.innerBlocks ?? []
-				);
-				if ( nestedMatch ) {
-					return nestedMatch;
-				}
-			}
-
-			return null;
-		};
-
-		const clientId = findCtaInSingleButton(
-			store.select( 'core/block-editor' ).getBlocks()
-		);
-
-		if ( ! clientId ) {
-			return false;
-		}
-
-		store.dispatch( 'core/block-editor' ).selectBlock( clientId );
-		return true;
-	} );
-
-	if ( ! selected ) {
-		throw new Error(
-			'Single Button / CTA Bar (Freemius) block not found on fixture post 428'
-		);
-	}
-
-	await page.waitForTimeout( 600 );
-	await closeListViewIfOpen( page );
-
-	if ( ! ( await isScopeGroupSidebarVisible( page ) ) ) {
-		throw new Error(
-			'Scoped group block not selected — Freemius scope sidebar is not visible'
-		);
-	}
-}
-
-/**
- * Select the Single Button scope group and prepare sidebar for the overview shot.
- *
- * @param {import('playwright').Page} page
- */
-async function prepareButtonCheckout( page ) {
-	await closeListViewIfOpen( page );
-	await ensureBlockSidebarOpen( page );
-	await ensureBlockInspectorTab( page );
-	await ensureBlockSettingsTab( page );
-
-	const ctaBar = singleButtonCtaBarLocator( page );
-
-	await ctaBar.waitFor( { state: 'visible', timeout: 15_000 } );
-	await ctaBar.scrollIntoViewIfNeeded();
-	await page.waitForTimeout( 300 );
-
-	await selectSingleButtonScopeGroup( page );
-	await closeListViewIfOpen( page );
-
-	await collapsePanelByTitle( page, 'Layout' );
-	await openFreemiusPanel( page );
-	await scrollSidebarToTop( page );
-	await closeListViewIfOpen( page );
-	await alignCanvasBlockWithFreemiusPanel( page );
-	await page.waitForTimeout( 300 );
 }
 
 /**
@@ -1323,114 +1158,6 @@ async function captureButtonKeySettings( page, outputAbs ) {
 	drawPngSolidArrow( capture, tailX, tailY, tip.x, tip.y, ANNOTATION_RED );
 
 	writeFileSync( outputAbs, PNG.sync.write( capture ) );
-}
-
-/**
- * Editor body with selected Single Button block and full-height Freemius sidebar.
- *
- * @param {import('playwright').Page} page
- * @param {string} outputAbs
- * @param {{ padding?: number }} capture
- */
-async function captureButtonCheckout( page, outputAbs, capture ) {
-	const editorBody = page
-		.locator( '.interface-interface-skeleton__body' )
-		.first();
-	const ctaBar = singleButtonCtaBarLocator( page );
-	const freemiusPanel = page
-		.locator( '.freemius-button-scope-settings' )
-		.first();
-	const layoutPanel = page
-		.locator( '.components-panel__body' )
-		.filter( {
-			has: page.getByText( 'Layout', { exact: true } ),
-		} )
-		.first();
-
-	await ctaBar.waitFor( { state: 'visible', timeout: 15_000 } );
-	await freemiusPanel.waitFor( { state: 'visible', timeout: 10_000 } );
-	await closeListViewIfOpen( page );
-	await alignCanvasBlockWithFreemiusPanel( page );
-	await page.waitForTimeout( 200 );
-
-	const bodyBox = await editorBody.boundingBox();
-	const layoutToggle = layoutPanel.locator(
-		'.components-panel__body-toggle'
-	);
-
-	if ( ! bodyBox ) {
-		throw new Error(
-			'Editor body not visible for button-checkout capture'
-		);
-	}
-
-	if ( ( await layoutToggle.count() ) > 0 ) {
-		const expanded = await layoutToggle.getAttribute( 'aria-expanded' );
-		if ( expanded === 'true' ) {
-			throw new Error(
-				'Layout panel must be collapsed for button-checkout capture'
-			);
-		}
-	}
-
-	const panelBox = await freemiusPanel.boundingBox();
-	const panelHeader = freemiusPanel
-		.locator( '.components-tools-panel-header' )
-		.first();
-	const enableHelp = page.getByText(
-		'Enable Freemius for this area.',
-		{ exact: true }
-	);
-	const panelHeaderBox = await panelHeader.boundingBox();
-	const enableHelpBox = await enableHelp.boundingBox();
-
-	if ( ! panelBox || ! panelHeaderBox || ! enableHelpBox ) {
-		throw new Error(
-			'Freemius panel header or Enable Freemius control is not visible for button-checkout capture'
-		);
-	}
-
-	const padding = capture.padding ?? 0;
-	const clip = {
-		x: Math.max( 0, bodyBox.x - padding ),
-		y: Math.max( 0, bodyBox.y - padding ),
-		width: bodyBox.width + padding * 2,
-		height: bodyBox.height + padding * 2,
-	};
-
-	const capturePng = PNG.sync.read(
-		await page.screenshot( {
-			type: 'png',
-			clip,
-		} )
-	);
-
-	const highlightX = snapPixel(
-		panelBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
-	);
-	const highlightY = snapPixel(
-		panelHeaderBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
-	);
-	const highlightWidth = snapPixel(
-		panelBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
-	);
-	const highlightHeight = snapPixel(
-		enableHelpBox.y +
-			enableHelpBox.height -
-			panelHeaderBox.y +
-			CHECKOUT_PANEL_ANNOTATION_INSET * 2
-	);
-
-	drawPngRect(
-		capturePng,
-		highlightX,
-		highlightY,
-		highlightWidth,
-		highlightHeight,
-		ANNOTATION_RED
-	);
-
-	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
 }
 
 /**
@@ -3441,7 +3168,6 @@ async function prepareSettingsProducts( page ) {
 
 /** @type {Record<string, (page: import('playwright').Page) => Promise<void>>} */
 const PRE_CAPTURE_ACTIONS = {
-	'button-checkout': prepareButtonCheckout,
 	'button-overview': prepareButtonOverview,
 	'button-key-settings': prepareButtonKeySettings,
 	'button-track-callback': prepareButtonTrackCallback,
@@ -3623,11 +3349,6 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 	if ( entry.capture.selector ) {
 		if ( entry.id === 'button-key-settings' ) {
 			await captureButtonKeySettings( page, outputAbs );
-			return;
-		}
-
-		if ( entry.id === 'button-checkout' ) {
-			await captureButtonCheckout( page, outputAbs, entry.capture );
 			return;
 		}
 

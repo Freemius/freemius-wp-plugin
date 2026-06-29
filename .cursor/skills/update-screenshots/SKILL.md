@@ -35,8 +35,8 @@ Every `docs/assets/*.png` and `![…](…)` in docs markdown must have a matchin
 
    ```bash
    npm run update-screenshots
-   npm run update-screenshots -- button-checkout
-   npm run update-screenshots -- --force button-checkout
+   npm run update-screenshots -- button-overview
+   npm run update-screenshots -- --force button-overview
    ```
 
 3. On failure, fix manifest or [`scripts/update-doc-screenshots.mjs`](../../../scripts/update-doc-screenshots.mjs).

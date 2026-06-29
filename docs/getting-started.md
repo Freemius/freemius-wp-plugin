@@ -16,8 +16,6 @@ See [Settings](settings.md) for the full admin screen.
 3. In the block sidebar, open **Freemius** and enable **Freemius Checkout**.
 4. Use **Preview** in the sidebar to test checkout before publishing.
 
-![Freemius Checkout button selected in the editor with Freemius sidebar settings](assets/button-checkout.png)
-
 Details: [Freemius Button](button.md).
 
 ## Pricing page
