@@ -1,40 +1,53 @@
 # Freemius for WordPress
 
-If you use WordPress with the Block Editor, **Freemius for WordPress** lets you integrate Freemius checkout directly while you build landing and sales pages for your Freemius product. No JavaScript snippets, theme hacks, or custom code required.
+If you are using WordPress with the Block Editor, the Freemius for WordPress plugin enables you to integrate the Freemius checkout directly and quickly while building landing/sales pages for your Freemius product. No JavaScript, theme hacking, or coding required!
 
-**Not using the Block Editor?** See [Freemius overlay checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/) or [hosted checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-hosted-page/) in the main Freemius documentation.
+![Block editor with Freemius checkout preview open](assets/docs-homepage-preview.png)
 
-## What you get
+**Not using the Block Editor?**
 
-Out of the box, the plugin provides:
+See how to use the [overlay checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/) or the [hosted checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-hosted-page/).
 
-- **Native Block Editor support (Gutenberg)** — Drop checkout buttons or pricing tables into your layouts like any other block. Add a “Buy Now” button to a landing page in seconds.
-- **Dynamic pricing tables** — Show multiple plans with clear comparisons and calls-to-action. For example, present Starter, Pro, and Agency tiers side by side with checkout built in.
-- **Plan switching and trials** — Let customers change plan, billing cycle, or currency on the page, and support trials where your product allows them.
-- **Compatibility with modern block themes** — Works with block-based themes and plugins without editing your theme.
-- **Free and open source** — MIT-licensed; extend or contribute via the [GitHub repository](https://github.com/Freemius/freemius-wp-plugin).
+Out of the box, Freemius for WordPress gives you:
+
+- **Native Block Editor support (Gutenberg):** Drop checkout buttons or pricing tables directly into your page layouts - just like adding any other block.
+
+  _For example: Add a "Buy Now" button to your landing page in seconds._
+
+- **Dynamic pricing tables:** Display different plans with clear comparisons and calls-to-action.
+
+  _Example: Showcase "Starter / Pro / Agency" tiers side by side, with checkout built in._
+
+- **Plan switching and trials:** Let customers upgrade, downgrade, or start with a free trial seamlessly.
+
+  _Example: Offer a 14-day free trial that auto-converts to a paid plan without extra coding._
+
+- **Full compatibility with modern WordPress block themes and plugins:** Works out of the box with your existing WordPress block site setup - no theme hacks required.
+
+- **100% free and open source:** Transparent, community-driven, and extensible.
+
+  _Example: Extend the plugin with your own block variations, or contribute improvements back to the repo._
 
 ## Resources
 
-- [Download on WordPress.org](https://wordpress.org/plugins/freemius/)
-- [GitHub repository](https://github.com/Freemius/freemius-wp-plugin)
-- [Try the plugin on WordPress Playground](https://playground.wordpress.net/?plugin=freemius)
-- [Plugin readme, roadmap, and changelog](https://github.com/Freemius/freemius-wp-plugin#readme)
-- [Freemius documentation hub](https://freemius.com/help/documentation/)
+- [Download from WordPress.org.](https://wordpress.org/plugins/freemius/)
+- [GitHub repo.](https://github.com/Freemius/freemius-wp-plugin)
+- [Test now on Playground.](https://playground.wordpress.net/?plugin=freemius)
+- [Features, roadmap and the changelog.](https://github.com/Freemius/freemius-wp-plugin#readme)
 
-## Quick start: checkout button
+## How do I set up a Freemius checkout button?
 
-1. Install and activate the plugin on your WordPress site.
-2. Add a **Button** block to a page or post, then enable **Freemius Checkout** in the block sidebar.
-3. Connect your product under **Settings → Freemius**, configure defaults, and use **Preview** in the sidebar to test checkout before you publish.
+1. Download, install, and activate the plugin on your WordPress site.
+2. Add a button block to your page or post, then enable the Freemius checkout option in the button settings.
+3. Configure your product details, and the button will automatically handle the checkout process.
 
-**Video walkthrough:** [How to set up a Freemius checkout button](https://www.youtube.com/watch?v=MTOuIBGan7E)
+Here is a quick video demonstrating how to set up a Freemius checkout button:
 
-For the full setup path, continue with [Getting started](user-guide/getting-started.md).
+[How to set up a Freemius checkout button](https://www.youtube.com/watch?v=MTOuIBGan7E)
+
+For step-by-step guides in this documentation, see [Getting started](user-guide/getting-started.md).
 
 ## Documentation
-
-Step-by-step guides for site owners and editors:
 
 | Guide | What it covers |
 | ----- | -------------- |
@@ -47,21 +60,15 @@ Step-by-step guides for site owners and editors:
 | [Settings](user-guide/settings.md) | Admin tabs: Products, Editor Settings, and site-wide defaults |
 | [How it works](user-guide/README.md) | Requirements, architecture, and how scopes inherit settings |
 
-## Requirements
-
-- WordPress 6.7 or later
-- A [Freemius](https://freemius.com/) account
-- A Freemius product (plugin, theme, or SaaS) with checkout enabled
-
 ## FAQs
+
+### Can I customize the checkout experience?
+
+Yes, you can customize various aspects of the checkout process through the plugin settings, including product details, pricing, and the checkout flow.
 
 ### How do I set up a Freemius checkout button?
 
 Add a **Button** block, turn on **Freemius Checkout** in the Freemius panel, and set your product under **Settings → Freemius**. See [Getting started](user-guide/getting-started.md) and [Freemius Button](user-guide/button.md).
-
-### Can I customize the checkout experience?
-
-Yes. Set product, plan, billing cycle, currency, and other checkout options in **Settings → Freemius** and in block **scopes** on each page. You can also map button labels and use custom success or cancel URLs on buttons. See [Settings](user-guide/settings.md) and [Scopes](user-guide/scopes/README.md).
 
 ### Is the plugin compatible with my theme?
 

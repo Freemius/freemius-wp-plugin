@@ -2603,13 +2603,19 @@ async function ensureCheckoutOverlayFullyVisible( page, capture ) {
 }
 
 /**
- * Editor view with checkout preview open and the Preview button outlined.
+ * Editor view with the checkout preview overlay open in the block editor.
  *
  * @param {import('playwright').Page} page
  * @param {string} outputAbs
  * @param {{ padding?: number }} capture
+ * @param {{ annotatePreview?: boolean }} options
  */
-async function capturePricingPagePreview( page, outputAbs, capture ) {
+async function capturePricingCheckoutPreviewEditor(
+	page,
+	outputAbs,
+	capture,
+	{ annotatePreview = false } = {}
+) {
 	const editorBody = page
 		.locator( '.interface-interface-skeleton__body' )
 		.first();
@@ -2624,11 +2630,10 @@ async function capturePricingPagePreview( page, outputAbs, capture ) {
 
 	const bodyBox = await editorBody.boundingBox();
 	const checkoutBox = await checkoutOverlay.boundingBox();
-	const previewButtonBox = await getPreviewButtonAnnotationBox( page );
 
 	if ( ! bodyBox || ! checkoutBox ) {
 		throw new Error(
-			'Pricing preview overlay is not visible for pricing-page-preview capture'
+			'Pricing preview overlay is not visible for checkout preview capture'
 		);
 	}
 
@@ -2656,50 +2661,77 @@ async function capturePricingPagePreview( page, outputAbs, capture ) {
 		} )
 	);
 
-	const highlightX = snapPixel(
-		previewButtonBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
-	);
-	const highlightY = snapPixel(
-		previewButtonBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
-	);
-	const highlightWidth = snapPixel(
-		previewButtonBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
-	);
-	const highlightHeight = snapPixel(
-		previewButtonBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
-	);
+	if ( annotatePreview ) {
+		const previewButtonBox = await getPreviewButtonAnnotationBox( page );
+		const highlightX = snapPixel(
+			previewButtonBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+		);
+		const highlightY = snapPixel(
+			previewButtonBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+		);
+		const highlightWidth = snapPixel(
+			previewButtonBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+		);
+		const highlightHeight = snapPixel(
+			previewButtonBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+		);
 
-	drawPngRect(
-		capturePng,
-		highlightX,
-		highlightY,
-		highlightWidth,
-		highlightHeight,
-		ANNOTATION_RED
-	);
+		drawPngRect(
+			capturePng,
+			highlightX,
+			highlightY,
+			highlightWidth,
+			highlightHeight,
+			ANNOTATION_RED
+		);
 
-	const tailX = snapPixel( highlightX - 50 );
-	const tailY = snapPixel( highlightY + highlightHeight / 2 );
-	const tip = arrowTipBeforeRect(
-		tailX,
-		tailY,
-		highlightX,
-		highlightY,
-		highlightWidth,
-		highlightHeight,
-		KEY_SETTINGS_ARROW_TIP_GAP
-	);
+		const tailX = snapPixel( highlightX - 50 );
+		const tailY = snapPixel( highlightY + highlightHeight / 2 );
+		const tip = arrowTipBeforeRect(
+			tailX,
+			tailY,
+			highlightX,
+			highlightY,
+			highlightWidth,
+			highlightHeight,
+			KEY_SETTINGS_ARROW_TIP_GAP
+		);
 
-	drawPngSolidArrow(
-		capturePng,
-		tailX,
-		tailY,
-		tip.x,
-		tip.y,
-		ANNOTATION_RED
-	);
+		drawPngSolidArrow(
+			capturePng,
+			tailX,
+			tailY,
+			tip.x,
+			tip.y,
+			ANNOTATION_RED
+		);
+	}
 
 	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
+}
+
+/**
+ * Editor view with checkout preview open and the Preview button outlined.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function capturePricingPagePreview( page, outputAbs, capture ) {
+	await capturePricingCheckoutPreviewEditor( page, outputAbs, capture, {
+		annotatePreview: true,
+	} );
+}
+
+/**
+ * Editor view with checkout preview open for the documentation homepage.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureDocsHomepagePreview( page, outputAbs, capture ) {
+	await capturePricingCheckoutPreviewEditor( page, outputAbs, capture );
 }
 
 /**
@@ -2849,6 +2881,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'pricing-page-checkout-button': preparePricingPageCheckoutButton,
 	'pricing-page-modifiers-row': preparePricingPageModifiersRow,
 	'pricing-page-plan-column': preparePricingPagePlanColumn,
+	'docs-homepage-preview': preparePricingPagePreview,
 	'pricing-page-preview': preparePricingPagePreview,
 	'scope-modifiers': prepareScopeModifiers,
 	'settings-editor': prepareSettingsEditor,
@@ -3062,6 +3095,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'pricing-page-preview' ) {
 			await capturePricingPagePreview( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'docs-homepage-preview' ) {
+			await captureDocsHomepagePreview( page, outputAbs, entry.capture );
 			return;
 		}
 

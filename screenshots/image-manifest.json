@@ -177,6 +177,32 @@
 			}
 		},
 		{
+			"id": "docs-homepage-preview",
+			"title": "Documentation homepage preview",
+			"description": "Editor view with the Freemius checkout preview overlay open, without annotations.",
+			"use": "docs",
+			"match": [
+				"homepage preview",
+				"docs hero",
+				"checkout preview editor"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/docs-homepage-preview/source.png",
+				"doc": "docs/README.md",
+				"path": "docs/assets/docs-homepage-preview.png",
+				"alt": "Block editor with Freemius checkout preview open",
+				"status": "captured"
+			}
+		},
+		{
 			"id": "pricing-page-checkout-button",
 			"title": "Pricing checkout button",
 			"description": "Editor view with a plan checkout button selected in the pricing table and the Enable Freemius Checkout toggle outlined in the sidebar.",
