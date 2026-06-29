@@ -21,32 +21,6 @@
 	},
 	"images": [
 		{
-			"id": "button-callback-editor",
-			"title": "Callback popout editor",
-			"description": "Expanded Popout Editor for custom checkout callback JavaScript on a button block.",
-			"use": "docs",
-			"match": [
-				"callback editor",
-				"popout editor",
-				"custom js"
-			],
-			"capture": {
-				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
-				"viewports": [
-					"desktop"
-				],
-				"selector": ".components-modal__frame",
-				"padding": 16
-			},
-			"embed": {
-				"from": "screenshots/button-callback-editor/source.png",
-				"doc": "docs/user-guide/button.md",
-				"path": "docs/assets/button-callback-editor.png",
-				"alt": "Callback popout editor with custom JavaScript",
-				"status": "placeholder"
-			}
-		},
-		{
 			"id": "button-checkout",
 			"title": "Freemius Checkout button",
 			"description": "Block editor with the Single Button scope group selected, Layout collapsed, and the Freemius sidebar panel spanning the inspector.",
@@ -100,32 +74,6 @@
 			}
 		},
 		{
-			"id": "button-popout-editor",
-			"title": "Popout Editor button",
-			"description": "Freemius sidebar showing the Popout Editor control for custom callback code.",
-			"use": "docs",
-			"match": [
-				"popout editor",
-				"events",
-				"callbacks"
-			],
-			"capture": {
-				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
-				"viewports": [
-					"desktop"
-				],
-				"selector": ".freemius-button-scope-settings, .interface-complementary-area",
-				"padding": 16
-			},
-			"embed": {
-				"from": "screenshots/button-popout-editor/source.png",
-				"doc": "docs/user-guide/button.md",
-				"path": "docs/assets/button-popout-editor.png",
-				"alt": "Popout Editor control in the Freemius button settings",
-				"status": "captured"
-			}
-		},
-		{
 			"id": "button-preview",
 			"title": "Checkout preview",
 			"description": "Freemius Preview control in the button block sidebar for testing checkout before publish.",
@@ -173,6 +121,33 @@
 				"doc": "docs/user-guide/button.md",
 				"path": "docs/assets/button-scopes.png",
 				"alt": "Freemius configuration scopes in the block editor sidebar",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "button-track-callback",
+			"title": "Track Callback popout editor",
+			"description": "Get Professional Plan button with Track Callback highlighted in the sidebar and Popout Editor open.",
+			"use": "docs",
+			"match": [
+				"track callback",
+				"popout editor",
+				"events",
+				"callbacks"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/button-track-callback/source.png",
+				"doc": "docs/user-guide/button.md",
+				"path": "docs/assets/button-track-callback.png",
+				"alt": "Track Callback in the Freemius button sidebar with Popout Editor open",
 				"status": "captured"
 			}
 		},

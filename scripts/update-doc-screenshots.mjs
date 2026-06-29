@@ -1641,23 +1641,165 @@ async function captureSettingsProducts( page, outputAbs, capture ) {
 /**
  * @param {import('playwright').Page} page
  */
-async function prepareButtonPopoutEditor( page ) {
-	await selectFirstButtonBlock( page );
+async function prepareButtonTrackCallback( page ) {
+	await closeListViewIfOpen( page );
+	await ensureBlockSidebarOpen( page );
+	await selectPricingCheckoutButton( page );
+	await collapseLayoutPanel( page );
 	await openFreemiusPanel( page );
+	await dismissAutosaveNoticeIfPresent( page );
+
+	const popout = page.getByRole( 'button', { name: /Popout Editor/i } ).first();
+
+	if ( ( await popout.count() ) > 0 ) {
+		await popout.scrollIntoViewIfNeeded();
+		await page.waitForTimeout( 300 );
+	}
+}
+
+/**
+ * Bounding box for the Track Callback field annotation (sidebar, before modal).
+ *
+ * @param {import('playwright').Page} page
+ */
+async function getTrackCallbackAnnotationBox( page ) {
+	const freemiusPanel = page
+		.locator( '.freemius-button-scope-settings' )
+		.first();
+	const trackCallbackControl = freemiusPanel
+		.locator( '.components-base-control' )
+		.filter( { has: page.getByRole( 'button', { name: /Popout Editor/i } ) } )
+		.first();
+	const popoutButton = trackCallbackControl.getByRole( 'button', {
+		name: /Popout Editor/i,
+	} );
+
+	await trackCallbackControl.waitFor( { state: 'visible', timeout: 10_000 } );
+	await popoutButton.waitFor( { state: 'visible', timeout: 10_000 } );
+
+	const panelBox = await freemiusPanel.boundingBox();
+	const controlBox = await trackCallbackControl.boundingBox();
+	const popoutBox = await popoutButton.boundingBox();
+
+	if ( ! panelBox || ! controlBox || ! popoutBox ) {
+		throw new Error(
+			'Track Callback control is not visible for button-track-callback capture'
+		);
+	}
+
+	return {
+		x: panelBox.x,
+		y: controlBox.y,
+		width: panelBox.width,
+		height: popoutBox.y + popoutBox.height - controlBox.y,
+	};
 }
 
 /**
  * @param {import('playwright').Page} page
  */
-async function prepareButtonCallbackEditor( page ) {
-	await selectFirstButtonBlock( page );
-	await openFreemiusPanel( page );
+async function openTrackCallbackPopoutEditor( page ) {
+	const popout = page.getByRole( 'button', { name: /Popout Editor/i } ).first();
 
-	const popout = page.getByRole( 'button', { name: /Popout Editor/i } );
-	if ( ( await popout.count() ) > 0 ) {
-		await popout.click();
-		await page.waitForTimeout( 500 );
+	await popout.click();
+	await page
+		.locator( '.components-modal__frame' )
+		.first()
+		.waitFor( { state: 'visible', timeout: 10_000 } );
+	await page.waitForTimeout( 500 );
+}
+
+/**
+ * Editor body with Track Callback popout open and the sidebar field annotated.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} outputAbs
+ * @param {{ padding?: number }} capture
+ */
+async function captureButtonTrackCallback( page, outputAbs, capture ) {
+	const editorBody = page
+		.locator( '.interface-interface-skeleton__body' )
+		.first();
+	const modal = page.locator( '.components-modal__frame' ).first();
+
+	await dismissAutosaveNoticeIfPresent( page );
+
+	const trackCallbackBox = await getTrackCallbackAnnotationBox( page );
+
+	await openTrackCallbackPopoutEditor( page );
+	await modal.waitFor( { state: 'visible', timeout: 10_000 } );
+
+	const bodyBox = await editorBody.boundingBox();
+
+	if ( ! bodyBox ) {
+		throw new Error(
+			'Editor body is not visible for button-track-callback capture'
+		);
 	}
+
+	const padding = capture.padding ?? 0;
+	const clip = {
+		x: Math.max( 0, bodyBox.x - padding ),
+		y: Math.max( 0, bodyBox.y - padding ),
+		width: bodyBox.width + padding * 2,
+		height: bodyBox.height + padding * 2,
+	};
+
+	const capturePng = PNG.sync.read(
+		await page.screenshot( {
+			type: 'png',
+			clip,
+		} )
+	);
+
+	const highlightX = snapPixel(
+		trackCallbackBox.x - clip.x - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightY = snapPixel(
+		trackCallbackBox.y - clip.y - CHECKOUT_PANEL_ANNOTATION_INSET
+	);
+	const highlightWidth = snapPixel(
+		trackCallbackBox.width + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+	const highlightHeight = snapPixel(
+		trackCallbackBox.height + CHECKOUT_PANEL_ANNOTATION_INSET * 2
+	);
+
+	drawPngRect(
+		capturePng,
+		highlightX,
+		highlightY,
+		highlightWidth,
+		highlightHeight,
+		ANNOTATION_RED
+	);
+
+	const modalBox = await modal.boundingBox();
+
+	if ( modalBox ) {
+		const tailX = snapPixel( modalBox.x + modalBox.width * 0.9 - clip.x );
+		const tailY = snapPixel( modalBox.y + modalBox.height * 0.42 - clip.y );
+		const tip = arrowTipBeforeRect(
+			tailX,
+			tailY,
+			highlightX,
+			highlightY,
+			highlightWidth,
+			highlightHeight,
+			KEY_SETTINGS_ARROW_TIP_GAP
+		);
+
+		drawPngSolidArrow(
+			capturePng,
+			tailX,
+			tailY,
+			tip.x,
+			tip.y,
+			ANNOTATION_RED
+		);
+	}
+
+	writeFileSync( outputAbs, PNG.sync.write( capturePng ) );
 }
 
 /**
@@ -2873,8 +3015,7 @@ const PRE_CAPTURE_ACTIONS = {
 	'button-checkout': prepareButtonCheckout,
 	'button-scopes': prepareButtonScopes,
 	'button-key-settings': prepareButtonKeySettings,
-	'button-popout-editor': prepareButtonPopoutEditor,
-	'button-callback-editor': prepareButtonCallbackEditor,
+	'button-track-callback': prepareButtonTrackCallback,
 	'button-preview': prepareButtonPreview,
 	'scope-enable-checkout': prepareScopeEnableCheckout,
 	'scope-pricing-mapped': prepareScopePricingMapped,
@@ -3058,6 +3199,11 @@ async function captureScreenshot( page, entry, viewports, outputPath ) {
 
 		if ( entry.id === 'button-checkout' ) {
 			await captureButtonCheckout( page, outputAbs, entry.capture );
+			return;
+		}
+
+		if ( entry.id === 'button-track-callback' ) {
+			await captureButtonTrackCallback( page, outputAbs, entry.capture );
 			return;
 		}
 

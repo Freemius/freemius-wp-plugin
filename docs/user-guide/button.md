@@ -35,11 +35,11 @@ Handle checkout events with custom JavaScript:
 
 - `purchaseCompleted`, `success`, `cancel`, `track`
 
-![Popout Editor control in the Freemius button settings](../assets/button-popout-editor.png)
+Use **Track Callback** for advanced tracking across checkout events (currency changes, billing cycle updates, license count, and more). Open **Popout Editor** for a larger code editor:
 
-Open **Popout Editor** for a larger code editor:
+![Track Callback in the Freemius button sidebar with Popout Editor open](../assets/button-track-callback.png)
 
-![Callback popout editor with custom JavaScript](../assets/button-callback-editor.png)
+For more `track` events, see the [Freemius checkout track documentation](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/#track).
 
 Examples: [Freemius tracking docs](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/#tracking_purchases_with_google_analytics_and_facebook).
 
