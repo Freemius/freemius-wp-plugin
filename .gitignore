@@ -31,3 +31,6 @@ vendor/
 .env
 
 /vendor/
+
+# Cursor IDE config (local nested repo; not shared on origin)
+.cursor/
