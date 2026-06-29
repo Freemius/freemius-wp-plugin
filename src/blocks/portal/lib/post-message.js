@@ -7,8 +7,13 @@
 /**
  * @param {string} postName
  * @param {string} receiveName
+ * @param {Window} [listenerWindow]
  */
-export function createNoJQueryPostMessageTransport( postName, receiveName ) {
+export function createNoJQueryPostMessageTransport(
+	postName,
+	receiveName,
+	listenerWindow = window
+) {
 	const transport = {};
 	let attachListener;
 	let detachListener;
@@ -17,20 +22,20 @@ export function createNoJQueryPostMessageTransport( postName, receiveName ) {
 	let lastHash = null;
 	let hashCounter = 1;
 
-	if ( window.postMessage ) {
-		if ( window.addEventListener ) {
+	if ( listenerWindow.postMessage ) {
+		if ( listenerWindow.addEventListener ) {
 			attachListener = ( fn ) => {
-				window.addEventListener( 'message', fn, false );
+				listenerWindow.addEventListener( 'message', fn, false );
 			};
 			detachListener = ( fn ) => {
-				window.removeEventListener( 'message', fn, false );
+				listenerWindow.removeEventListener( 'message', fn, false );
 			};
 		} else {
 			attachListener = ( fn ) => {
-				window.attachEvent( 'onmessage', fn );
+				listenerWindow.attachEvent( 'onmessage', fn );
 			};
 			detachListener = ( fn ) => {
-				window.detachEvent( 'onmessage', fn );
+				listenerWindow.detachEvent( 'onmessage', fn );
 			};
 		}
 		transport[ postName ] = function (
@@ -105,7 +110,7 @@ export function createNoJQueryPostMessageTransport( postName, receiveName ) {
 				pollMs = interval;
 			}
 			hashPollId = setInterval( function () {
-				const hash = document.location.hash;
+				const hash = listenerWindow.document.location.hash;
 				const prefix = /^#?\d+&/;
 				if ( hash !== lastHash && prefix.test( hash ) ) {
 					lastHash = hash;
@@ -137,7 +142,8 @@ export function createParentPostMessageHub( win, baseUrl, getIframe ) {
 	const expectedOrigin = baseUrl.replace( /([^:]+:\/\/[^/]+).*/, '$1' );
 	const postman = createNoJQueryPostMessageTransport(
 		'postMessage',
-		'receiveMessage'
+		'receiveMessage',
+		win
 	);
 
 	const callbacks = {};
