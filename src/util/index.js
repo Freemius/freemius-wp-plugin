@@ -28,3 +28,10 @@ const Dump = ( { props, title = '', visible = true } ) => {
 };
 
 export default Dump;
+
+export {
+	applyCouponDiscount,
+	couponAppliesToPlan,
+	formatMappingPrice,
+	getCouponData,
+} from './discountedPrice';

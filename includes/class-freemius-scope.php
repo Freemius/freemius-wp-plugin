@@ -29,9 +29,18 @@ class Scope {
 	/**
 	 * Whether the matrix has been added to the content
 	 *
-	 * @var boolean
+	 * @var array<int|string>
 	 */
 	private $matrix_added = array();
+
+	/**
+	 * Coupon scripts already added to the page (product_id:coupon_code).
+	 *
+	 * @since 0.5.0
+	 *
+	 * @var array<string>
+	 */
+	private $coupon_added = array();
 
 
 	/**
@@ -143,6 +152,26 @@ class Scope {
 			$extra .= '<script type="application/json" class="freemius-matrix-data" data-freemius-product-id="' . esc_attr( $product_id ) . '">' . \wp_json_encode( $this->get_matrix( $args ) ) . '</script>';
 
 			$this->matrix_added[] = $product_id;
+		}
+
+		$coupon_code = $args['coupon'] ?? '';
+		if ( $product_id && ! empty( $coupon_code ) ) {
+			$coupon_key = $product_id . ':' . $coupon_code;
+
+			if ( ! in_array( $coupon_key, $this->coupon_added, true ) ) {
+				$coupon = Coupon::get_by_code( (int) $product_id, (string) $coupon_code );
+
+				if ( null !== $coupon ) {
+					$extra .= sprintf(
+						'<script type="application/json" class="freemius-coupon-data" data-freemius-product-id="%1$s" data-freemius-coupon-code="%2$s">%3$s</script>',
+						esc_attr( (string) $product_id ),
+						esc_attr( (string) $coupon_code ),
+						\wp_json_encode( Coupon::to_embed_data( $coupon ) )
+					);
+
+					$this->coupon_added[] = $coupon_key;
+				}
+			}
 		}
 
 		$block_content = $extra . $block_content;

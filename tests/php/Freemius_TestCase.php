@@ -165,6 +165,11 @@ abstract class Freemius_TestCase extends TestCase {
 			$matrix->setAccessible( true );
 			$matrix->setValue( $scope, array() );
 		}
+		if ( $ref->hasProperty( 'coupon_added' ) ) {
+			$coupon_added = $ref->getProperty( 'coupon_added' );
+			$coupon_added->setAccessible( true );
+			$coupon_added->setValue( $scope, array() );
+		}
 
 		$api     = Api::get_instance();
 		$api_ref = new ReflectionClass( $api );

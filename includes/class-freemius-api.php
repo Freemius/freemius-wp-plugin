@@ -479,6 +479,10 @@ class Api {
 			$body = $dummy['pricing'];
 		}
 
+		if ( substr( $endpoint, -strlen( '/coupons.json' ) ) === '/coupons.json' ) {
+			$body = $dummy['coupons'];
+		}
+
 		if ( substr( $endpoint, -strlen( '/products/19794.json' ) ) === '/products/19794.json' ) {
 			$body = $dummy['product'];
 		}
@@ -515,6 +519,7 @@ class Api {
 			'pricing'    => $pricing,
 			'currencies' => $currencies,
 			'product'    => $product,
+			'coupons'    => $coupons,
 		);
 
 		return $data;

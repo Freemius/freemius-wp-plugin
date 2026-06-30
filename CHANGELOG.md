@@ -4,6 +4,8 @@ All notable changes to Freemius for WordPress are documented in this file.
 
 ## [Unreleased]
 
+- added: "Discounted price" mapping field that applies the scope coupon discount to the displayed plan price
+
 ## [0.4.2]
 
 - fixed: missing import for MappingSettings

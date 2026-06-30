@@ -10,6 +10,12 @@ import { store, getContext, getElement } from '@wordpress/interactivity';
 /**
  * Internal dependencies
  */
+import {
+	applyCouponDiscount,
+	couponAppliesToPlan,
+	formatMappingPrice,
+	getCouponData,
+} from '../../util/discountedPrice';
 
 /**
  * Get the mapping content based on the mapping type and data
@@ -52,6 +58,13 @@ function getMappingContent( scopeData, mappingData ) {
 
 	let content = '';
 
+	const licensesKey = sd.licenses || 'unlimited';
+
+	const getBasePrice = () =>
+		matrix[ sd.plan_id ]?.pricing?.[ sd.currency ]?.[ sd.billing_cycle ]?.[
+			licensesKey
+		] ?? 0;
+
 	switch ( md.field ) {
 		case 'billing_cycle':
 			content = md.labels?.[ sd.billing_cycle ] ?? sd.billing_cycle;
@@ -60,30 +73,42 @@ function getMappingContent( scopeData, mappingData ) {
 			content = md.labels?.[ sd.licenses ] ?? sd.licenses;
 			break;
 		case 'price':
-			content =
-				matrix[ sd.plan_id ]?.pricing?.[ sd.currency ]?.[
-					sd.billing_cycle
-				]?.[ sd.licenses || 'unlimited' ] ?? 0;
+		case 'discounted_price': {
+			content = getBasePrice();
+
+			if ( md.field === 'discounted_price' ) {
+				if ( ! sd.coupon ) {
+					content = '';
+					break;
+				}
+
+				const coupon = getCouponData( sd.product_id, sd.coupon );
+
+				if ( ! coupon || ! couponAppliesToPlan( coupon, sd.plan_id ) ) {
+					content = '';
+					break;
+				}
+
+				content = applyCouponDiscount( content, coupon, {
+					currency: sd.currency,
+				} );
+			}
 
 			// it's an invalid plan
 			if ( ! content && matrix[ sd.plan_id ]?.pricing !== null ) {
-				content = '-';
+				content = md.field === 'discounted_price' ? '' : '-';
 				break;
 			}
 
-			const symbol = md.currency_symbol;
+			if ( content === '' ) break;
 
-			content = new Intl.NumberFormat( 'en-US', {
-				style: symbol !== 'hide' ? 'currency' : 'decimal',
-				currency: symbol !== 'hide' ? sd.currency : undefined,
-				minimumFractionDigits: 0,
-			} ).format( content );
-
-			// extract the currency symbol
-			if ( symbol === 'symbol' )
-				content = content.replace( /[\d\s.,]/g, '' ).trim();
+			content = formatMappingPrice( content, {
+				currency: sd.currency,
+				currency_symbol: md.currency_symbol,
+			} );
 
 			break;
+		}
 		default:
 			content = matrix[ sd.plan_id ]?.[ md.field ] ?? '';
 			break;
