@@ -50,6 +50,10 @@ registerBlockExtension( SUPPORTED_BROKER_BLOCKS, {
 			type: 'boolean',
 			default: false,
 		},
+		freemius_query_overrides: {
+			type: 'boolean',
+			default: false,
+		},
 		freemius_modifications: {
 			type: 'object',
 		},
@@ -226,11 +230,15 @@ function addDataAttributes( props, blockType, attributes ) {
 		);
 
 	// scope
-	if ( attributes.freemius_enabled )
+	if ( attributes.freemius_enabled ) {
 		extraProps[ 'data-freemius-scope' ] = JSON.stringify( {
 			...( attributes.freemius || {} ),
 			...( attributes.freemius_modifications || {} ),
 		} );
+
+		if ( attributes.freemius_query_overrides )
+			extraProps[ 'data-freemius-query-overrides' ] = 'true';
+	}
 
 	return {
 		...props,

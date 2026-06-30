@@ -33,6 +33,7 @@ const EnableCheckbox = ( props ) => {
 		if ( ! val )
 			setAttributes( {
 				freemius_modifications: undefined,
+				freemius_query_overrides: false,
 				freemius: undefined,
 			} );
 	};

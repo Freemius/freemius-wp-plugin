@@ -33,6 +33,13 @@ class Scope {
 	 */
 	private $matrix_added = array();
 
+	/**
+	 * Whether the frontend scope view script has been enqueued
+	 *
+	 * @var boolean
+	 */
+	private $scope_view_enqueued = false;
+
 
 	/**
 	 * Constructor
@@ -109,6 +116,8 @@ class Scope {
 			return $block_content;
 		}
 
+		$this->enqueue_scope_view();
+
 		$block_args = $block['attrs']['freemius'] ?? array();
 
 		$defaults = \get_option( 'freemius_defaults', array() );
@@ -148,6 +157,27 @@ class Scope {
 		$block_content = $extra . $block_content;
 
 		return $block_content;
+	}
+
+	/**
+	 * Enqueue the frontend scope view script once per request.
+	 */
+	private function enqueue_scope_view() {
+		if ( $this->scope_view_enqueued || \is_admin() ) {
+			return;
+		}
+
+		$deps = include FREEMIUS_PLUGIN_DIR . '/build/scope/view.asset.php';
+
+		\wp_enqueue_script(
+			'freemius-scope-view',
+			FREEMIUS_PLUGIN_URL . '/build/scope/view.js',
+			$deps['dependencies'],
+			$deps['version'],
+			true
+		);
+
+		$this->scope_view_enqueued = true;
 	}
 
 	/**

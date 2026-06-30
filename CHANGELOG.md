@@ -4,6 +4,8 @@ All notable changes to Freemius for WordPress are documented in this file.
 
 ## [Unreleased]
 
+- improved: scopes can opt in to URL query parameters for currency, billing cycle, licenses, plan, and coupon via a new "Enable query overrides" setting (invalid pricing options are ignored)
+
 ## [0.4.2]
 
 - fixed: missing import for MappingSettings

@@ -6,10 +6,9 @@
  * WordPress dependencies
  */
 
-import domReady from '@wordpress/dom-ready';
-
 /**
  * Internal dependencies
  */
+import { applyQueryModifiers } from '../utils/scope';
 
-domReady( () => {} );
+applyQueryModifiers();

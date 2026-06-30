@@ -11,6 +11,7 @@ import domReady from '@wordpress/dom-ready';
 /**
  * Internal dependencies
  */
+import { getScopeData } from '../utils/scope';
 
 domReady( () => {
 	const buttons = document.querySelectorAll(
@@ -31,7 +32,6 @@ domReady( () => {
 					return;
 				}
 
-				// do not modify the original object
 				const freemius_copy = { ...scopeData };
 
 				const handler = new FS.Checkout( { product_id } );
@@ -68,28 +68,3 @@ domReady( () => {
 			} );
 	} );
 } );
-
-/**
- * Get the scope data from the element and all its ancestors
- *
- * @param {HTMLElement} element - The element to get the scope data from
- * @return {Object} The scope data
- */
-function getScopeData( element ) {
-	const scope = element.closest( '[data-freemius-scope]' );
-	const data = JSON.parse( scope.dataset.freemiusScope || '{}' );
-
-	const parent = scope.parentNode.closest( '[data-freemius-scope]' );
-
-	if ( parent ) {
-		const parentData = getScopeData( parent );
-		return { ...parentData, ...data };
-	}
-	const globalScope = document.querySelector( '.freemius-global-scope-data' );
-
-	if ( ! globalScope ) return data;
-
-	const globalScopeData = JSON.parse( globalScope.textContent );
-
-	return { ...globalScopeData, ...data };
-}

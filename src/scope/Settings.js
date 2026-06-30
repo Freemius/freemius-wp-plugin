@@ -16,6 +16,7 @@ import {
 	Button,
 	__experimentalSpacer as Spacer,
 	Notice,
+	ToggleControl,
 } from '@wordpress/components';
 
 /**
@@ -33,7 +34,12 @@ const PanelDescription = styled.div`
 const Settings = ( props ) => {
 	const { attributes, setAttributes, name } = props;
 
-	const { freemius_enabled, freemius, freemius_modifications } = attributes;
+	const {
+		freemius_enabled,
+		freemius_query_overrides,
+		freemius,
+		freemius_modifications,
+	} = attributes;
 
 	const { structure, isLoading } = useSettings( 'freemius_defaults' );
 
@@ -106,6 +112,22 @@ const Settings = ( props ) => {
 					}
 					{ ...props }
 				/>
+				{ freemius_enabled && (
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Enable query overrides', 'freemius' ) }
+						help={ __(
+							'Allow URL query parameters (e.g. ?currency=eur&coupon=CODE) to override scope for this area.',
+							'freemius'
+						) }
+						checked={ freemius_query_overrides || false }
+						onChange={ ( val ) =>
+							setAttributes( {
+								freemius_query_overrides: val,
+							} )
+						}
+					/>
+				) }
 				{ freemius_enabled && freemius_modifications && (
 					<Button
 						onClick={ () =>
