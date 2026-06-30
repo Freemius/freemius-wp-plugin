@@ -1,5 +1,4 @@
 .has-freemius-scope {
-
 	&::before {
 		content: "";
 		display: block;
@@ -18,6 +17,8 @@
 		border-radius: 1px;
 		_z-index: 100;
 		pointer-events: none;
+		padding: 0;
+		margin: 0;
 	}
 
 	&.is-freemius-invalid {
@@ -50,10 +51,11 @@
 		height: 100%;
 		border-radius: 1px;
 		pointer-events: none;
+		padding: 0;
+		margin: 0;
 	}
 
 	&.has-freemius-no-pricing {
-
 		&::before {
 			outline: 3px dotted #ff5353;
 		}
@@ -61,7 +63,6 @@
 }
 
 .has-freemius-mapping-error {
-
 	&::before {
 		outline: 2px dotted #ff5353;
 	}

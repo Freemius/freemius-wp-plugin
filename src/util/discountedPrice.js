@@ -76,12 +76,26 @@ export function applyCouponDiscount( basePrice, coupon, { currency } ) {
  */
 export function formatMappingPrice( value, { currency, currency_symbol } ) {
 	const symbol = currency_symbol ?? 'show';
+	const numericValue = Number( value );
+	const hasFractionalCents = Math.round( numericValue * 100 ) % 100 !== 0;
+	const fractionDigits = hasFractionalCents ? 2 : 0;
 
 	let content = new Intl.NumberFormat( 'en-US', {
 		style: symbol !== 'hide' ? 'currency' : 'decimal',
 		currency: symbol !== 'hide' ? currency : undefined,
-		minimumFractionDigits: 0,
-	} ).format( value );
+		minimumFractionDigits: fractionDigits,
+		maximumFractionDigits: fractionDigits,
+	} ).format( numericValue );
+
+	if ( fractionDigits > 0 ) {
+		const decimalSeparatorIndex = content.lastIndexOf( '.' );
+
+		if ( decimalSeparatorIndex !== -1 )
+			content =
+				content.slice( 0, decimalSeparatorIndex ) +
+				',' +
+				content.slice( decimalSeparatorIndex + 1 );
+	}
 
 	if ( symbol === 'symbol' )
 		content = content.replace( /[\d\s.,]/g, '' ).trim();
