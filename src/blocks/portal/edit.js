@@ -7,7 +7,7 @@ import {
 	useBlockProps,
 	__experimentalUseBorderProps as useBorderProps,
 	InspectorControls,
-	useSetting,
+	useSettings,
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
@@ -185,7 +185,7 @@ function PortalPlaceholderForm( { store_id, public_key, setAttributes } ) {
 }
 
 function usePreviewHeightUnits() {
-	const spacingUnits = useSetting( 'spacing.units' );
+	const [ spacingUnits ] = useSettings( 'spacing.units' );
 
 	return useMemo( () => {
 		if ( ! Array.isArray( spacingUnits ) || spacingUnits.length === 0 )
