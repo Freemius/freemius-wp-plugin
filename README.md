@@ -28,8 +28,9 @@ Freemius for WordPress lets you sell Freemius products from the Block Editor (Gu
 ### Try it
 
 - [WordPress Playground demo](https://playground.wordpress.net/?plugin=freemius)
-- [How to set up a Freemius checkout button (video)](https://www.youtube.com/watch?v=MTOuIBGan7E)
 - [Plugin documentation on GitHub](https://github.com/Freemius/freemius-wp-plugin/tree/main/docs)
+
+https://www.youtube.com/watch?v=MTOuIBGan7E
 
 ## Installation
 
