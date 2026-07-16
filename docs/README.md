@@ -58,6 +58,7 @@ For step-by-step guides in this documentation, see [Getting started](getting-sta
 | [Field mapping](mapping.md) | Pull plan price, title, description, and billing labels into blocks |
 | [Scope modifiers](modifiers.md) | Currency, billing cycle, and license toggles on the page |
 | [Settings](settings.md) | Admin tabs: Products, Editor Settings, and site-wide defaults |
+| [Customer Portal](customer-portal.md) | Embed the members dashboard with Store ID and Public Key; link to Freemius portal docs |
 
 ## FAQs
 
