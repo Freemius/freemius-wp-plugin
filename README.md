@@ -1,65 +1,91 @@
 # Freemius for WordPress
 
 Contributors:      freemius, xaverb  
-Tags:              freemius, checkout, payment, button  
+Tags:              freemius checkout, pricing table, block editor, customer portal, payment button  
+Requires at least: 6.6  
 Tested up to:      6.9  
 Stable tag:        0.4.2  
 License:           MIT  
 
-Freemius for WordPress helps you to add Freemius Checkout to any button of your WordPress content using the block editor.
+Add Freemius checkout, pricing tables, and a Customer Portal to WordPress with the Block Editor—no custom code required.
 
 ## Description
 
-Freemius for WordPress is a powerful WordPress plugin that allows you to transform any block-based button into a Freemius checkout button. This makes it easy to integrate Freemius payment processing into your WordPress site with minimal effort.
+Freemius for WordPress lets you sell Freemius products from the Block Editor (Gutenberg). Turn any Button into a Freemius checkout, build dynamic pricing tables with scopes and modifiers, manage multiple products in settings, and embed the Freemius Customer Portal so customers can manage licenses, billing, and downloads—without JavaScript, theme hacks, or custom coding.
 
-<https://www.youtube.com/watch?v=MTOuIBGan7E>
+**Not using the Block Editor?** See the [overlay checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/) or [hosted checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-hosted-page/) in the Freemius docs.
 
 ### Key features
 
-- Convert any block button to a Freemius checkout button
-- Seamless integration with Freemius payment processing
-- Customizable checkout experience
-- Works with all block-based themes and plugins
+- Native Block Editor support: Freemius checkout on Button blocks, with preview in the editor
+- Dynamic pricing tables: plan columns, field mapping (price, title, description), and checkout CTAs
+- Scope modifiers: currency, billing cycle, and license toggles on the page
+- Multi-product settings: connect Product IDs and API tokens under Settings → Freemius
+- Freemius Customer Portal block: embed the members dashboard (Store ID + Public Key)
+- Compatible with modern block themes and classic themes that support the block editor
+- Free and open source
 
-### Roadmap
+### Try it
 
-- Support for Pricing tables.
-- Better support to measure analytics.
-- Dedicated Settings page.
-- Testimonials (from the API).
+- [WordPress Playground demo](https://playground.wordpress.net/?plugin=freemius)
+- [How to set up a Freemius checkout button (video)](https://www.youtube.com/watch?v=MTOuIBGan7E)
+- [Plugin documentation on GitHub](https://github.com/Freemius/freemius-wp-plugin/tree/main/docs)
 
 ## Installation
 
-1. Upload the plugin files to the `/wp-content/plugins/freemius` directory, or install the plugin through the WordPress plugins screen directly
-2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Place a button via the block editor into your page/post
-4. Enable Freemius checkout in the button settings
-5. Configure your product details and the button will automatically handle the checkout process.
+1. Install and activate **Freemius for WordPress** from Plugins → Add New, or upload the plugin zip.
+2. Open **Settings → Freemius** and add your product under **Products** (Product ID and Token from the [Freemius Developer Dashboard](https://dashboard.freemius.com/)).
+3. Optionally set site-wide defaults under **Editor Settings**.
+4. Add a **Button** block, enable **Freemius Checkout** in the Freemius panel, and use **Preview** before publishing.
+5. For a pricing page: use Group/Columns with Freemius scopes, map plan fields, and add checkout buttons per plan.
+6. For the Customer Portal: add the **Freemius Customer Portal** block and enter your **Store ID** and **Public Key**.
 
 ## Frequently Asked Questions
 
 ### How do I set up a Freemius checkout button?
 
-Simply add a button block to your page or post, then enable the Freemius checkout option in the button settings. Configure your product details and the button will automatically handle the checkout process.
+Add a **Button** block, turn on **Freemius Checkout** in the Freemius panel, and connect your product under **Settings → Freemius**. See the [getting started guide](https://github.com/Freemius/freemius-wp-plugin/blob/main/docs/getting-started.md) and [button docs](https://github.com/Freemius/freemius-wp-plugin/blob/main/docs/button.md).
+
+### How do I build a Freemius pricing table?
+
+Create a page with a scoped Group and one Column per plan, map price and plan fields, then add a checkout Button in each column. Details: [Creating your Pricing page](https://github.com/Freemius/freemius-wp-plugin/blob/main/docs/creating-your-pricing-page.md).
+
+### How do I embed the Freemius Customer Portal?
+
+Add the **Freemius Customer Portal** block and enter your **Store ID** and **Public Key** from the Freemius Developer Dashboard (Stores → Settings → Keys). See the [Customer Portal guide](https://github.com/Freemius/freemius-wp-plugin/blob/main/docs/customer-portal.md) and [Freemius portal documentation](https://freemius.com/help/documentation/users-account-management/embedding-customer-portal/).
 
 ### Can I customize the checkout experience?
 
-Yes, you can customize various aspects of the checkout process through the plugin settings, including product details, pricing, and checkout flow.
+Yes. Configure product details and site-wide defaults under **Settings → Freemius**, and adjust per-button Freemius options (plan, licenses, callbacks, and more) in the block sidebar.
 
 ### Is this plugin compatible with my theme?
 
-The plugin works with any WordPress theme that supports the block editor (Gutenberg). It's designed to be compatible with all modern WordPress themes and plugins.
+The plugin targets the Block Editor (Gutenberg). It works with block themes and classic themes that support the block editor.
 
-### Where do I find the offical Freemius documentation?
+### Where is pricing data loaded from?
+
+Mapped prices and plan copy are saved when you edit and publish a page; the frontend does not call the Freemius API on every visit. After you change prices in the Freemius dashboard, reopen the page in the editor and **Update** it.
+
+### Where do I find the official Freemius documentation?
 
 [Freemius Documentation](https://freemius.com/help/documentation/)
 
 ## Screenshots
 
-1. Button block settings with Freemius checkout option
-2. Example of a Freemius checkout button in action
+1. Freemius checkout preview in the block editor
+2. Freemius scope modifiers on a pricing page
+3. Published Freemius pricing page
+4. Freemius Customer Portal for licenses, billing, and downloads
+5. Freemius Products settings tab
+
 
 ## Changelog
+
+## [Unreleased]
+
+- added: Freemius Customer Portal block to embed the members dashboard on your site
+- improved: portal block height adapts to iframe content with viewport-based limits instead of a fixed pixel size on the frontend
+- improved: portal block editor preview height supports px, vh, vw, rem, em, and % units
 
 ## [0.4.2]
 

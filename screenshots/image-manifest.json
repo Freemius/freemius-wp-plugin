@@ -412,6 +412,94 @@
 				"alt": "Products tab on the Freemius settings page",
 				"status": "captured"
 			}
+		},
+		{
+			"id": "wporg-button-overview",
+			"title": "WordPress.org: checkout preview in the block editor",
+			"description": "Plugin directory screenshot of the Freemius checkout preview modal open in the block editor after clicking Preview.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 1",
+				"checkout preview",
+				"preview modal"
+			],
+			"wordpress": {
+				"from": "docs/assets/docs-homepage-preview.png",
+				"path": ".wordpress-org/screenshot-1.png",
+				"caption": "Freemius checkout preview in the block editor",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-customer-portal",
+			"title": "WordPress.org: Customer Portal licenses view",
+			"description": "Plugin directory screenshot of the Freemius Customer Portal embed on the licenses screen.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 3",
+				"customer portal",
+				"licenses"
+			],
+			"capture": {
+				"url": "https://dev.local/portal/#!/licenses",
+				"viewports": [
+					"desktop"
+				]
+			},
+			"wordpress": {
+				"from": "screenshots/wporg-customer-portal/source.png",
+				"path": ".wordpress-org/screenshot-4.png",
+				"caption": "Freemius Customer Portal for licenses, billing, and downloads",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-pricing-page",
+			"title": "WordPress.org: published pricing page",
+			"description": "Plugin directory screenshot of a published Freemius pricing page with plan columns and checkout buttons.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 2",
+				"pricing page"
+			],
+			"wordpress": {
+				"from": "docs/assets/pricing-page-playground.png",
+				"path": ".wordpress-org/screenshot-3.png",
+				"caption": "Published Freemius pricing page",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-scope-modifiers",
+			"title": "WordPress.org: scope modifiers",
+			"description": "Plugin directory screenshot of Freemius scope modifiers for currency, billing cycle, and licenses.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 4",
+				"scope modifiers"
+			],
+			"wordpress": {
+				"from": "docs/assets/scope-modifiers.png",
+				"path": ".wordpress-org/screenshot-2.png",
+				"caption": "Freemius scope modifiers on a pricing page",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-settings-products",
+			"title": "WordPress.org: Products settings tab",
+			"description": "Plugin directory screenshot of Settings → Freemius Products tab with Product ID and Token fields.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 5",
+				"products settings"
+			],
+			"wordpress": {
+				"from": "docs/assets/settings-products.png",
+				"path": ".wordpress-org/screenshot-5.png",
+				"caption": "Freemius Products settings tab",
+				"status": "captured"
+			}
 		}
 	]
 }
