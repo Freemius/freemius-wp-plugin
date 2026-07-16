@@ -23,7 +23,6 @@ domReady( () => {
 				portalEl.getAttribute( 'data-freemius-portal' ) || '{}'
 			);
 		} catch ( err ) {
-			// eslint-disable-next-line no-console -- invalid block configuration
 			console.error(
 				'Freemius portal: invalid data-freemius-portal',
 				err

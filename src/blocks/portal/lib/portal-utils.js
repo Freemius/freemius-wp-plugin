@@ -37,7 +37,7 @@ export function createGuid() {
 export function isRunningInIframe( win ) {
 	try {
 		return win.self !== win.top;
-	} catch ( e ) {
+	} catch ( _e ) {
 		return true;
 	}
 }

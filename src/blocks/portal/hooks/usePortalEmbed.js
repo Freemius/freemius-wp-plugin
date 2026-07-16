@@ -325,7 +325,6 @@ export function usePortalEmbed( {
 				container.removeChild( container.firstChild );
 		};
 		// Height updates handled separately to avoid iframe reload.
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- see above
 	}, [
 		storeId,
 		publicKey,

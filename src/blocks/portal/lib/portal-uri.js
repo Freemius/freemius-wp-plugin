@@ -50,7 +50,7 @@ function parseQuerystring( url ) {
 			queryObject[ decodeURIComponent( pair[ 0 ] ) ] = decodeURIComponent(
 				pair[ 1 ]
 			);
-		} catch ( e ) {
+		} catch ( _e ) {
 			// Ignore malformed pairs.
 		}
 
