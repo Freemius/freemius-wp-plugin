@@ -1,0 +1,51 @@
+.freemius-portal-resizable-box {
+	width: 100%;
+}
+
+.freemius-portal-resizable-box .components-resizable-box__container {
+	width: 100% !important;
+}
+
+.fs-dashboard-container--preview {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+}
+
+.wp-block-freemius-portal {
+
+	.components-placeholder__label svg {
+		width: 24px;
+		height: 24px;
+	}
+
+	.wp-block-freemius-portal__placeholder-input {
+		flex: 1 1 auto;
+		width: 100%;
+	}
+}
+
+.freemius-portal-placeholder-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+}
+
+.freemius-portal-field-label {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75em;
+	width: 100%;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-transform: uppercase;
+
+	a {
+		font-size: 12px;
+		font-weight: 400;
+		text-transform: none;
+	}
+}

@@ -26,9 +26,7 @@ module.exports = [
 		},
 		module: {
 			...defaultConfig[ 0 ].module,
-			rules: [
-				...defaultConfig[ 0 ].module.rules,
-			],
+			rules: [ ...defaultConfig[ 0 ].module.rules ],
 		},
 		plugins: [
 			...defaultConfig[ 0 ].plugins,
