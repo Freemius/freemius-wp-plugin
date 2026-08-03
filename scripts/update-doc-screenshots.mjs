@@ -67,8 +67,10 @@ const ENTRY_KEY_ORDER = [
 	'match',
 	'capture',
 	'embed',
-	'website',
+	'wordpress',
 ];
+
+const README_PATH = resolve( rootDir, 'README.md' );
 
 /**
  * @param {string} dir
@@ -677,9 +679,12 @@ function isEditorCanvasCapture( entry ) {
  * @param {{ id: string, capture: { url: string } }} entry
  */
 function isFrontendCapture( entry ) {
+	const url = entry.capture?.url ?? '';
 	return (
 		entry.id.startsWith( 'pricing-page-' ) ||
-		entry.capture.url.includes( '/playground' )
+		entry.id.startsWith( 'wporg-customer-portal' ) ||
+		url.includes( '/playground' ) ||
+		url.includes( '/portal' )
 	);
 }
 
@@ -3617,6 +3622,274 @@ function reviewSourcePath( id ) {
 }
 
 /**
+ * @param {string} path
+ * @returns {number | null}
+ */
+function wordpressScreenshotNumber( path ) {
+	const match = path.match( /\.wordpress-org\/screenshot-(\d+)\.png$/ );
+	return match ? Number( match[ 1 ] ) : null;
+}
+
+/**
+ * Rewrite README.md Screenshots section from wordpress manifest captions.
+ *
+ * @param {Array<{ wordpress: { path: string, caption: string } }>} wordpressEntries
+ */
+function syncReadmeScreenshotCaptions( wordpressEntries ) {
+	const ordered = [ ...wordpressEntries ]
+		.filter( ( entry ) => wordpressScreenshotNumber( entry.wordpress.path ) )
+		.sort(
+			( a, b ) =>
+				wordpressScreenshotNumber( a.wordpress.path ) -
+				wordpressScreenshotNumber( b.wordpress.path )
+		);
+
+	if ( ordered.length === 0 ) {
+		return;
+	}
+
+	const captions = ordered
+		.map(
+			( entry, index ) =>
+				`${ index + 1 }. ${ entry.wordpress.caption }`
+		)
+		.join( '\n' );
+
+	const readme = readFileSync( README_PATH, 'utf8' );
+	const sectionPattern =
+		/(## Screenshots\n\n)([\s\S]*?)(?=\n## |\n*$)/;
+
+	if ( ! sectionPattern.test( readme ) ) {
+		throw new Error(
+			'README.md is missing a ## Screenshots section to sync captions into'
+		);
+	}
+
+	const next = readme.replace( sectionPattern, `$1${ captions }\n` );
+	writeFileSync( README_PATH, next, 'utf8' );
+}
+
+/**
+ * @param {import('playwright').BrowserType} chromium
+ * @param {object} manifest
+ * @param {Array<{ id: string, capture?: object, wordpress: { from: string, path: string, caption: string, status: string } }>} entries
+ * @param {{ force?: boolean }} options
+ */
+async function processWordpressEntries(
+	chromium,
+	manifest,
+	entries,
+	options = {}
+) {
+	const compareOptions = getScreenshotCompareOptions();
+	if ( options.force ) {
+		compareOptions.disabled = true;
+	}
+
+	/** @type {Array<{ id: string, url: string, output: string, status: string, detail?: string }>} */
+	const results = [];
+	let manifestDirty = false;
+	let browser = null;
+	let page = null;
+
+	const needsBrowser = entries.some( ( entry ) => entry.capture );
+
+	if ( needsBrowser ) {
+		const probeEntry = entries.find( ( entry ) => entry.capture );
+		const probeUrl = resolveCaptureUrl( probeEntry.capture.url );
+		console.log( `  Checking ${ probeUrl }…` );
+
+		try {
+			await assertSiteReachable( chromium, probeUrl );
+		} catch ( error ) {
+			if ( isMissingBrowserError( error ) ) {
+				printPlaywrightHelp();
+				process.exit( 1 );
+			}
+			console.error(
+				`Local site not reachable at ${ probeUrl } — start dev.local and ensure auto-login works.`
+			);
+			console.error( String( error ) );
+			process.exit( 1 );
+		}
+
+		try {
+			browser = await chromium.launch();
+		} catch ( error ) {
+			if ( isMissingBrowserError( error ) ) {
+				printPlaywrightHelp();
+				process.exit( 1 );
+			}
+			throw error;
+		}
+
+		page = await browser.newPage( { ignoreHTTPSErrors: true } );
+	}
+
+	try {
+		for ( let index = 0; index < entries.length; index += 1 ) {
+			const entry = entries[ index ];
+			const linePrefix = `  [${ index + 1 }/${ entries.length }] WordPress.org ${ entry.id }…`;
+			const url = entry.capture
+				? resolveCaptureUrl( entry.capture.url )
+				: entry.wordpress.from;
+
+			try {
+				if ( entry.capture ) {
+					const sourcePath = entry.wordpress.from.startsWith(
+						'screenshots/'
+					)
+						? entry.wordpress.from
+						: reviewSourcePath( entry.id );
+					const tempCapturePath = `${ sourcePath }.capture-tmp.png`;
+
+					await captureScreenshot(
+						page,
+						entry,
+						manifest.viewports,
+						tempCapturePath
+					);
+
+					const baselinePath = existsSync(
+						resolve( rootDir, entry.wordpress.path )
+					)
+						? entry.wordpress.path
+						: existsSync( resolve( rootDir, sourcePath ) )
+						? sourcePath
+						: null;
+
+					const entryCompareOptions =
+						resolveCompareOptionsForCapture(
+							compareOptions,
+							entry.capture
+						);
+					const compareResult = baselinePath
+						? await compareScreenshotFiles(
+								resolve( rootDir, baselinePath ),
+								resolve( rootDir, tempCapturePath ),
+								entryCompareOptions
+						  )
+						: {
+								action: 'update',
+								diffRatio: 1,
+								reason: 'no baseline file',
+						  };
+
+					const tempCaptureAbs = resolve( rootDir, tempCapturePath );
+
+					if ( compareResult.action === 'skip' ) {
+						unlinkSync( tempCaptureAbs );
+						results.push( {
+							id: entry.id,
+							url,
+							output: entry.wordpress.path,
+							status: 'unchanged',
+							detail: compareResult.reason,
+						} );
+						logCaptureLine( linePrefix, 'skipped' );
+						continue;
+					}
+
+					if ( compareResult.action === 'abort' ) {
+						unlinkSync( tempCaptureAbs );
+						results.push( {
+							id: entry.id,
+							url,
+							output: entry.wordpress.path,
+							status: 'error',
+							detail: `Screenshot comparison aborted: ${ compareResult.reason }`,
+						} );
+						logCaptureLine( linePrefix, 'error' );
+						continue;
+					}
+
+					copyAsset( tempCapturePath, sourcePath );
+					unlinkSync( tempCaptureAbs );
+					copyAsset( sourcePath, entry.wordpress.path );
+				} else {
+					if ( ! existsSync( resolve( rootDir, entry.wordpress.from ) ) ) {
+						throw new Error(
+							`Missing wordpress.from source: ${ entry.wordpress.from }`
+						);
+					}
+					copyAsset( entry.wordpress.from, entry.wordpress.path );
+				}
+
+				entry.wordpress.status = 'captured';
+				manifestDirty = true;
+				results.push( {
+					id: entry.id,
+					url,
+					output: entry.wordpress.path,
+					status: 'ok',
+				} );
+				logCaptureLine( linePrefix, 'ok' );
+			} catch ( error ) {
+				results.push( {
+					id: entry.id,
+					url,
+					output: entry.wordpress.path,
+					status: 'error',
+					detail: String( error ),
+				} );
+				logCaptureLine( linePrefix, 'error' );
+			}
+		}
+	} finally {
+		if ( browser ) {
+			await browser.close();
+		}
+	}
+
+	if ( manifestDirty ) {
+		writeManifest( manifest );
+		const allWordpress = manifest.images.filter(
+			( entry ) => entry.use === 'wordpress' && entry.wordpress
+		);
+		syncReadmeScreenshotCaptions( allWordpress );
+	}
+
+	results.sort( ( a, b ) => a.id.localeCompare( b.id ) );
+
+	const failures = results.filter( ( row ) => row.status === 'error' );
+	const unchanged = results.filter( ( row ) => row.status === 'unchanged' );
+	const updated = results.filter( ( row ) => row.status === 'ok' );
+
+	if ( failures.length === 0 ) {
+		const parts = [];
+		if ( updated.length > 0 ) {
+			parts.push( `${ updated.length } updated` );
+		}
+		if ( unchanged.length > 0 ) {
+			parts.push( `${ unchanged.length } unchanged` );
+		}
+		console.log(
+			`Ready.. (${ parts.join( ', ' ) || 'no wordpress captures' })`
+		);
+	} else {
+		console.log(
+			`Ready.. (${ updated.length } updated, ${ unchanged.length } unchanged, ${ failures.length } failed)`
+		);
+	}
+
+	console.log( '\nWordPress.org screenshot summary:\n' );
+	console.log(
+		'| id | url | output | status |',
+		'\n| --- | --- | --- | --- |'
+	);
+	for ( const row of results ) {
+		const detail = row.detail ? ` (${ row.detail })` : '';
+		console.log(
+			`| ${ row.id } | ${ row.url } | ${ row.output } | ${ row.status }${ detail } |`
+		);
+	}
+
+	if ( failures.length > 0 ) {
+		process.exit( 1 );
+	}
+}
+
+/**
  * @param {string[]} argv
  * @returns {{ filterId: string | null, help: boolean, force: boolean }}
  */
@@ -3665,10 +3938,16 @@ function parseCliArgs( argv ) {
 /**
  * @param {Array<{ id: string }>} captureEntries
  * @param {Array<{ id: string }>} reviewCaptureEntries
+ * @param {Array<{ id: string }>} wordpressEntries
  */
-function printUsage( captureEntries, reviewCaptureEntries = [] ) {
+function printUsage(
+	captureEntries,
+	reviewCaptureEntries = [],
+	wordpressEntries = []
+) {
 	const ids = captureEntries.map( ( entry ) => entry.id ).sort();
 	const reviewIds = reviewCaptureEntries.map( ( entry ) => entry.id ).sort();
+	const wordpressIds = wordpressEntries.map( ( entry ) => entry.id ).sort();
 
 	console.log( `Usage:
   npm run update-screenshots
@@ -3682,6 +3961,13 @@ ${
 		? `\nReview-only ids (single-id capture only, ${
 				reviewIds.length
 		  }):\n${ reviewIds.map( ( id ) => `  - ${ id }` ).join( '\n' ) }`
+		: ''
+}
+${
+	wordpressIds.length
+		? `\nWordPress.org ids (${ wordpressIds.length }):\n${ wordpressIds
+				.map( ( id ) => `  - ${ id }` )
+				.join( '\n' ) }`
 		: ''
 }
 ` );
@@ -3789,9 +4075,16 @@ async function main() {
 	const allReviewCaptureEntries = manifest.images.filter(
 		( entry ) => entry.use === 'review' && entry.capture
 	);
+	const allWordpressEntries = manifest.images.filter(
+		( entry ) => entry.use === 'wordpress' && entry.wordpress
+	);
 
 	if ( help ) {
-		printUsage( allCaptureEntries, allReviewCaptureEntries );
+		printUsage(
+			allCaptureEntries,
+			allReviewCaptureEntries,
+			allWordpressEntries
+		);
 		process.exit( 0 );
 	}
 
@@ -3800,8 +4093,40 @@ async function main() {
 
 		if ( ! entry ) {
 			console.error( `Unknown manifest id "${ filterId }".` );
-			printUsage( allCaptureEntries, allReviewCaptureEntries );
+			printUsage(
+				allCaptureEntries,
+				allReviewCaptureEntries,
+				allWordpressEntries
+			);
 			process.exit( 1 );
+		}
+
+		if ( entry.use === 'review' ) {
+			if ( ! entry.capture ) {
+				console.error(
+					`"${ filterId }" has no capture block — add capture.url and capture.viewports first.`
+				);
+				process.exit( 1 );
+			}
+			console.log( `Starting.. (1 review screenshot: ${ filterId })` );
+			await captureReviewEntry( chromium, manifest, entry );
+			return;
+		}
+
+		if ( entry.use === 'wordpress' ) {
+			if ( ! entry.wordpress ) {
+				console.error(
+					`"${ filterId }" is missing the wordpress block (from, path, caption, status).`
+				);
+				process.exit( 1 );
+			}
+			console.log(
+				`Starting.. (1 WordPress.org screenshot: ${ filterId })`
+			);
+			await processWordpressEntries( chromium, manifest, [ entry ], {
+				force,
+			} );
+			return;
 		}
 
 		if ( ! entry.capture ) {
@@ -3809,12 +4134,6 @@ async function main() {
 				`"${ filterId }" has no capture block — add capture.url and capture.viewports first.`
 			);
 			process.exit( 1 );
-		}
-
-		if ( entry.use === 'review' ) {
-			console.log( `Starting.. (1 review screenshot: ${ filterId })` );
-			await captureReviewEntry( chromium, manifest, entry );
-			return;
 		}
 
 		if ( entry.use !== 'docs' || ! entry.embed ) {
@@ -3825,9 +4144,9 @@ async function main() {
 		}
 	}
 
-	if ( allCaptureEntries.length === 0 ) {
+	if ( allCaptureEntries.length === 0 && allWordpressEntries.length === 0 ) {
 		console.error(
-			'No docs manifest entries with capture blocks — add capture.url and capture.viewports first.'
+			'No docs or wordpress manifest entries to process — add capture/wordpress blocks first.'
 		);
 		process.exit( 1 );
 	}
@@ -3841,253 +4160,267 @@ async function main() {
 		captureEntries = [ entry ];
 	}
 
-	const captureCount = captureEntries.length;
-	console.log(
-		filterId
-			? `Starting.. (1 screenshot: ${ filterId })`
-			: `Starting.. (${ captureCount } screenshots)`
-	);
-
-	const probeUrl = resolveCaptureUrl( captureEntries[ 0 ].capture.url );
-	console.log( `  Checking ${ probeUrl }…` );
-	const compareOptions = getScreenshotCompareOptions();
-	if ( force ) {
-		compareOptions.disabled = true;
-	}
-
-	try {
-		await assertSiteReachable( chromium, probeUrl );
-	} catch ( error ) {
-		if ( isMissingBrowserError( error ) ) {
-			printPlaywrightHelp();
-			process.exit( 1 );
-		}
-		console.error(
-			`Local site not reachable at ${ probeUrl } — start dev.local and ensure auto-login works.`
+	if ( captureEntries.length > 0 ) {
+		const captureCount = captureEntries.length;
+		console.log(
+			filterId
+				? `Starting.. (1 screenshot: ${ filterId })`
+				: `Starting.. (${ captureCount } screenshots)`
 		);
-		console.error( String( error ) );
-		process.exit( 1 );
-	}
 
-	/** @type {Map<string, typeof docsEntries>} */
-	const bySource = new Map();
-	for ( const entry of docsEntries ) {
-		const key = entry.embed.from;
-		if ( ! bySource.has( key ) ) {
-			bySource.set( key, [] );
-		}
-		bySource.get( key ).push( entry );
-	}
-
-	/** @type {Map<string, typeof captureEntries[number]>} */
-	const captureBySource = new Map();
-	for ( const entry of captureEntries ) {
-		if ( filterId ) {
-			captureBySource.set( entry.embed.from, entry );
-			continue;
+		const probeUrl = resolveCaptureUrl( captureEntries[ 0 ].capture.url );
+		console.log( `  Checking ${ probeUrl }…` );
+		const compareOptions = getScreenshotCompareOptions();
+		if ( force ) {
+			compareOptions.disabled = true;
 		}
 
-		if ( ! captureBySource.has( entry.embed.from ) ) {
-			captureBySource.set( entry.embed.from, entry );
-		}
-	}
-
-	/** @type {Array<{ id: string, url: string, output: string, status: string, detail?: string }>} */
-	const results = [];
-	let manifestDirty = false;
-
-	let browser;
-	try {
-		browser = await chromium.launch();
-	} catch ( error ) {
-		if ( isMissingBrowserError( error ) ) {
-			printPlaywrightHelp();
+		try {
+			await assertSiteReachable( chromium, probeUrl );
+		} catch ( error ) {
+			if ( isMissingBrowserError( error ) ) {
+				printPlaywrightHelp();
+				process.exit( 1 );
+			}
+			console.error(
+				`Local site not reachable at ${ probeUrl } — start dev.local and ensure auto-login works.`
+			);
+			console.error( String( error ) );
 			process.exit( 1 );
 		}
-		throw error;
-	}
 
-	const page = await browser.newPage( { ignoreHTTPSErrors: true } );
+		/** @type {Map<string, typeof docsEntries>} */
+		const bySource = new Map();
+		for ( const entry of docsEntries ) {
+			const key = entry.embed.from;
+			if ( ! bySource.has( key ) ) {
+				bySource.set( key, [] );
+			}
+			bySource.get( key ).push( entry );
+		}
 
-	let captureIndex = 0;
+		/** @type {Map<string, typeof captureEntries[number]>} */
+		const captureBySource = new Map();
+		for ( const entry of captureEntries ) {
+			if ( filterId ) {
+				captureBySource.set( entry.embed.from, entry );
+				continue;
+			}
 
-	try {
-		for ( const [ sourcePath, primary ] of captureBySource ) {
-			const url = resolveCaptureUrl( primary.capture.url );
-			let captureError = null;
+			if ( ! captureBySource.has( entry.embed.from ) ) {
+				captureBySource.set( entry.embed.from, entry );
+			}
+		}
 
-			captureIndex += 1;
-			const relatedEntries = bySource.get( sourcePath ) ?? [ primary ];
-			const relatedIds = relatedEntries
-				.map( ( entry ) => entry.id )
-				.join( ', ' );
-			const linePrefix = `  [${ captureIndex }/${ captureBySource.size }] Capturing ${ relatedIds }…`;
-			/** @type {Array<{ id: string, url: string, output: string, status: string, detail?: string }>} */
-			const batchResults = [];
+		/** @type {Array<{ id: string, url: string, output: string, status: string, detail?: string }>} */
+		const results = [];
+		let manifestDirty = false;
 
-			try {
-				const tempCapturePath = `${ sourcePath }.capture-tmp.png`;
-				await captureScreenshot(
-					page,
-					primary,
-					manifest.viewports,
-					tempCapturePath
-				);
+		let browser;
+		try {
+			browser = await chromium.launch();
+		} catch ( error ) {
+			if ( isMissingBrowserError( error ) ) {
+				printPlaywrightHelp();
+				process.exit( 1 );
+			}
+			throw error;
+		}
 
-				const baselinePath = resolveBaselinePath(
-					relatedEntries,
-					sourcePath
-				);
-				const entryCompareOptions = resolveCompareOptionsForCapture(
-					compareOptions,
-					primary.capture
-				);
-				const compareResult = baselinePath
-					? await compareScreenshotFiles(
-							resolve( rootDir, baselinePath ),
-							resolve( rootDir, tempCapturePath ),
-							entryCompareOptions
-					  )
-					: {
-							action: 'update',
-							diffRatio: 1,
-							reason: 'no baseline file',
-					  };
+		const page = await browser.newPage( { ignoreHTTPSErrors: true } );
 
-				const tempCaptureAbs = resolve( rootDir, tempCapturePath );
+		let captureIndex = 0;
 
-				if ( compareResult.action === 'skip' ) {
-					unlinkSync( tempCaptureAbs );
-					for ( const entry of relatedEntries ) {
-						batchResults.push( {
-							id: entry.id,
-							url,
-							output: entry.embed.path,
-							status: 'unchanged',
-							detail: compareResult.reason,
-						} );
-					}
-					logCaptureLine(
-						linePrefix,
-						captureLineStatus( batchResults )
+		try {
+			for ( const [ sourcePath, primary ] of captureBySource ) {
+				const url = resolveCaptureUrl( primary.capture.url );
+				let captureError = null;
+
+				captureIndex += 1;
+				const relatedEntries = bySource.get( sourcePath ) ?? [ primary ];
+				const relatedIds = relatedEntries
+					.map( ( entry ) => entry.id )
+					.join( ', ' );
+				const linePrefix = `  [${ captureIndex }/${ captureBySource.size }] Capturing ${ relatedIds }…`;
+				/** @type {Array<{ id: string, url: string, output: string, status: string, detail?: string }>} */
+				const batchResults = [];
+
+				try {
+					const tempCapturePath = `${ sourcePath }.capture-tmp.png`;
+					await captureScreenshot(
+						page,
+						primary,
+						manifest.viewports,
+						tempCapturePath
 					);
-					results.push( ...batchResults );
-					continue;
+
+					const baselinePath = resolveBaselinePath(
+						relatedEntries,
+						sourcePath
+					);
+					const entryCompareOptions = resolveCompareOptionsForCapture(
+						compareOptions,
+						primary.capture
+					);
+					const compareResult = baselinePath
+						? await compareScreenshotFiles(
+								resolve( rootDir, baselinePath ),
+								resolve( rootDir, tempCapturePath ),
+								entryCompareOptions
+						  )
+						: {
+								action: 'update',
+								diffRatio: 1,
+								reason: 'no baseline file',
+						  };
+
+					const tempCaptureAbs = resolve( rootDir, tempCapturePath );
+
+					if ( compareResult.action === 'skip' ) {
+						unlinkSync( tempCaptureAbs );
+						for ( const entry of relatedEntries ) {
+							batchResults.push( {
+								id: entry.id,
+								url,
+								output: entry.embed.path,
+								status: 'unchanged',
+								detail: compareResult.reason,
+							} );
+						}
+						logCaptureLine(
+							linePrefix,
+							captureLineStatus( batchResults )
+						);
+						results.push( ...batchResults );
+						continue;
+					}
+
+					if ( compareResult.action === 'abort' ) {
+						unlinkSync( tempCaptureAbs );
+						for ( const entry of relatedEntries ) {
+							batchResults.push( {
+								id: entry.id,
+								url,
+								output: entry.embed.path,
+								status: 'error',
+								detail: `Screenshot comparison aborted: ${ compareResult.reason }`,
+							} );
+						}
+						logCaptureLine(
+							linePrefix,
+							captureLineStatus( batchResults )
+						);
+						results.push( ...batchResults );
+						continue;
+					}
+
+					copyAsset( tempCapturePath, sourcePath );
+					unlinkSync( tempCaptureAbs );
+				} catch ( error ) {
+					captureError = error;
 				}
 
-				if ( compareResult.action === 'abort' ) {
-					unlinkSync( tempCaptureAbs );
+				if ( captureError ) {
 					for ( const entry of relatedEntries ) {
 						batchResults.push( {
 							id: entry.id,
 							url,
 							output: entry.embed.path,
 							status: 'error',
-							detail: `Screenshot comparison aborted: ${ compareResult.reason }`,
+							detail: String( captureError ),
 						} );
 					}
-					logCaptureLine(
-						linePrefix,
-						captureLineStatus( batchResults )
-					);
+					logCaptureLine( linePrefix, captureLineStatus( batchResults ) );
 					results.push( ...batchResults );
 					continue;
 				}
 
-				copyAsset( tempCapturePath, sourcePath );
-				unlinkSync( tempCaptureAbs );
-			} catch ( error ) {
-				captureError = error;
-			}
-
-			if ( captureError ) {
 				for ( const entry of relatedEntries ) {
-					batchResults.push( {
-						id: entry.id,
-						url,
-						output: entry.embed.path,
-						status: 'error',
-						detail: String( captureError ),
-					} );
+					try {
+						copyAsset( sourcePath, entry.embed.path );
+						verifyDocImageReference( entry );
+						entry.embed.status = 'captured';
+						manifestDirty = true;
+						batchResults.push( {
+							id: entry.id,
+							url,
+							output: entry.embed.path,
+							status: relatedEntries.length > 1 ? 'copied' : 'ok',
+						} );
+					} catch ( error ) {
+						batchResults.push( {
+							id: entry.id,
+							url,
+							output: entry.embed.path,
+							status: 'error',
+							detail: String( error ),
+						} );
+					}
 				}
+
 				logCaptureLine( linePrefix, captureLineStatus( batchResults ) );
 				results.push( ...batchResults );
-				continue;
 			}
+		} finally {
+			await browser.close();
+		}
 
-			for ( const entry of relatedEntries ) {
-				try {
-					copyAsset( sourcePath, entry.embed.path );
-					verifyDocImageReference( entry );
-					entry.embed.status = 'captured';
-					manifestDirty = true;
-					batchResults.push( {
-						id: entry.id,
-						url,
-						output: entry.embed.path,
-						status: relatedEntries.length > 1 ? 'copied' : 'ok',
-					} );
-				} catch ( error ) {
-					batchResults.push( {
-						id: entry.id,
-						url,
-						output: entry.embed.path,
-						status: 'error',
-						detail: String( error ),
-					} );
-				}
+		if ( manifestDirty ) {
+			writeManifest( manifest );
+			console.log( '  Syncing screenshots inventory…' );
+			syncScreenshotsDocsPage();
+		}
+
+		results.sort( ( a, b ) => a.id.localeCompare( b.id ) );
+
+		const failures = results.filter( ( row ) => row.status === 'error' );
+		const unchanged = results.filter( ( row ) => row.status === 'unchanged' );
+		const updated = results.filter( ( row ) =>
+			[ 'ok', 'copied' ].includes( row.status )
+		);
+
+		if ( failures.length === 0 ) {
+			const parts = [];
+			if ( updated.length > 0 ) {
+				parts.push( `${ updated.length } updated` );
 			}
-
-			logCaptureLine( linePrefix, captureLineStatus( batchResults ) );
-			results.push( ...batchResults );
+			if ( unchanged.length > 0 ) {
+				parts.push( `${ unchanged.length } unchanged` );
+			}
+			console.log( `Ready.. (${ parts.join( ', ' ) || 'no captures' })` );
+		} else {
+			console.log(
+				`Ready.. (${ updated.length } updated, ${ unchanged.length } unchanged, ${ failures.length } failed)`
+			);
 		}
-	} finally {
-		await browser.close();
-	}
 
-	if ( manifestDirty ) {
-		writeManifest( manifest );
-		console.log( '  Syncing screenshots inventory…' );
-		syncScreenshotsDocsPage();
-	}
-
-	results.sort( ( a, b ) => a.id.localeCompare( b.id ) );
-
-	const failures = results.filter( ( row ) => row.status === 'error' );
-	const unchanged = results.filter( ( row ) => row.status === 'unchanged' );
-	const updated = results.filter( ( row ) =>
-		[ 'ok', 'copied' ].includes( row.status )
-	);
-
-	if ( failures.length === 0 ) {
-		const parts = [];
-		if ( updated.length > 0 ) {
-			parts.push( `${ updated.length } updated` );
-		}
-		if ( unchanged.length > 0 ) {
-			parts.push( `${ unchanged.length } unchanged` );
-		}
-		console.log( `Ready.. (${ parts.join( ', ' ) || 'no captures' })` );
-	} else {
+		console.log( '\nDoc screenshot summary:\n' );
 		console.log(
-			`Ready.. (${ updated.length } updated, ${ unchanged.length } unchanged, ${ failures.length } failed)`
+			'| id | url | output | status |',
+			'\n| --- | --- | --- | --- |'
 		);
+		for ( const row of results ) {
+			const detail = row.detail ? ` (${ row.detail })` : '';
+			console.log(
+				`| ${ row.id } | ${ row.url } | ${ row.output } | ${ row.status }${ detail } |`
+			);
+		}
+
+		if ( failures.length > 0 ) {
+			process.exit( 1 );
+		}
 	}
 
-	console.log( '\nDoc screenshot summary:\n' );
-	console.log(
-		'| id | url | output | status |',
-		'\n| --- | --- | --- | --- |'
-	);
-	for ( const row of results ) {
-		const detail = row.detail ? ` (${ row.detail })` : '';
+	if ( ! filterId && allWordpressEntries.length > 0 ) {
 		console.log(
-			`| ${ row.id } | ${ row.url } | ${ row.output } | ${ row.status }${ detail } |`
+			`Starting.. (${ allWordpressEntries.length } WordPress.org screenshots)`
 		);
-	}
-
-	if ( failures.length > 0 ) {
-		process.exit( 1 );
+		await processWordpressEntries(
+			chromium,
+			manifest,
+			allWordpressEntries,
+			{ force }
+		);
 	}
 }
 

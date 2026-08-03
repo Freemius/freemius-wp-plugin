@@ -55,7 +55,7 @@
 		},
 		"useType": {
 			"type": "string",
-			"enum": [ "docs", "website", "review" ]
+			"enum": [ "docs", "wordpress", "review" ]
 		},
 		"embedStatus": {
 			"type": "string",
@@ -123,6 +123,29 @@
 				"status": { "$ref": "#/$defs/embedStatus" }
 			}
 		},
+		"wordpressBlock": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [ "from", "path", "caption", "status" ],
+			"properties": {
+				"from": {
+					"type": "string",
+					"pattern": "^(screenshots/[a-z0-9]+(-[a-z0-9]+)*/[^/]+\\.png|docs/assets/[^/]+\\.(png|jpg|jpeg|webp|gif))$",
+					"description": "Source under screenshots/{id}/ or a committed docs/assets file."
+				},
+				"path": {
+					"type": "string",
+					"pattern": "^\\.wordpress-org/screenshot-[0-9]+\\.png$",
+					"description": "WordPress.org plugin directory screenshot path."
+				},
+				"caption": {
+					"type": "string",
+					"minLength": 1,
+					"description": "README Screenshots section caption (numbered list text)."
+				},
+				"status": { "$ref": "#/$defs/embedStatus" }
+			}
+		},
 		"imageEntry": {
 			"type": "object",
 			"additionalProperties": false,
@@ -137,7 +160,8 @@
 					"items": { "type": "string", "minLength": 1 }
 				},
 				"capture": { "$ref": "#/$defs/captureBlock" },
-				"embed": { "$ref": "#/$defs/embedBlock" }
+				"embed": { "$ref": "#/$defs/embedBlock" },
+				"wordpress": { "$ref": "#/$defs/wordpressBlock" }
 			},
 			"allOf": [
 				{
@@ -145,14 +169,34 @@
 						"properties": { "use": { "const": "docs" } },
 						"required": [ "use" ]
 					},
-					"then": { "required": [ "embed" ] }
+					"then": {
+						"required": [ "embed" ],
+						"not": { "required": [ "wordpress" ] }
+					}
+				},
+				{
+					"if": {
+						"properties": { "use": { "const": "wordpress" } },
+						"required": [ "use" ]
+					},
+					"then": {
+						"required": [ "wordpress" ],
+						"not": { "required": [ "embed" ] }
+					}
 				},
 				{
 					"if": {
 						"properties": { "use": { "const": "review" } },
 						"required": [ "use" ]
 					},
-					"then": { "not": { "required": [ "embed" ] } }
+					"then": {
+						"not": {
+							"anyOf": [
+								{ "required": [ "embed" ] },
+								{ "required": [ "wordpress" ] }
+							]
+						}
+					}
 				}
 			]
 		}
