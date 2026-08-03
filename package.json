@@ -33,7 +33,7 @@
 		"*.php"
 	],
 	"dependencies": {
-		"@10up/block-components": "^1.19.3",
+		"@10up/block-components": "^1.22.4",
 		"@emotion/styled": "^11.14.0",
 		"@wordpress/data": "^10.52.0",
 		"@wordpress/dom-ready": "^4.52.0",
