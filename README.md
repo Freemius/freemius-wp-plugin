@@ -3,7 +3,7 @@
 Contributors:      freemius, xaverb  
 Tags:              freemius checkout, pricing table, block editor, customer portal, payment button  
 Requires at least: 6.6  
-Tested up to:      6.9  
+Tested up to:      7.0  
 Stable tag:        0.5.0  
 License:           MIT  
 
@@ -82,25 +82,23 @@ Mapped prices and plan copy are saved when you edit and publish a page; the fron
 
 ## Changelog
 
-## [Unreleased]
+### 0.5.0 — 2026-08-03
 
 - added: Freemius Customer Portal block to embed the members dashboard on your site
-- improved: portal block height adapts to iframe content with viewport-based limits instead of a fixed pixel size on the frontend
-- improved: portal block editor preview height supports px, vh, vw, rem, em, and % units
 
-## [0.4.2]
+### 0.4.2 — 2026-01-06
 
 - fixed: missing import for MappingSettings
 - updated: dependencies
 
-## [0.4.1]
+### 0.4.1 — 2025-11-19
 
 - fixed: missing import in useMapping hook
 - improved: support for button tag in the button block (WordPress 6.9)
 - updated: Tested up to 6.9
 - updated: dependencies
 
-## [0.4.0]
+### 0.4.0 — 2025-09-22
 
 - added: support for multiple products — manage and configure multiple Freemius products
 - added: "Get Started" tab in settings with helpful video tutorial
@@ -112,7 +110,7 @@ Mapped prices and plan copy are saved when you edit and publish a page; the fron
 - improved: faster loading and plugin performance
 - fixed: various stability improvements
 
-## [0.3.0]
+### 0.3.0 — 2025-07-28
 
 - added: pricing table functionality with dynamic plan display
 - changed: complete refactoring of Freemius settings and API structure (breaking)
@@ -125,36 +123,38 @@ Mapped prices and plan copy are saved when you edit and publish a page; the fron
 - changed: codebase structure with new component organization
 - added: support for advanced pricing modifiers and billing cycles
 
-## [0.2.1]
+### 0.2.1 — 2025-06-30
 
 - added: popout editor for code fields
 
-## [0.2.0]
+### 0.2.0 — 2025-06-02
 
 - changed: deprecated argument `plugin_id` to `product_id` (breaking)
 
-## [0.1.9]
+### 0.1.9 — 2025-05-29
 
 - added: support for WordPress 6.8
 - improved: button customization options
 - fixed: bug fixes and performance improvements
 
-## [0.1.8]
+### 0.1.8 — 2024-12-19
 
 - improved: checkout flow
 - added: new customization options
 - fixed: compatibility issues
 
-## [0.1.7]
+### 0.1.7 — 2024-12-09
 
 - improved: error handling
 - added: support for custom checkout fields
 - improved: performance optimizations
 
-## [0.1.6]
+### 0.1.6 — 2024-12-04
 
 - added: initial public release with basic Freemius checkout integration and core functionality
 
-## [0.1.0]
+### 0.1.0 — 2024-11-20
 
 - added: initial development release
+
+Version **0.5.0** — see CHANGELOG.md
