@@ -4,7 +4,7 @@ Contributors:      freemius, xaverb
 Tags:              freemius checkout, pricing table, block editor, customer portal, payment button  
 Requires at least: 6.6  
 Tested up to:      6.9  
-Stable tag:        0.4.2  
+Stable tag:        0.5.0  
 License:           MIT  
 
 Add Freemius checkout, pricing tables, and a Customer Portal to WordPress with the Block Editor—no custom code required.
