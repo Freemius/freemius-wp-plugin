@@ -13,19 +13,19 @@ import { __ } from '@wordpress/i18n';
  */
 export const MODIFIERS = [
 	{
-		name: __('Currency', 'freemius'),
+		name: __( 'Currency', 'freemius' ),
 		id: 'currency',
 	},
 	{
-		name: __('Billing Cycle', 'freemius'),
+		name: __( 'Billing Cycle', 'freemius' ),
 		id: 'billing_cycle',
 	},
 	{
-		name: __('Licenses', 'freemius'),
+		name: __( 'Licenses', 'freemius' ),
 		id: 'licenses',
 	},
 	{
-		name: __('Plan', 'freemius'),
+		name: __( 'Plan', 'freemius' ),
 		id: 'plan_id',
 	},
 ];

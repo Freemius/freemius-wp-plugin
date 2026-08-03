@@ -1,16 +1,28 @@
 {
 	"name": "freemius",
-	"version": "0.4.2",
+	"version": "0.5.0",
 	"author": "Xaver",
 	"license": "GPL-2.0-or-later",
+	"engines": {
+		"node": "^24.0.0"
+	},
 	"scripts": {
 		"build": "wp-scripts build  --experimental-modules",
 		"format": "wp-scripts format",
+		"lint": "npm run lint:js && npm run lint:css",
+		"lint:all": "npm run lint && composer run lint:php",
 		"lint:css": "wp-scripts lint-style",
-		"lint:js": "wp-scripts lint-js",
+		"lint:css:fix": "wp-scripts lint-style --fix",
+		"lint:js": "wp-scripts lint-js src webpack.config.js",
+		"lint:php": "composer run lint:php",
+		"lint:php:fix": "composer run lint:php:fix",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start  --experimental-modules"
+		"sync:screenshots-docs": "node scripts/sync-screenshots-docs.mjs",
+		"sync:screenshot-captions": "node scripts/sync-screenshot-captions.mjs",
+		"update-screenshots": "node scripts/update-doc-screenshots.mjs",
+		"start": "wp-scripts start  --experimental-modules",
+		"test:php": "composer run test:php"
 	},
 	"files": [
 		"build",
@@ -21,19 +33,25 @@
 		"*.php"
 	],
 	"dependencies": {
-		"@10up/block-components": "^1.19.3",
+		"@10up/block-components": "^1.22.4",
 		"@emotion/styled": "^11.14.0",
-		"@wordpress/data": "^10.37.0",
-		"@wordpress/dom-ready": "^4.37.0",
-		"@wordpress/element": "^6.37.0",
-		"@wordpress/i18n": "^6.10.0",
-		"@wordpress/interactivity": "^6.37.0",
+		"@wordpress/data": "^10.52.0",
+		"@wordpress/dom-ready": "^4.52.0",
+		"@wordpress/element": "^8.4.0",
+		"@wordpress/i18n": "^6.25.0",
+		"@wordpress/interactivity": "^6.52.0",
 		"classnames": "^2.5.1"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.37.0",
-		"@wordpress/scripts": "^31.2.0",
-		"sounds-webpack-plugin": "^0.0.2",
+		"@playwright/test": "^1.60.0",
+		"@wordpress/env": "^11.12.0",
+		"@wordpress/prettier-config": "^4.52.0",
+		"@wordpress/scripts": "^34.0.0",
+		"eslint": "^10.6.0",
+		"globals": "^17.7.0",
+		"looks-same": "^10.0.1",
+		"pngjs": "^7.0.0",
+		"prettier": "npm:wp-prettier@^3.0.3",
 		"webpack-remove-empty-scripts": "^1.0.4"
 	}
 }

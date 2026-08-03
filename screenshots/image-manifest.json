@@ -1,0 +1,505 @@
+{
+	"$schema": "./image-manifest.schema.json",
+	"version": 1,
+	"viewports": {
+		"mobile": {
+			"width": 390,
+			"height": 844
+		},
+		"tablet": {
+			"width": 768,
+			"height": 1024
+		},
+		"desktop": {
+			"width": 1280,
+			"height": 800
+		},
+		"wide": {
+			"width": 1920,
+			"height": 1080
+		}
+	},
+	"images": [
+		{
+			"id": "button-key-settings",
+			"title": "Freemius options menu",
+			"description": "Freemius ToolsPanel overflow menu on a button block showing optional checkout fields such as Product ID and Plan.",
+			"use": "docs",
+			"match": [
+				"key settings",
+				"three dots",
+				"overflow menu",
+				"freemius options"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".freemius-button-scope-settings"
+			},
+			"embed": {
+				"from": "screenshots/button-key-settings/source.png",
+				"doc": "docs/button.md",
+				"path": "docs/assets/button-key-settings.png",
+				"alt": "Freemius options menu with additional checkout field toggles",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "button-overview",
+			"title": "Freemius Checkout button overview",
+			"description": "Pricing table editor with the Professional plan checkout button selected and the Freemius sidebar panel highlighted.",
+			"use": "docs",
+			"match": [
+				"button overview",
+				"mapped checkout button",
+				"pricing table button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/button-overview/source.png",
+				"doc": "docs/button.md",
+				"path": "docs/assets/button-overview.png",
+				"alt": "Mapped Freemius checkout button in the pricing table with Freemius sidebar settings highlighted",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "button-track-callback",
+			"title": "Track Callback popout editor",
+			"description": "Get Professional Plan button with Track Callback highlighted in the sidebar and Popout Editor open.",
+			"use": "docs",
+			"match": [
+				"track callback",
+				"popout editor",
+				"events",
+				"callbacks"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/button-track-callback/source.png",
+				"doc": "docs/button.md",
+				"path": "docs/assets/button-track-callback.png",
+				"alt": "Track Callback in the Freemius button sidebar with Popout Editor open",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "docs-homepage-preview",
+			"title": "Documentation homepage preview",
+			"description": "Editor view with the Freemius checkout preview overlay open, without annotations.",
+			"use": "docs",
+			"match": [
+				"homepage preview",
+				"docs hero",
+				"checkout preview editor"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/docs-homepage-preview/source.png",
+				"doc": "docs/README.md",
+				"path": "docs/assets/docs-homepage-preview.png",
+				"alt": "Block editor with Freemius checkout preview open",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "pricing-page-checkout-button",
+			"title": "Pricing checkout button",
+			"description": "Editor view with a plan checkout button selected in the pricing table and the Enable Freemius Checkout toggle outlined in the sidebar.",
+			"use": "docs",
+			"match": [
+				"pricing checkout button",
+				"enable freemius checkout",
+				"plan button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-checkout-button/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-checkout-button.png",
+				"alt": "Pricing page editor with a checkout button selected and Enable Freemius Checkout outlined",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "pricing-page-modifiers-row",
+			"title": "Pricing modifier toggles",
+			"description": "Editor canvas showing the currency, billing cycle, and license modifier button row on the pricing page, with the row outlined.",
+			"use": "docs",
+			"match": [
+				"modifiers row",
+				"pricing toggles",
+				"currency billing licenses"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-modifiers-row/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-modifiers-row.png",
+				"alt": "Pricing page editor with the modifier toggle row outlined",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "pricing-page-plan-column",
+			"title": "Pricing plan column scope",
+			"description": "Editor canvas showing the pricing plan columns with one scoped column selected and outlined.",
+			"use": "docs",
+			"match": [
+				"plan column",
+				"pricing column scope",
+				"column per plan"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-plan-column/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-plan-column.png",
+				"alt": "Pricing page editor with one plan column selected and outlined",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "pricing-page-playground",
+			"title": "Published pricing page",
+			"description": "Frontend pricing page with plan columns, modifiers, and checkout buttons.",
+			"use": "docs",
+			"match": [
+				"pricing page",
+				"playground",
+				"frontend pricing"
+			],
+			"capture": {
+				"url": "https://dev.local/playground/",
+				"viewports": [
+					"desktop"
+				],
+				"selector": ".wp-block-post-content, main",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-playground/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-playground.png",
+				"alt": "Published Freemius pricing page with plan columns and billing toggles",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "pricing-page-preview",
+			"title": "Pricing checkout preview",
+			"description": "Editor view with the Freemius checkout preview overlay open and the Preview button outlined in the sidebar.",
+			"use": "docs",
+			"match": [
+				"pricing preview",
+				"checkout preview popup",
+				"preview button"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/pricing-page-preview/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/pricing-page-preview.png",
+				"alt": "Pricing page editor with checkout preview open and the Preview button outlined",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "scope-columns-overview",
+			"title": "Pricing plan column scopes",
+			"description": "Pricing table editor with arrows on each plan column scope, Freemius panel highlighted, and purple or dotted outlines visible.",
+			"use": "docs",
+			"match": [
+				"scope columns",
+				"plan scopes",
+				"purple outline",
+				"dotted outline"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/scope-columns-overview/source.png",
+				"doc": "docs/scopes.md",
+				"path": "docs/assets/scope-columns-overview.png",
+				"alt": "Pricing page in the block editor with arrows on each plan column scope and the Freemius panel highlighted",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "scope-enable-checkout",
+			"title": "Enable Freemius on scope",
+			"description": "Block editor with a scoped Group block selected, purple scope outline on the canvas, and the Freemius sidebar panel highlighted.",
+			"use": "docs",
+			"match": [
+				"enable freemius",
+				"scope",
+				"group block"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/scope-enable-checkout/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/scope-enable-checkout.png",
+				"alt": "Editor view with scoped Group block, arrow pointing to the highlighted Freemius panel",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "scope-modifiers",
+			"title": "Scope modifiers",
+			"description": "Pricing page editor with the currency, billing cycle, and license modifier toggle row outlined and the Freemius modifier sidebar open.",
+			"use": "docs",
+			"match": [
+				"modifiers",
+				"scope modifier",
+				"freemius scope block"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__body",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/scope-modifiers/source.png",
+				"doc": "docs/modifiers.md",
+				"path": "docs/assets/scope-modifiers.png",
+				"alt": "Pricing page editor with modifier toggles outlined and Freemius modifier settings in the sidebar",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "scope-pricing-mapped",
+			"title": "Mapped pricing with scopes",
+			"description": "Block editor canvas of the pricing table layout with purple Freemius scope outlines (same content as the playground page).",
+			"use": "docs",
+			"match": [
+				"pricing",
+				"mapping",
+				"scope outline",
+				"pricing page editor"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/post.php?post=FIXTURE_POST_ID&action=edit",
+				"viewports": [
+					"wide"
+				],
+				"selector": ".interface-interface-skeleton__editor",
+				"padding": 24
+			},
+			"embed": {
+				"from": "screenshots/scope-pricing-mapped/source.png",
+				"doc": "docs/mapping.md",
+				"path": "docs/assets/scope-pricing-mapped.png",
+				"alt": "Pricing page in the block editor with purple Freemius scope outlines",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "settings-editor",
+			"title": "Editor Settings tab",
+			"description": "Freemius admin settings page with the Editor Settings tab selected, showing site-wide default checkout fields.",
+			"use": "docs",
+			"match": [
+				"editor settings",
+				"defaults",
+				"global settings"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/options-general.php?page=freemius-settings#defaults",
+				"viewports": [
+					"desktop"
+				],
+				"selector": "#freemius-settings-app",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/settings-editor/source.png",
+				"doc": "docs/settings.md",
+				"path": "docs/assets/settings-editor.png",
+				"alt": "Editor Settings tab on the Freemius settings page",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "settings-products",
+			"title": "Products tab",
+			"description": "Freemius admin settings page with the Products tab selected, showing Product ID and Token fields.",
+			"use": "docs",
+			"match": [
+				"products tab",
+				"connect product",
+				"product id token"
+			],
+			"capture": {
+				"url": "https://dev.local/wp-admin/options-general.php?page=freemius-settings#products",
+				"viewports": [
+					"desktop"
+				],
+				"selector": "#freemius-settings-app",
+				"padding": 0
+			},
+			"embed": {
+				"from": "screenshots/settings-products/source.png",
+				"doc": "docs/creating-your-pricing-page.md",
+				"path": "docs/assets/settings-products.png",
+				"alt": "Products tab on the Freemius settings page",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-button-overview",
+			"title": "WordPress.org: checkout preview in the block editor",
+			"description": "Plugin directory screenshot of the Freemius checkout preview modal open in the block editor after clicking Preview.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 1",
+				"checkout preview",
+				"preview modal"
+			],
+			"wordpress": {
+				"from": "docs/assets/docs-homepage-preview.png",
+				"path": ".wordpress-org/screenshot-1.png",
+				"caption": "Freemius checkout preview in the block editor",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-customer-portal",
+			"title": "WordPress.org: Customer Portal licenses view",
+			"description": "Plugin directory screenshot of the Freemius Customer Portal embed on the licenses screen.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 3",
+				"customer portal",
+				"licenses"
+			],
+			"capture": {
+				"url": "https://dev.local/portal/#!/licenses",
+				"viewports": [
+					"desktop"
+				]
+			},
+			"wordpress": {
+				"from": "screenshots/wporg-customer-portal/source.png",
+				"path": ".wordpress-org/screenshot-4.png",
+				"caption": "Freemius Customer Portal for licenses, billing, and downloads",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-pricing-page",
+			"title": "WordPress.org: published pricing page",
+			"description": "Plugin directory screenshot of a published Freemius pricing page with plan columns and checkout buttons.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 2",
+				"pricing page"
+			],
+			"wordpress": {
+				"from": "docs/assets/pricing-page-playground.png",
+				"path": ".wordpress-org/screenshot-3.png",
+				"caption": "Published Freemius pricing page",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-scope-modifiers",
+			"title": "WordPress.org: scope modifiers",
+			"description": "Plugin directory screenshot of Freemius scope modifiers for currency, billing cycle, and licenses.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 4",
+				"scope modifiers"
+			],
+			"wordpress": {
+				"from": "docs/assets/scope-modifiers.png",
+				"path": ".wordpress-org/screenshot-2.png",
+				"caption": "Freemius scope modifiers on a pricing page",
+				"status": "captured"
+			}
+		},
+		{
+			"id": "wporg-settings-products",
+			"title": "WordPress.org: Products settings tab",
+			"description": "Plugin directory screenshot of Settings → Freemius Products tab with Product ID and Token fields.",
+			"use": "wordpress",
+			"match": [
+				"wordpress.org screenshot 5",
+				"products settings"
+			],
+			"wordpress": {
+				"from": "docs/assets/settings-products.png",
+				"path": ".wordpress-org/screenshot-5.png",
+				"caption": "Freemius Products settings tab",
+				"status": "captured"
+			}
+		}
+	]
+}

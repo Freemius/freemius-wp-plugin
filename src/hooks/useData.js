@@ -1,21 +1,9 @@
 /**
- * External dependencies
- */
-import styled from '@emotion/styled';
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 import { useContext, useMemo } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import {
-	__experimentalItemGroup as ItemGroup,
-	__experimentalItem as Item,
-	Flex,
-	FlexItem,
-	FlexBlock,
-	Button,
-} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -23,22 +11,13 @@ import {
 import { FreemiusContext } from '../context';
 import { useSettings, usePlans } from '../hooks';
 
-const DataViewContainer = styled.div`
-	grid-column: span 2;
-	overflow: hidden;
-	margin-bottom: 10px;
-`;
+const useData = ( scopeData ) => {
+	const { settings, isLoading: isSettingsLoading } =
+		useSettings( 'freemius_defaults' );
 
-const useData = (scopeData) => {
-	const {
-		settings,
-		structure,
-		isLoading: isSettingsLoading,
-	} = useSettings('freemius_defaults');
+	const context = useContext( FreemiusContext );
 
-	const context = useContext(FreemiusContext);
-
-	const { selectBlock } = useDispatch('core/block-editor');
+	const { selectBlock } = useDispatch( 'core/block-editor' );
 
 	const contextData = scopeData?.freemius || context?.freemius || {};
 
@@ -54,74 +33,70 @@ const useData = (scopeData) => {
 	};
 
 	const dataWithoutWithDefaultPlan = useMemo(
-		() => ({
+		() => ( {
 			...defaults,
 			...settings,
 			...contextData,
-		}),
-		[settings, contextData]
+		} ),
+		[ settings, contextData ]
 	);
 
 	const {
 		plans,
 		isLoading: isPlansLoading,
 		isApiAvailable,
-	} = usePlans(dataWithoutWithDefaultPlan?.product_id);
+	} = usePlans( dataWithoutWithDefaultPlan?.product_id );
 
 	// get the first, non-free plan
-	const defaultPlan = useMemo(() => {
-		return plans?.find((plan) => plan.pricing);
-	}, [plans]);
+	const defaultPlan = useMemo( () => {
+		return plans?.find( ( plan ) => plan.pricing );
+	}, [ plans ] );
 
-	const data = useMemo(() => {
-		let data = { ...dataWithoutWithDefaultPlan };
+	const data = useMemo( () => {
+		const data = { ...dataWithoutWithDefaultPlan };
 
 		// add the default plan if no plan_id is set
-		if (defaultPlan && !data.plan_id) {
-			data.plan_id = +defaultPlan.id;
-		}
+		if ( defaultPlan && ! data.plan_id ) data.plan_id = +defaultPlan.id;
 
 		// special case for licenses
-		if (data?.licenses === 0) {
-			data.licenses = null;
-		}
+		if ( data?.licenses === 0 ) data.licenses = null;
 
 		return data;
-	}, [defaultPlan, dataWithoutWithDefaultPlan]);
+	}, [ defaultPlan, dataWithoutWithDefaultPlan ] );
 
-	const currentPlan = useMemo(() => {
-		return plans?.find((plan) => plan.id == data?.plan_id);
-	}, [plans, data?.plan_id]);
+	const currentPlan = useMemo( () => {
+		return plans?.find( ( plan ) => plan.id == data?.plan_id );
+	}, [ plans, data?.plan_id ] );
 
-	const currentPricing = useMemo(() => {
-		return currentPlan?.pricing?.find((pricing) => {
+	const currentPricing = useMemo( () => {
+		return currentPlan?.pricing?.find( ( pricing ) => {
 			return (
-				pricing.currency == data?.currency && pricing.licenses == data?.licenses
+				pricing.currency == data?.currency &&
+				pricing.licenses == data?.licenses
 			);
-		});
-	}, [currentPlan, data?.currency, data?.licenses]);
+		} );
+	}, [ currentPlan, data?.currency, data?.licenses ] );
 
 	const clientId = scopeData?.clientID || context?.clientID;
 
-	const matrix = useMemo(() => {
-		if (!plans) return [];
+	const matrix = useMemo( () => {
+		if ( ! plans ) return [];
 
-		return plans.map((plan) => {
+		return plans.map( ( plan ) => {
 			const pricingByCurrency = {};
 
-			plan?.pricing?.forEach((pricing) => {
+			plan?.pricing?.forEach( ( pricing ) => {
 				const currency = pricing.currency?.toLowerCase();
 
-				if (!pricingByCurrency[currency]) {
-					pricingByCurrency[currency] = {};
-				}
+				if ( ! pricingByCurrency[ currency ] )
+					pricingByCurrency[ currency ] = {};
 
-				pricingByCurrency[currency] = {
+				pricingByCurrency[ currency ] = {
 					monthly: pricing.monthly_price,
 					annual: pricing.annual_price,
 					lifetime: pricing.lifetime_price,
 				};
-			});
+			} );
 
 			return {
 				name: plan.name,
@@ -129,77 +104,50 @@ const useData = (scopeData) => {
 				description: plan.description,
 				pricing: pricingByCurrency,
 			};
-		});
-	}, [plans]);
+		} );
+	}, [ plans ] );
 
 	// the plan is free. undefined if data is still loading
 	const isFree =
-		isSettingsLoading || isPlansLoading ? undefined : !currentPlan?.pricing;
+		isSettingsLoading || isPlansLoading
+			? undefined
+			: ! currentPlan?.pricing;
 
 	// the plan is invalid if no Pricing and not free or when the plan is not defined. undefined if data is still loading.
 	const isInvalid =
 		isSettingsLoading || isPlansLoading
 			? undefined
-			: (!currentPricing && !isFree) || !data?.plan_id || !data?.product_id;
+			: ( ! currentPricing && ! isFree ) ||
+			  ! data?.plan_id ||
+			  ! data?.product_id;
 
-	const errorMessage = useMemo(() => {
-		let message = [];
+	const errorMessage = useMemo( () => {
+		const message = [];
 
-		if (!data?.product_id) {
-			message.push(__('Product ID is required', 'freemius'));
-		}
+		if ( ! data?.product_id )
+			message.push( __( 'Product ID is required', 'freemius' ) );
+
 		// if (!data?.public_key) {
 		// 	message.push(__('Public Key is required', 'freemius'));
 		// }
-		if (!isPlansLoading && !data?.plan_id) {
-			message.push(__('Plan ID is required.', 'freemius'));
-		}
+		if ( ! isPlansLoading && ! data?.plan_id )
+			message.push( __( 'Plan ID is required.', 'freemius' ) );
 
-		return message.join(', ');
-	}, [isInvalid, data, isPlansLoading]);
+		return message.join( ', ' );
+	}, [ isInvalid, data, isPlansLoading ] );
 
-	const DataView = useMemo(() => {
+	const DataView = useMemo( () => {
 		return () => <></>;
-
-		// only for development
-		return () => (
-			<DataViewContainer>
-				<ItemGroup isSeparated isBorderd size="small">
-					<Item>
-						<Flex>
-							<FlexBlock>isFree</FlexBlock>
-							<FlexBlock>{isFree ? 'true' : 'false'}</FlexBlock>
-						</Flex>
-					</Item>
-					<Item>
-						<Flex>
-							<FlexBlock>isInvalid</FlexBlock>
-							<FlexBlock>{isInvalid ? 'true' : 'false'}</FlexBlock>
-						</Flex>
-					</Item>
-					{Object.entries(data).map(([key, value]) => (
-						<Item key={key}>
-							<Flex>
-								<FlexBlock>{key}</FlexBlock>
-								<FlexBlock>
-									{value === null ? <i>{'null'}</i> : <span>{value}</span>}
-								</FlexBlock>
-							</Flex>
-						</Item>
-					))}
-				</ItemGroup>
-			</DataViewContainer>
-		);
-	}, [data, isFree, isInvalid]);
+	}, [] );
 
 	const selectScope = () => {
-		selectBlock(clientId);
+		selectBlock( clientId );
 	};
 
 	return {
 		data,
 		settings,
-		isLoading: isApiAvailable && (isSettingsLoading || isPlansLoading),
+		isLoading: isApiAvailable && ( isSettingsLoading || isPlansLoading ),
 		isApiAvailable,
 		//metaData,
 		contextData,

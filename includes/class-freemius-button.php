@@ -62,10 +62,10 @@ class Button {
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block.
-	 * @param array  $instance      The instance.
+	 * @param array  $instance      The block instance (unused; required by filter signature).
 	 * @return string The block content.
 	 */
-	public function render_button( $block_content, $block, $instance ) {
+	public function render_button( $block_content, $block, $instance ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		if ( ! isset( $block['attrs'] ) ) {
 			return $block_content;

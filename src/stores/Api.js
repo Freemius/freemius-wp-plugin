@@ -19,7 +19,7 @@ const DEFAULT_STATE = {
 };
 
 const actions = {
-	setLoading(endpoint, isLoading) {
+	setLoading( endpoint, isLoading ) {
 		return {
 			type: 'SET_LOADING',
 			endpoint,
@@ -27,7 +27,7 @@ const actions = {
 		};
 	},
 
-	setCacheData(endpoint, data) {
+	setCacheData( endpoint, data ) {
 		return {
 			type: 'SET_CACHE_DATA',
 			endpoint,
@@ -35,7 +35,7 @@ const actions = {
 		};
 	},
 
-	setError(error) {
+	setError( error ) {
 		return {
 			type: 'SET_ERROR',
 			error,
@@ -54,7 +54,7 @@ const actions = {
 		};
 	},
 
-	setOngoingRequest(cacheKey, promise) {
+	setOngoingRequest( cacheKey, promise ) {
 		return {
 			type: 'SET_ONGOING_REQUEST',
 			cacheKey,
@@ -62,7 +62,7 @@ const actions = {
 		};
 	},
 
-	clearOngoingRequest(cacheKey) {
+	clearOngoingRequest( cacheKey ) {
 		return {
 			type: 'CLEAR_ONGOING_REQUEST',
 			cacheKey,
@@ -90,17 +90,17 @@ const actions = {
 	/**
 	 * Fetch data from Freemius API proxy
 	 *
-	 * @param {string} endpoint The API endpoint to fetch from
-	 * @param {Object} params Query parameters
+	 * @param {string}  endpoint     The API endpoint to fetch from
+	 * @param {Object}  params       Query parameters
 	 * @param {boolean} forceRefresh Force refresh ignoring cache
 	 */
-	fetchFromApi(endpoint, params = {}, forceRefresh = false) {
-		return async ({ dispatch, select }) => {
-			const cacheKey = generateCacheKey(endpoint, params);
+	fetchFromApi( endpoint, params = {}, forceRefresh = false ) {
+		return async ( { dispatch, select } ) => {
+			const cacheKey = generateCacheKey( endpoint, params );
 
 			// Check API health - if blocked, reject immediately
 			const apiHealth = select.getApiHealth();
-			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+			if ( apiHealth.blockUntil && Date.now() < apiHealth.blockUntil ) {
 				const error = new Error(
 					'API is temporarily blocked due to consecutive failures'
 				);
@@ -109,53 +109,52 @@ const actions = {
 			}
 
 			// Return cached data if available and not forcing refresh
-			if (!forceRefresh) {
-				const cachedData = select.getCachedData(cacheKey);
-				if (cachedData) {
-					return cachedData;
-				}
+			if ( ! forceRefresh ) {
+				const cachedData = select.getCachedData( cacheKey );
+				if ( cachedData ) return cachedData;
 			}
 
 			// Check if there's already an ongoing request for this cache key
-			const ongoingRequest = select.getOngoingRequest(cacheKey);
-			if (ongoingRequest && !forceRefresh) {
+			const ongoingRequest = select.getOngoingRequest( cacheKey );
+			if ( ongoingRequest && ! forceRefresh )
 				// Return the existing promise to prevent duplicate requests
 				return ongoingRequest;
-			}
 
-			dispatch.setLoading(cacheKey, true);
+			dispatch.setLoading( cacheKey, true );
 			dispatch.clearError();
 
 			// Create the request promise
-			const requestPromise = (async () => {
+			const requestPromise = ( async () => {
 				try {
 					// Build query string for params
-					const queryString = new URLSearchParams(params).toString();
-					const path = `/freemius/v1/proxy/${endpoint}${
-						queryString ? `?${queryString}` : ''
+					const queryString = new URLSearchParams(
+						params
+					).toString();
+					const path = `/freemius/v1/proxy/${ endpoint }${
+						queryString ? `?${ queryString }` : ''
 					}`;
 
-					const response = await apiFetch({
+					const response = await apiFetch( {
 						path,
 						method: 'GET',
-					});
+					} );
 
-					dispatch.setCacheData(cacheKey, response);
+					dispatch.setCacheData( cacheKey, response );
 					dispatch.recordApiSuccess(); // Record successful API call
 					return response;
-				} catch (error) {
-					console.error('Freemius API fetch error:', error);
-					dispatch.setError(error);
+				} catch ( error ) {
+					console.error( 'Freemius API fetch error:', error );
+					dispatch.setError( error );
 					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
-					dispatch.setLoading(cacheKey, false);
-					dispatch.clearOngoingRequest(cacheKey);
+					dispatch.setLoading( cacheKey, false );
+					dispatch.clearOngoingRequest( cacheKey );
 				}
-			})();
+			} )();
 
 			// Store the ongoing request
-			dispatch.setOngoingRequest(cacheKey, requestPromise);
+			dispatch.setOngoingRequest( cacheKey, requestPromise );
 
 			return requestPromise;
 		};
@@ -165,15 +164,15 @@ const actions = {
 	 * Post data to Freemius API proxy
 	 *
 	 * @param {string} endpoint The API endpoint
-	 * @param {Object} data Data to post
+	 * @param {Object} data     Data to post
 	 */
-	postToApi(endpoint, data = {}) {
-		return async ({ dispatch, select }) => {
-			const requestId = generateCacheKey(endpoint, data);
+	postToApi( endpoint, data = {} ) {
+		return async ( { dispatch, select } ) => {
+			const requestId = generateCacheKey( endpoint, data );
 
 			// Check API health - if blocked, reject immediately
 			const apiHealth = select.getApiHealth();
-			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+			if ( apiHealth.blockUntil && Date.now() < apiHealth.blockUntil ) {
 				const error = new Error(
 					'API is temporarily blocked due to consecutive failures'
 				);
@@ -182,42 +181,41 @@ const actions = {
 			}
 
 			// Check if there's already an ongoing request for this operation
-			const ongoingRequest = select.getOngoingRequest(requestId);
-			if (ongoingRequest) {
+			const ongoingRequest = select.getOngoingRequest( requestId );
+			if ( ongoingRequest )
 				// Return the existing promise to prevent duplicate requests
 				return ongoingRequest;
-			}
 
-			dispatch.setLoading(requestId, true);
+			dispatch.setLoading( requestId, true );
 			dispatch.clearError();
 
 			// Create the request promise
-			const requestPromise = (async () => {
+			const requestPromise = ( async () => {
 				try {
-					const response = await apiFetch({
-						path: `/freemius/v1/proxy/${endpoint}`,
+					const response = await apiFetch( {
+						path: `/freemius/v1/proxy/${ endpoint }`,
 						method: 'POST',
 						data,
-					});
+					} );
 
 					// Clear cache after successful write operation
 					dispatch.clearCache();
 					dispatch.recordApiSuccess(); // Record successful API call
 
 					return response;
-				} catch (error) {
-					console.error('Freemius API post error:', error);
-					dispatch.setError(error);
+				} catch ( error ) {
+					console.error( 'Freemius API post error:', error );
+					dispatch.setError( error );
 					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
-					dispatch.setLoading(requestId, false);
-					dispatch.clearOngoingRequest(requestId);
+					dispatch.setLoading( requestId, false );
+					dispatch.clearOngoingRequest( requestId );
 				}
-			})();
+			} )();
 
 			// Store the ongoing request
-			dispatch.setOngoingRequest(requestId, requestPromise);
+			dispatch.setOngoingRequest( requestId, requestPromise );
 
 			return requestPromise;
 		};
@@ -227,15 +225,15 @@ const actions = {
 	 * Put data to Freemius API proxy
 	 *
 	 * @param {string} endpoint The API endpoint
-	 * @param {Object} data Data to put
+	 * @param {Object} data     Data to put
 	 */
-	putToApi(endpoint, data = {}) {
-		return async ({ dispatch, select }) => {
-			const requestId = generateCacheKey(endpoint, data);
+	putToApi( endpoint, data = {} ) {
+		return async ( { dispatch, select } ) => {
+			const requestId = generateCacheKey( endpoint, data );
 
 			// Check API health - if blocked, reject immediately
 			const apiHealth = select.getApiHealth();
-			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+			if ( apiHealth.blockUntil && Date.now() < apiHealth.blockUntil ) {
 				const error = new Error(
 					'API is temporarily blocked due to consecutive failures'
 				);
@@ -244,42 +242,41 @@ const actions = {
 			}
 
 			// Check if there's already an ongoing request for this operation
-			const ongoingRequest = select.getOngoingRequest(requestId);
-			if (ongoingRequest) {
+			const ongoingRequest = select.getOngoingRequest( requestId );
+			if ( ongoingRequest )
 				// Return the existing promise to prevent duplicate requests
 				return ongoingRequest;
-			}
 
-			dispatch.setLoading(requestId, true);
+			dispatch.setLoading( requestId, true );
 			dispatch.clearError();
 
 			// Create the request promise
-			const requestPromise = (async () => {
+			const requestPromise = ( async () => {
 				try {
-					const response = await apiFetch({
-						path: `/freemius/v1/proxy/${endpoint}`,
+					const response = await apiFetch( {
+						path: `/freemius/v1/proxy/${ endpoint }`,
 						method: 'PUT',
 						data,
-					});
+					} );
 
 					// Clear cache after successful write operation
 					dispatch.clearCache();
 					dispatch.recordApiSuccess(); // Record successful API call
 
 					return response;
-				} catch (error) {
-					console.error('Freemius API put error:', error);
-					dispatch.setError(error);
+				} catch ( error ) {
+					console.error( 'Freemius API put error:', error );
+					dispatch.setError( error );
 					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
-					dispatch.setLoading(requestId, false);
-					dispatch.clearOngoingRequest(requestId);
+					dispatch.setLoading( requestId, false );
+					dispatch.clearOngoingRequest( requestId );
 				}
-			})();
+			} )();
 
 			// Store the ongoing request
-			dispatch.setOngoingRequest(requestId, requestPromise);
+			dispatch.setOngoingRequest( requestId, requestPromise );
 
 			return requestPromise;
 		};
@@ -290,13 +287,13 @@ const actions = {
 	 *
 	 * @param {string} endpoint The API endpoint
 	 */
-	deleteFromApi(endpoint) {
-		return async ({ dispatch, select }) => {
+	deleteFromApi( endpoint ) {
+		return async ( { dispatch, select } ) => {
 			const requestId = endpoint;
 
 			// Check API health - if blocked, reject immediately
 			const apiHealth = select.getApiHealth();
-			if (apiHealth.blockUntil && Date.now() < apiHealth.blockUntil) {
+			if ( apiHealth.blockUntil && Date.now() < apiHealth.blockUntil ) {
 				const error = new Error(
 					'API is temporarily blocked due to consecutive failures'
 				);
@@ -305,41 +302,40 @@ const actions = {
 			}
 
 			// Check if there's already an ongoing request for this operation
-			const ongoingRequest = select.getOngoingRequest(requestId);
-			if (ongoingRequest) {
+			const ongoingRequest = select.getOngoingRequest( requestId );
+			if ( ongoingRequest )
 				// Return the existing promise to prevent duplicate requests
 				return ongoingRequest;
-			}
 
-			dispatch.setLoading(requestId, true);
+			dispatch.setLoading( requestId, true );
 			dispatch.clearError();
 
 			// Create the request promise
-			const requestPromise = (async () => {
+			const requestPromise = ( async () => {
 				try {
-					const response = await apiFetch({
-						path: `/freemius/v1/proxy/${endpoint}`,
+					const response = await apiFetch( {
+						path: `/freemius/v1/proxy/${ endpoint }`,
 						method: 'DELETE',
-					});
+					} );
 
 					// Clear cache after successful write operation
 					dispatch.clearCache();
 					dispatch.recordApiSuccess(); // Record successful API call
 
 					return response;
-				} catch (error) {
-					console.error('Freemius API delete error:', error);
-					dispatch.setError(error);
+				} catch ( error ) {
+					console.error( 'Freemius API delete error:', error );
+					dispatch.setError( error );
 					dispatch.recordApiFailure(); // Record API failure
 					throw error;
 				} finally {
-					dispatch.setLoading(requestId, false);
-					dispatch.clearOngoingRequest(requestId);
+					dispatch.setLoading( requestId, false );
+					dispatch.clearOngoingRequest( requestId );
 				}
-			})();
+			} )();
 
 			// Store the ongoing request
-			dispatch.setOngoingRequest(requestId, requestPromise);
+			dispatch.setOngoingRequest( requestId, requestPromise );
 
 			return requestPromise;
 		};
@@ -349,37 +345,37 @@ const actions = {
 	 * Clear server-side cache
 	 */
 	clearServerCache() {
-		return async ({ dispatch }) => {
-			dispatch.setLoading('cache-clear', true);
+		return async ( { dispatch } ) => {
+			dispatch.setLoading( 'cache-clear', true );
 
 			try {
-				await apiFetch({
+				await apiFetch( {
 					path: '/freemius/v1/cache/clear',
 					method: 'POST',
-				});
+				} );
 
 				// Also clear local cache
 				dispatch.clearCache();
-			} catch (error) {
-				console.error('Cache clear error:', error);
-				dispatch.setError(error);
+			} catch ( error ) {
+				console.error( 'Cache clear error:', error );
+				dispatch.setError( error );
 				throw error;
 			} finally {
-				dispatch.setLoading('cache-clear', false);
+				dispatch.setLoading( 'cache-clear', false );
 			}
 		};
 	},
 };
 
-const store = createReduxStore(API_STORE, {
-	reducer(state = DEFAULT_STATE, action) {
-		switch (action.type) {
+const store = createReduxStore( API_STORE, {
+	reducer( state = DEFAULT_STATE, action ) {
+		switch ( action.type ) {
 			case 'SET_LOADING':
 				return {
 					...state,
 					isLoading: {
 						...state.isLoading,
-						[action.endpoint]: action.isLoading,
+						[ action.endpoint ]: action.isLoading,
 					},
 				};
 
@@ -388,7 +384,7 @@ const store = createReduxStore(API_STORE, {
 					...state,
 					cache: {
 						...state.cache,
-						[action.endpoint]: {
+						[ action.endpoint ]: {
 							data: action.data,
 							timestamp: Date.now(),
 						},
@@ -420,13 +416,13 @@ const store = createReduxStore(API_STORE, {
 					...state,
 					ongoingRequests: {
 						...state.ongoingRequests,
-						[action.cacheKey]: action.promise,
+						[ action.cacheKey ]: action.promise,
 					},
 				};
 
 			case 'CLEAR_ONGOING_REQUEST':
 				const newOngoingRequests = { ...state.ongoingRequests };
-				delete newOngoingRequests[action.cacheKey];
+				delete newOngoingRequests[ action.cacheKey ];
 				return {
 					...state,
 					ongoingRequests: newOngoingRequests,
@@ -439,7 +435,8 @@ const store = createReduxStore(API_STORE, {
 						...state.apiHealth,
 						isHealthy: false,
 						lastFailureTime: Date.now(),
-						consecutiveFailures: state.apiHealth.consecutiveFailures + 1,
+						consecutiveFailures:
+							state.apiHealth.consecutiveFailures + 1,
 						blockUntil: state.apiHealth.blockUntil
 							? state.apiHealth.blockUntil
 							: Date.now() + 30000, // Block for 30 seconds
@@ -481,21 +478,17 @@ const store = createReduxStore(API_STORE, {
 		/**
 		 * Get cached data for a specific cache key
 		 *
-		 * @param {Object} state Store state
+		 * @param {Object} state    Store state
 		 * @param {string} cacheKey The cache key
 		 * @return {*} Cached data or null
 		 */
-		getCachedData(state, cacheKey) {
-			const cached = state.cache[cacheKey];
-			if (!cached) {
-				return null;
-			}
+		getCachedData( state, cacheKey ) {
+			const cached = state.cache[ cacheKey ];
+			if ( ! cached ) return null;
 
 			// Check if cache is still valid (1 hour = 3600000 ms)
 			const isExpired = Date.now() - cached.timestamp > 3600000;
-			if (isExpired) {
-				return null;
-			}
+			if ( isExpired ) return null;
 
 			return cached.data;
 		},
@@ -503,12 +496,12 @@ const store = createReduxStore(API_STORE, {
 		/**
 		 * Check if a request is loading
 		 *
-		 * @param {Object} state Store state
+		 * @param {Object} state    Store state
 		 * @param {string} endpoint The endpoint identifier
 		 * @return {boolean} Whether the request is loading
 		 */
-		isLoading(state, endpoint) {
-			return state.isLoading[endpoint] || false;
+		isLoading( state, endpoint ) {
+			return state.isLoading[ endpoint ] || false;
 		},
 
 		/**
@@ -517,8 +510,10 @@ const store = createReduxStore(API_STORE, {
 		 * @param {Object} state Store state
 		 * @return {boolean} Whether any request is loading
 		 */
-		isAnyLoading(state) {
-			return Object.values(state.isLoading).some((loading) => loading);
+		isAnyLoading( state ) {
+			return Object.values( state.isLoading ).some(
+				( loading ) => loading
+			);
 		},
 
 		/**
@@ -527,7 +522,7 @@ const store = createReduxStore(API_STORE, {
 		 * @param {Object} state Store state
 		 * @return {*} Current error or null
 		 */
-		getError(state) {
+		getError( state ) {
 			return state.error;
 		},
 
@@ -537,7 +532,7 @@ const store = createReduxStore(API_STORE, {
 		 * @param {Object} state Store state
 		 * @return {*} Last error or null
 		 */
-		getLastError(state) {
+		getLastError( state ) {
 			return state.lastError;
 		},
 
@@ -547,27 +542,25 @@ const store = createReduxStore(API_STORE, {
 		 * @param {Object} state Store state
 		 * @return {Object} All cached data
 		 */
-		getAllCachedData(state) {
+		getAllCachedData( state ) {
 			const result = {};
-			Object.keys(state.cache).forEach((key) => {
-				const cached = state.cache[key];
+			Object.keys( state.cache ).forEach( ( key ) => {
+				const cached = state.cache[ key ];
 				const isExpired = Date.now() - cached.timestamp > 3600000;
-				if (!isExpired) {
-					result[key] = cached.data;
-				}
-			});
+				if ( ! isExpired ) result[ key ] = cached.data;
+			} );
 			return result;
 		},
 
 		/**
 		 * Get ongoing request for a specific cache key
 		 *
-		 * @param {Object} state Store state
+		 * @param {Object} state    Store state
 		 * @param {string} cacheKey The cache key
 		 * @return {Promise|null} Ongoing request promise or null
 		 */
-		getOngoingRequest(state, cacheKey) {
-			return state.ongoingRequests[cacheKey] || null;
+		getOngoingRequest( state, cacheKey ) {
+			return state.ongoingRequests[ cacheKey ] || null;
 		},
 
 		/**
@@ -576,7 +569,7 @@ const store = createReduxStore(API_STORE, {
 		 * @param {Object} state Store state
 		 * @return {Object} API health status
 		 */
-		getApiHealth(state) {
+		getApiHealth( state ) {
 			return state.apiHealth;
 		},
 
@@ -586,43 +579,31 @@ const store = createReduxStore(API_STORE, {
 		 * @param {Object} state Store state
 		 * @return {boolean} Whether API is available
 		 */
-		isApiAvailable(state) {
+		isApiAvailable( state ) {
 			const { blockUntil } = state.apiHealth;
-			return !blockUntil || Date.now() >= blockUntil;
-		},
-
-		/**
-		 * Check if any request is loading
-		 *
-		 * @param {Object} state Store state
-		 * @return {boolean} Whether any request is loading
-		 */
-		isAnyLoading(state) {
-			return Object.values(state.isLoading).some(Boolean);
+			return ! blockUntil || Date.now() >= blockUntil;
 		},
 	},
-});
+} );
 
 /**
  * Generate a cache key for endpoint and parameters
  *
  * @param {string} endpoint API endpoint
- * @param {Object} params Parameters
+ * @param {Object} params   Parameters
  * @return {string} Cache key
  */
-function generateCacheKey(endpoint, params = {}) {
-	const normalizedParams = Object.keys(params)
+function generateCacheKey( endpoint, params = {} ) {
+	const normalizedParams = Object.keys( params )
 		.sort()
-		.reduce((result, key) => {
-			result[key] = params[key];
+		.reduce( ( result, key ) => {
+			result[ key ] = params[ key ];
 			return result;
-		}, {});
+		}, {} );
 
-	return `${endpoint}:${JSON.stringify(normalizedParams)}`;
+	return `${ endpoint }:${ JSON.stringify( normalizedParams ) }`;
 }
 
-if (!select(API_STORE)) {
-	register(store);
-}
+if ( ! select( API_STORE ) ) register( store );
 
 export { API_STORE };

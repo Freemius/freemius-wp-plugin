@@ -8,27 +8,24 @@ import { useEffect } from '@wordpress/element';
  */
 import { useMapping } from '../hooks';
 
-const MappedBlockEdit = (props) => {
-	const { BlockEdit, attributes, setAttributes, clientId, name } = props;
+const MappedBlockEdit = ( props ) => {
+	const { BlockEdit, attributes, setAttributes, name } = props;
 
-	const { value } = useMapping(props);
+	const { value } = useMapping( props );
 
-	useEffect(() => {
-		if (typeof value === 'undefined') {
-			return;
-		}
+	useEffect( () => {
+		if ( typeof value === 'undefined' ) return;
 
 		// buttons need a different property name
 		const property = name === 'core/button' ? 'text' : 'content';
 
-		if (attributes?.[property]?.toString() !== value) {
-			setAttributes({
-				[property]: value,
-			});
-		}
-	}, [value]);
+		if ( attributes?.[ property ]?.toString() !== value )
+			setAttributes( {
+				[ property ]: value,
+			} );
+	}, [ value ] );
 
-	return <BlockEdit key="edit" {...props} />;
+	return <BlockEdit key="edit" { ...props } />;
 };
 
 export default MappedBlockEdit;

@@ -13,19 +13,18 @@ import { __ } from '@wordpress/i18n';
  */
 import { MODIFIERS } from '../../constants';
 
-export default function Label(attributes, { context }) {
+export default function Label( attributes ) {
 	const { type, metadata } = attributes;
 
 	const customName = metadata?.name;
 
 	let returnValue = null;
 
-	if (customName) {
-		returnValue = customName;
-	} else {
+	if ( customName ) returnValue = customName;
+	else
 		returnValue =
-			MODIFIERS.find((modifier) => modifier.id === type)?.name || null;
-	}
+			MODIFIERS.find( ( modifier ) => modifier.id === type )?.name ||
+			null;
 
 	return returnValue;
 }

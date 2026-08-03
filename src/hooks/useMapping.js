@@ -13,10 +13,10 @@ import { useMemo } from '@wordpress/element';
  */
 import { useData, usePlans, useLicenses } from './';
 
-const useMapping = (props) => {
+const useMapping = ( props ) => {
 	const { attributes, setAttributes } = props;
 
-	const { freemius_mapping, content } = attributes;
+	const { freemius_mapping } = attributes;
 
 	const { data, isLoading } = useData();
 
@@ -24,20 +24,20 @@ const useMapping = (props) => {
 		data?.product_id
 	);
 
-	const defaultLabels = useMemo(() => {
+	const defaultLabels = useMemo( () => {
 		return {
-			licenses: licenses.reduce((acc, license) => {
+			licenses: licenses.reduce( ( acc, license ) => {
 				const key = license || 0; // 0 is unlimited
-				acc[key] = license || __('Unlimited', 'freemius');
+				acc[ key ] = license || __( 'Unlimited', 'freemius' );
 				return acc;
-			}, {}),
+			}, {} ),
 			billing_cycle: {
-				monthly: __('Monthly', 'freemius'),
-				annual: __('Annually', 'freemius'),
-				lifetime: __('Lifetime', 'freemius'),
+				monthly: __( 'Monthly', 'freemius' ),
+				annual: __( 'Annually', 'freemius' ),
+				lifetime: __( 'Lifetime', 'freemius' ),
 			},
 		};
-	}, [licenses]);
+	}, [ licenses ] );
 
 	// defined default options
 	const options = {
@@ -46,36 +46,39 @@ const useMapping = (props) => {
 		currency_symbol: 'show',
 		format_price: true,
 		show_currency: true,
-		labels: defaultLabels[freemius_mapping?.field] || {},
+		labels: defaultLabels[ freemius_mapping?.field ] || {},
 		...freemius_mapping,
 	};
 
-	const setMapping = (key, value) => {
-		let newMapping = {
+	const setMapping = ( key, value ) => {
+		const newMapping = {
 			freemius_mapping: {
 				...freemius_mapping,
-				[key]:
+				[ key ]:
 					typeof value === 'object' && value !== null
-						? { ...freemius_mapping?.[key], ...value }
+						? { ...freemius_mapping?.[ key ], ...value }
 						: value,
 			},
 		};
 		// update labels when field is changed
-		if (key === 'field') {
-			newMapping.freemius_mapping.labels = defaultLabels[value] || undefined;
-		}
-		setAttributes(newMapping);
+		if ( key === 'field' )
+			newMapping.freemius_mapping.labels =
+				defaultLabels[ value ] || undefined;
+
+		setAttributes( newMapping );
 	};
 
-	const value = getMappingValue(options);
+	const value = getMappingValue( options );
 
 	const errorMessage = [];
 
-	if (value === undefined) {
+	if ( value === undefined )
 		errorMessage.push(
-			sprintf(__('No value found for field %s', 'freemius'), options.field)
+			sprintf(
+				__( 'No value found for field %s', 'freemius' ),
+				options.field
+			)
 		);
-	}
 
 	// if (!data.public_key) {
 	// errorMessage.push(__('Public key is required', 'freemius'));
@@ -89,7 +92,8 @@ const useMapping = (props) => {
 	// 	errorMessage.push(__('Plan ID is required', 'freemius'));
 	// }
 
-	const isError = !isLoading && !isLicensesLoading && errorMessage.length > 0;
+	const isError =
+		! isLoading && ! isLicensesLoading && errorMessage.length > 0;
 
 	return {
 		value,
@@ -98,81 +102,85 @@ const useMapping = (props) => {
 		defaultLabels,
 		isLoading: isLicensesLoading || isLoading,
 		isError,
-		errorMessage: errorMessage.join(', '),
+		errorMessage: errorMessage.join( ', ' ),
 	};
 };
 
-const getMappingValue = (options) => {
+const getMappingValue = ( options ) => {
 	const { data, isLoading: isDataLoading } = useData();
-	const { plans, isLoading: isPlansLoading } = usePlans(data?.product_id);
+	const { plans, isLoading: isPlansLoading } = usePlans( data?.product_id );
 
-	const currentPlan = useMemo(() => {
-		return plans?.find((plan) => plan.id == data?.plan_id);
-	}, [plans, data]);
+	const currentPlan = useMemo( () => {
+		return plans?.find( ( plan ) => plan.id == data?.plan_id );
+	}, [ plans, data ] );
 
-	const currentPricing = useMemo(() => {
-		return currentPlan?.pricing?.find((pricing) => {
+	const currentPricing = useMemo( () => {
+		return currentPlan?.pricing?.find( ( pricing ) => {
 			return (
-				pricing.currency == data?.currency && pricing.licenses == data?.licenses
+				pricing.currency == data?.currency &&
+				pricing.licenses == data?.licenses
 			);
-		});
-	}, [currentPlan, data]);
+		} );
+	}, [ currentPlan, data ] );
 
-	const mappingData = useMemo(() => {
+	const mappingData = useMemo( () => {
 		return {
-			price: currentPricing?.[data?.billing_cycle + '_price'] || undefined, // Free plan has no pricing
+			price:
+				currentPricing?.[ data?.billing_cycle + '_price' ] || undefined, // Free plan has no pricing
 			currency:
-				data?.currency && data?.currency !== 'auto' ? data?.currency : 'usd',
+				data?.currency && data?.currency !== 'auto'
+					? data?.currency
+					: 'usd',
 			title: currentPlan?.title || null,
 			licenses:
-				currentPricing?.licenses === null ? 0 : currentPricing?.licenses, // handle unlimited license
+				currentPricing?.licenses === null
+					? 0
+					: currentPricing?.licenses, // handle unlimited license
 			billing_cycle: data?.billing_cycle,
 			description: currentPlan?.description || null,
 		};
-	}, [currentPricing, currentPlan, data]);
+	}, [ currentPricing, currentPlan, data ] );
 
-	const newContent = useMemo(() => {
-		let content = mappingData[options.field];
+	const newContent = useMemo( () => {
+		let content = mappingData[ options.field ];
 
-		if (typeof content === 'undefined') {
+		if ( typeof content === 'undefined' ) {
 			// plans are loaded, but no pricing found => free plan
-			if (isPlansLoading) {
-				return undefined;
-			}
+			if ( isPlansLoading ) return undefined;
+
 			content = '0';
 		}
 
-		if (options.field === 'price' && !isNaN(content)) {
+		if ( options.field === 'price' && ! isNaN( content ) ) {
 			const symbol = options.currency_symbol;
 
-			content = new Intl.NumberFormat('en-US', {
+			content = new Intl.NumberFormat( 'en-US', {
 				style: symbol !== 'hide' ? 'currency' : 'decimal',
 				currency: symbol !== 'hide' ? mappingData.currency : undefined,
 				minimumFractionDigits: 0,
-			}).format(content);
+			} ).format( content );
 
 			// extract the currency symbol
-			if (symbol === 'symbol') {
-				content = content.replace(/[\d\s.,]/g, '').trim();
-			}
-		} else if (options.field === 'billing_cycle') {
+			if ( symbol === 'symbol' )
+				content = content.replace( /[\d\s.,]/g, '' ).trim();
+		} else if ( options.field === 'billing_cycle' )
 			content =
-				options.labels[mappingData.billing_cycle] ?? mappingData.billing_cycle;
-		} else if (options.field === 'licenses') {
-			content = options.labels[mappingData.licenses || data.licenses || 0]; // 0 is unlimited
-		} else if (content === null) {
+				options.labels[ mappingData.billing_cycle ] ??
+				mappingData.billing_cycle;
+		else if ( options.field === 'licenses' )
+			content =
+				options.labels[ mappingData.licenses || data.licenses || 0 ];
+		// 0 is unlimited
+		else if ( content === null )
 			// description could be null
 			content = '';
-		}
 
 		content = options.prefix + content + options.suffix;
 
 		return content;
-	}, [mappingData, options, isPlansLoading]);
+	}, [ mappingData, options, isPlansLoading ] );
 
-	if (isPlansLoading || isDataLoading) {
-		return undefined;
-	}
+	if ( isPlansLoading || isDataLoading ) return undefined;
 
 	return newContent;
 };

@@ -12,4 +12,4 @@ import domReady from '@wordpress/dom-ready';
  * Internal dependencies
  */
 
-domReady(() => {});
+domReady( () => {} );

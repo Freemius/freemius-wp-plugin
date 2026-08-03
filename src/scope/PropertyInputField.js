@@ -17,12 +17,14 @@ import {
 } from '@wordpress/components';
 import { useState, useRef, useEffect } from '@wordpress/element';
 
+import { closeSmall } from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
 import { useData, usePlans, useProducts } from '../hooks';
 
-const PropertyInputField = (properties) => {
+const PropertyInputField = ( properties ) => {
 	const {
 		label,
 		help,
@@ -36,22 +38,23 @@ const PropertyInputField = (properties) => {
 		props,
 	} = properties;
 
-	const { options } = props;
+	const { options, isRequired } = props;
 
 	let InputComponent = null;
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	switch (type) {
+	switch ( type ) {
 		case 'boolean':
 			InputComponent = (
 				<CheckboxControl
 					__nextHasNoMarginBottom
-					checked={value != undefined ? value : defaultValue}
-					label={label}
-					help={help}
-					indeterminate={!!placeholder && value == undefined}
-					onChange={onChange}
+					key={ `component-${ value }` } // force re-render when value changes
+					checked={ value != undefined ? value : defaultValue }
+					label={ label }
+					help={ help }
+					indeterminate={ !! placeholder && value == undefined }
+					onChange={ onChange }
 				/>
 			);
 			break;
@@ -62,18 +65,18 @@ const PropertyInputField = (properties) => {
 				<NumberControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					value={value || ''}
-					label={label}
-					help={help}
-					isDragEnabled={false}
-					min={0}
-					placeholder={formatedPlaceholder}
-					onChange={onChange}
-					onWheel={(e) => {
+					value={ value || '' }
+					label={ label }
+					help={ help }
+					isDragEnabled={ false }
+					min={ 0 }
+					placeholder={ formatedPlaceholder }
+					onChange={ onChange }
+					onWheel={ ( e ) => {
 						// do not allow to change the value by scrolling
 						e.target.blur();
 						return false;
-					}}
+					} }
 				/>
 			);
 			break;
@@ -82,15 +85,19 @@ const PropertyInputField = (properties) => {
 				<TreeSelect
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					label={label}
-					help={help}
-					onChange={onChange}
-					selectedId={value}
-					noOptionLabel={sprintf(__('Choose %s', 'freemius'), label)}
-					tree={Object.keys(options).map((key) => {
-						const label = options[key];
+					key={ `component-${ value }` } // force re-render when value changes
+					label={ label }
+					help={ help }
+					onChange={ onChange }
+					selectedId={ value }
+					noOptionLabel={ sprintf(
+						__( 'Choose %s', 'freemius' ),
+						label
+					) }
+					tree={ Object.keys( options ).map( ( key ) => {
+						const label = options[ key ];
 						return { name: label, id: key };
-					})}
+					} ) }
 				/>
 			);
 			break;
@@ -100,56 +107,59 @@ const PropertyInputField = (properties) => {
 					<BaseControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={label}
-						help={help}
+						label={ label }
+						help={ help }
 					>
 						<TextareaControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							value={value || ''}
-							onChange={onChange}
-							placeholder={formatedPlaceholder}
+							value={ value || '' }
+							onChange={ onChange }
+							placeholder={ formatedPlaceholder }
 						/>
 						<HStack justify="flex-end">
 							<Button
 								icon="external"
-								onClick={() => setIsModalOpen(true)}
+								onClick={ () => setIsModalOpen( true ) }
 								variant="tertiary"
 								size="small"
 							>
-								{__('Popout Editor', 'freemius')}
+								{ __( 'Popout Editor', 'freemius' ) }
 							</Button>
 						</HStack>
 					</BaseControl>
 
-					{isModalOpen && (
+					{ isModalOpen && (
 						<Modal
-							title={label}
+							title={ label }
 							size="large"
-							onRequestClose={() => {
-								setIsModalOpen(false);
-							}}
+							onRequestClose={ () => {
+								setIsModalOpen( false );
+							} }
 						>
 							<BaseControl
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
-								help={help}
+								help={ help }
 							>
-								{link && (
+								{ link && (
 									<HStack justify="flex-end">
-										<ExternalLink href={link}>
-											{__('Documentation', 'freemius')}
+										<ExternalLink href={ link }>
+											{ __(
+												'Documentation',
+												'freemius'
+											) }
 										</ExternalLink>
 									</HStack>
-								)}
+								) }
 								<CodeEditor
-									value={value}
-									onChange={onChange}
-									rows={value ? 10 : 3}
+									value={ value }
+									onChange={ onChange }
+									rows={ value ? 10 : 3 }
 								/>
 							</BaseControl>
 						</Modal>
-					)}
+					) }
 				</>
 			);
 			break;
@@ -158,67 +168,78 @@ const PropertyInputField = (properties) => {
 				<TextControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
-					value={value || ''}
-					label={label}
-					help={help}
-					placeholder={formatedPlaceholder}
-					onChange={onChange}
+					value={ value || '' }
+					label={ label }
+					help={ help }
+					placeholder={ formatedPlaceholder }
+					onChange={ onChange }
 				/>
 			);
 			break;
 	}
 
 	// check for special components
-	const SpecialComponent = getSpecial(properties);
+	const SpecialComponent = getSpecial( properties );
 
-	if (SpecialComponent) {
-		InputComponent = SpecialComponent;
-	}
+	if ( SpecialComponent ) InputComponent = SpecialComponent;
 
 	return (
 		<>
-			<HStack justify="flex-end">{link && <ExternalLink href={link} />}</HStack>
-			{InputComponent}
+			<HStack justify="flex-end">
+				{ ! isRequired && value && (
+					<Button
+						icon={ closeSmall }
+						iconSize={ 20 }
+						variant="tertiary"
+						isDestructive
+						size="small"
+						title={ __( 'Reset Field', 'freemius' ) }
+						onClick={ () => onChange( undefined ) }
+					/>
+				) }
+				{ link && <ExternalLink href={ link } target="_blank" /> }
+			</HStack>
+			{ InputComponent }
 		</>
 	);
 };
 
-const CodeEditor = (props) => {
+const CodeEditor = ( props ) => {
 	const { value, onChange, codemirrorProps } = props;
-	const textarea = useRef(null);
-	const editorRef = useRef(null);
+	const textarea = useRef( null );
+	const editorRef = useRef( null );
 
-	useEffect(() => {
-		if (editorRef.current && textarea.current) return;
+	useEffect( () => {
+		if ( editorRef.current && textarea.current ) return;
 
-		const editor = initCodeEditor(textarea.current, codemirrorProps);
-		if (editor) {
-			editor.setValue(value || '');
-			editor.on('change', () => {
-				onChange(editor.getValue() || undefined);
-			});
+		const editor = initCodeEditor( textarea.current, codemirrorProps );
+		if ( editor ) {
+			editor.setValue( value || '' );
+			editor.on( 'change', () => {
+				onChange( editor.getValue() || undefined );
+			} );
 			editor
 				.getWrapperElement()
-				.classList.add('components-text-control__input');
+				.classList.add( 'components-text-control__input' );
 
 			editorRef.current = editor;
 		}
 
 		return () => {
-			if (editorRef.current) {
+			if ( editorRef.current ) {
 				editorRef.current.toTextArea(); // clean up
 				editorRef.current = null;
 			}
 		};
-	}, [textarea]);
+	}, [ textarea ] );
 
-	return <textarea ref={textarea} defaultValue={value} />;
+	return <textarea ref={ textarea } defaultValue={ value } />;
 };
 
-function initCodeEditor(textarea, props) {
-	if (!window.wp || !window.wp.CodeMirror || !textarea) return;
+function initCodeEditor( textarea, props ) {
+	if ( ! window.wp || ! window.wp.CodeMirror || ! textarea ) return;
 
-	return wp.CodeMirror.fromTextArea(textarea, {
+	return wp.CodeMirror.fromTextArea( textarea, {
 		mode: 'application/javascript',
 		lineNumbers: true,
 		indentUnit: 4,
@@ -226,76 +247,72 @@ function initCodeEditor(textarea, props) {
 		indentWithTabs: true,
 		lint: true,
 		...props,
-	});
+	} );
 }
 
-function getSpecial(properties) {
+function getSpecial( properties ) {
 	const { value, onChange, props, help, label, inherited } = properties;
 
 	const { data } = useData();
 
-	if (props.id === 'plan_id') {
-		const { plans, isLoading, error } = usePlans(data?.product_id);
+	if ( props.id === 'plan_id' ) {
+		const { plans, isLoading, error } = usePlans( data?.product_id );
 
-		if (isLoading || error) return null;
+		if ( isLoading || error ) return null;
 
 		const currentPlan =
-			plans.find((plan) => plan?.id == value || inherited) || null;
+			plans.find( ( plan ) => plan?.id == value || inherited ) || null;
 
 		let noOptionLabel = {
 			hint: '',
 			name: '',
 			key: null,
 		};
-		if (value === undefined && !inherited) {
-			noOptionLabel.name = __('Use Default Plan', 'freemius');
-		} else if (inherited) {
+		if ( value === undefined && ! inherited )
+			noOptionLabel.name = __( 'Use Default Plan', 'freemius' );
+		else if ( inherited ) {
 			noOptionLabel.name = sprintf(
-				__('%s (inherited)', 'freemius'),
+				__( '%s (inherited)', 'freemius' ),
 				currentPlan?.title
 			);
-			noOptionLabel.hint = `[${currentPlan?.id}]`;
-		} else if (currentPlan) {
-			if (!inherited) {
+			noOptionLabel.hint = `[${ currentPlan?.id }]`;
+		} else if ( currentPlan )
+			if ( ! inherited )
 				noOptionLabel.name = sprintf(
-					__('%s (inherited)', 'freemius'),
+					__( '%s (inherited)', 'freemius' ),
 					currentPlan?.title
 				);
-			} else {
-				noOptionLabel = null;
-			}
-		} else {
-			noOptionLabel.name = __('Use Default Plan', 'freemius');
-		}
+			else noOptionLabel = null;
+		else noOptionLabel.name = __( 'Use Default Plan', 'freemius' );
 
-		if (plans) {
-			const options = Object.entries(plans).map(([i, plan]) => {
+		if ( plans ) {
+			const options = Object.entries( plans ).map( ( [ , plan ] ) => {
 				return {
-					hint: `[${plan.id}]`,
-					name: `${plan.title}`,
-					key: parseInt(plan.id),
+					hint: `[${ plan.id }]`,
+					name: `${ plan.title }`,
+					key: parseInt( plan.id ),
 				};
-			});
+			} );
 
-			if (noOptionLabel) options.unshift(noOptionLabel);
+			if ( noOptionLabel ) options.unshift( noOptionLabel );
 
 			return (
-				<BaseControl __nextHasNoMarginBottom help={help}>
+				<BaseControl __nextHasNoMarginBottom help={ help }>
 					<CustomSelectControl
-						key={props.id}
+						key={ props.id }
 						__next40pxDefaultSize
-						label={label}
-						onChange={(value) => {
+						label={ label }
+						onChange={ ( value ) => {
 							const item = value.selectedItem;
-							onChange(item.key);
-						}}
-						options={options}
+							onChange( item.key );
+						} }
+						options={ options }
 						value={
 							value
 								? {
-										hint: `[${value}]`,
-										name: `${currentPlan?.title}`,
-										key: parseInt(value),
+										hint: `[${ value }]`,
+										name: `${ currentPlan?.title }`,
+										key: parseInt( value ),
 								  }
 								: null
 						}
@@ -303,70 +320,69 @@ function getSpecial(properties) {
 				</BaseControl>
 			);
 		}
-	} else if (props.id === 'product_id') {
+	} else if ( props.id === 'product_id' ) {
 		const { products, isLoading, error } = useProducts();
 
-		if (isLoading || error) return null;
+		if ( isLoading || error ) return null;
 
 		const currentProduct =
-			products.find((product) => product?.id == value || inherited) || null;
+			products.find( ( product ) => product?.id == value || inherited ) ||
+			null;
 
-		if (products) {
+		if ( products ) {
 			let noOptionLabel = {
 				hint: '',
 				name: '',
 				key: null,
 			};
-			if (value === undefined && !inherited) {
-				noOptionLabel.name = __('Select Product', 'freemius');
-			} else if (inherited) {
+			if ( value === undefined && ! inherited )
+				noOptionLabel.name = __( 'Select Product', 'freemius' );
+			else if ( inherited ) {
 				noOptionLabel.name = sprintf(
-					__('%s (inherited)', 'freemius'),
+					__( '%s (inherited)', 'freemius' ),
 					currentProduct?.title
 				);
-				noOptionLabel.hint = `[${currentProduct?.id}]`;
-			} else if (currentProduct) {
-				if (!inherited) {
+				noOptionLabel.hint = `[${ currentProduct?.id }]`;
+			} else if ( currentProduct )
+				if ( ! inherited )
 					noOptionLabel.name = sprintf(
-						__('%s (inherited)', 'freemius'),
+						__( '%s (inherited)', 'freemius' ),
 						currentProduct?.title
 					);
-				} else {
-					noOptionLabel = null;
+				else noOptionLabel = null;
+			else noOptionLabel.name = __( 'Select Product', 'freemius' );
+
+			const options = Object.entries( products ).map(
+				( [ , product ] ) => {
+					if ( ! product ) return null;
+
+					return {
+						hint: `[${ product.id }]`,
+						name: `${ product.title }`,
+						key: parseInt( product.id ),
+					};
 				}
-			} else {
-				noOptionLabel.name = __('Select Product', 'freemius');
-			}
+			);
 
-			const options = Object.entries(products).map(([i, product]) => {
-				if (!product) return null;
-
-				return {
-					hint: `[${product.id}]`,
-					name: `${product.title}`,
-					key: parseInt(product.id),
-				};
-			});
-
-			if (noOptionLabel) options.unshift(noOptionLabel);
+			if ( noOptionLabel ) options.unshift( noOptionLabel );
 
 			return (
-				<BaseControl __nextHasNoMarginBottom help={help}>
+				<BaseControl __nextHasNoMarginBottom help={ help }>
 					<CustomSelectControl
-						key={props.id}
+						key={ props.id }
 						__next40pxDefaultSize
-						label={label}
-						onChange={(value) => {
+						label={ label }
+						onChange={ ( value ) => {
 							const item = value.selectedItem;
-							onChange(item.key);
-						}}
-						options={options}
+							onChange( item.key );
+						} }
+						options={ options }
 						value={
 							value
 								? {
-										hint: `[${value}]`,
-										name: `${currentProduct?.title}`,
-										key: parseInt(value),
+										hint: `[${ value }]`,
+										name: `${ currentProduct?.title }`,
+										key: parseInt( value ),
 								  }
 								: null
 						}

@@ -60,5 +60,6 @@ class Blocks {
 	 */
 	public function register_blocks() {
 		\register_block_type( FREEMIUS_PLUGIN_DIR . '/build/blocks/modifier' );
+		\register_block_type( FREEMIUS_PLUGIN_DIR . '/build/blocks/portal' );
 	}
 }

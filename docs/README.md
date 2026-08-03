@@ -1,91 +1,79 @@
 # Freemius for WordPress
 
-The Freemius for WordPress is a toolkit to help people sell products on their WordPress sites.
+If you are using WordPress with the Block Editor, the Freemius for WordPress plugin enables you to integrate the Freemius checkout directly and quickly while building landing/sales pages for your Freemius product. No JavaScript, theme hacking, or coding required!
 
-## General Idea
+![Block editor with Freemius checkout preview open](assets/docs-homepage-preview.png)
 
-This plugin helps you quickly set up a sales page for your WordPress product that you sell via Freemius.
+**Not using the Block Editor?**
 
-## How it works
+See how to use the [overlay checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-buy-button/) or the [hosted checkout](https://freemius.com/help/documentation/selling-with-freemius/freemius-checkout-hosted-page/).
 
-The plugin uses the Freemius API to fetch the product data and display it in the block editor.
+Out of the box, Freemius for WordPress gives you:
 
-The plugin also allows you to add Freemius Checkout to any button of your WordPress content using the block editor.
+- **Native Block Editor support (Gutenberg):** Drop checkout buttons or pricing tables directly into your page layouts - just like adding any other block.
 
-## Requirements
+  _For example: Add a "Buy Now" button to your landing page in seconds._
 
-- WordPress 6.7+
-- Freemius account
-- Freemius product
+- **Dynamic pricing tables:** Display different plans with clear comparisons and calls-to-action.
 
-## Installation
+  _Example: Showcase "Starter / Pro / Agency" tiers side by side, with checkout built in._
 
-1. Install the plugin via the WordPress admin panel.
-2. Activate the plugin.
-3. Go to the Freemius settings page (Settings => Freemius) and enter your Freemius Token.
-4. Go to the "Editor Settings" page and enter `product_id`, `public_key`.
+- **Plan switching and trials:** Let customers upgrade, downgrade, or start with a free trial seamlessly.
 
-## Checkout Button
+  _Example: Offer a 14-day free trial that auto-converts to a paid plan without extra coding._
 
-The easiest way to enable a checkout button is to create a new page (or edit an existing one) and add a new button block to the content.
+- **Full compatibility with modern WordPress block themes and plugins:** Works out of the box with your existing WordPress block site setup - no theme hacks required.
 
+- **100% free and open source:** Transparent, community-driven, and extensible.
 
-https://github.com/user-attachments/assets/c07268f2-0dc1-439a-840c-7e52215016cb
+  _Example: Extend the plugin with your own block variations, or contribute improvements back to the repo._
 
+## Resources
 
-Enable the checkout for this button in the inspector panel.
+- [Download from WordPress.org.](https://wordpress.org/plugins/freemius/)
+- [GitHub repo.](https://github.com/Freemius/freemius-wp-plugin)
+- [Test now on Playground.](https://playground.wordpress.net/?plugin=freemius)
+- [Features, roadmap and the changelog.](https://github.com/Freemius/freemius-wp-plugin#readme)
 
-You can instantly preview the button by clicking the "Preview" button in the inspector panel. Change the properties for this specific button with the settings below.
+## How do I set up a Freemius checkout button?
 
-## Working with Scopes
+1. Download, install, and activate the plugin on your WordPress site.
+2. Add a button block to your page or post, then enable the Freemius checkout option in the button settings.
+3. Configure your product details, and the button will automatically handle the checkout process.
 
-The plugin allows you to create multiple scopes for your product. Each scope can have different pricing and checkout buttons.
+Here is a quick video demonstrating how to set up a Freemius checkout button:
 
-A scope can be enabled on these blocks (or their children):
+[How to set up a Freemius checkout button](https://www.youtube.com/watch?v=MTOuIBGan7E)
 
-- Group Block
-- Columns Block
-- Column Block
-- Button Block
+For step-by-step guides in this documentation, see [Getting started](getting-started.md).
 
-<img width="280" height="284" alt="enable_checkout_full" src="https://github.com/user-attachments/assets/52b2e108-f3f2-4fd2-8760-c730a8c48315" />
+## Documentation
 
+| Guide | What it covers |
+| ----- | -------------- |
+| [Getting started](getting-started.md) | Install the plugin, connect your Freemius product, add a checkout button, and build a pricing page |
+| [Freemius Button](button.md) | Enable checkout on a button, scopes, preview, and optional settings |
+| [Customer Portal](customer-portal.md) | Embed the members dashboard with Store ID and Public Key; link to Freemius portal docs |
+| [Creating your Pricing page](creating-your-pricing-page.md) | Build a multi-plan pricing page with modifiers, scoped columns, mapped fields, and checkout buttons |
+| [Scopes](scopes.md) | Nested pricing contexts on one page (groups, columns, buttons) |
+| [Field mapping](mapping.md) | Pull plan price, title, description, and billing labels into blocks |
+| [Scope modifiers](modifiers.md) | Currency, billing cycle, and license toggles on the page |
+| [Settings](settings.md) | Admin tabs: Products, Editor Settings, and site-wide defaults |
 
+## FAQs
 
-Each scope inherits the properties of the parent scope. The first scope in the hierarchy will inherit the properties of the "Editor Settings" page.
+### Can I customize the checkout experience?
 
-### Mapping
+Yes, you can customize various aspects of the checkout process through the plugin settings, including product details, pricing, and the checkout flow.
 
-You can map certain fields from your plans (e.g., "title", "description", "price", etc.) to the content of the blocks.
+### How do I set up a Freemius checkout button?
 
-The following blocks can "receive" data from the scope:
+Add a **Button** block, turn on **Freemius Checkout** in the Freemius panel, and set your product under **Settings → Freemius**. See [Getting started](getting-started.md) and [Freemius Button](button.md).
 
-- Paragraph Block
-- HeadingBlock
-- Button Block
+### Is the plugin compatible with my theme?
 
-Currently, 5 fields are supported:
+The plugin targets the Block Editor (Gutenberg). It works with block themes and classic themes that support the block editor.
 
-- Title
-- Description
-- Price
-- Licenses (1, 2, 3, Unlimited)
-- Billing Cycle (Monthly, Yearly, Lifetime)
+### Where is pricing data loaded from?
 
-You can see a purple outline around all blocks with a scope. The dotted outline indicates a mapped field:
-
-<img width="1243" height="703" alt="pricing_with_scopes" src="https://github.com/user-attachments/assets/c84d5c2f-07c0-46df-8ac3-843f2961d493" />
-
-### Scope Modifiers
-
-Modifiers can be used to change the settings of the scope in which they are placed. They always change the scope of the next parent scope.
-
-The scope is enabled by adding the "Freemius Scope" block to the content.
-<img width="2439" height="609" alt="modifiers" src="https://github.com/user-attachments/assets/2f9441a1-4fa4-4285-a5e7-8e1f025dfe50" />
-
-You can click on the modifier directly in the editor to change the scope.
-
-https://github.com/user-attachments/assets/6a25e2cb-c169-4d2d-898c-d6a48f90e0c6
-
-
-
+Mapped prices and plan copy are saved when you edit and publish a page; the frontend does not call the Freemius API on every visit. After you change prices on the Freemius dashboard, reopen the page in the editor and **Update** it. See [Creating your Pricing page](creating-your-pricing-page.md#important-pricing-data-is-not-live-on-the-frontend).
